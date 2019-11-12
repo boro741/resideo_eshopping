@@ -69,6 +69,13 @@ class Screen3 extends StatelessWidget {
                 hintText: 'Enter your Name',
                 labelText: 'Name',
               ),
+              validator: (val) {
+                if (val.length == 0) {
+                  return 'Name field should not be empty';
+                } else {
+                  return null;
+                }
+              },
             ),
             TextFormField(
               decoration: const InputDecoration(
@@ -76,9 +83,17 @@ class Screen3 extends StatelessWidget {
                   FontAwesomeIcons.phone,
                   color: Color(0xff11b719),
                 ),
-                hintText: 'Ex: +91-9700000000',
+                hintText: 'Ex: 9700000000',
                 labelText: 'Phone',
               ),
+              validator: (val) {
+                Pattern pattern = r'^(?:[+0]9)?[0-9]{10}$';
+                RegExp regex = new RegExp(pattern);
+                if (!regex.hasMatch(val))
+                  return 'Enter Valid Phone Number';
+                else
+                  return null;
+              },
               keyboardType: TextInputType.number,
             ),
             TextFormField(
@@ -90,6 +105,12 @@ class Screen3 extends StatelessWidget {
                 ),
                 labelText: 'Address',
               ),
+              validator: (val) {
+                if (val.length == 0)
+                  return 'Address Field should not be empty';
+                else
+                  return null;
+              },
             ),
             TextFormField(
               decoration: const InputDecoration(
@@ -100,6 +121,14 @@ class Screen3 extends StatelessWidget {
                 hintText: 'Ex: 500000',
                 labelText: 'Zip Code',
               ),
+              validator: (val) {
+                Pattern pattern = r'^[1-9][0-9]{5}$';
+                RegExp regex = new RegExp(pattern);
+                if (!regex.hasMatch(val))
+                  return 'Enter Valid ZipCode';
+                else
+                  return null;
+              },
               keyboardType: TextInputType.number,
             ),
             Row(

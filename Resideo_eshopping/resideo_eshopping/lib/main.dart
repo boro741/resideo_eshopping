@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Resideo eshopping',
       theme: ThemeData(
-        primaryColor: Color(0xff11b719),
+        primaryColor: Color(0xffDB4437),
       ),
       home: Screen3(0.0),
     );

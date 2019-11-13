@@ -45,6 +45,7 @@ class Screen3 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      //backgroundColor: Color(),
       appBar: AppBar(
         title: Container(
           alignment: Alignment.center,
@@ -64,7 +65,7 @@ class Screen3 extends StatelessWidget {
               decoration: const InputDecoration(
                 icon: const Icon(
                   FontAwesomeIcons.userCircle,
-                  color: Color(0xff11b719),
+                  color: Color(0xffeb0000),
                 ),
                 hintText: 'Enter your Name',
                 labelText: 'Name',
@@ -81,7 +82,7 @@ class Screen3 extends StatelessWidget {
               decoration: const InputDecoration(
                 icon: const Icon(
                   FontAwesomeIcons.phone,
-                  color: Color(0xff11b719),
+                  color: Color(0xffeb0000),
                 ),
                 hintText: 'Ex: 9700000000',
                 labelText: 'Phone',
@@ -101,7 +102,7 @@ class Screen3 extends StatelessWidget {
               decoration: const InputDecoration(
                 icon: const Icon(
                   FontAwesomeIcons.home,
-                  color: Color(0xff11b719),
+                  color: Color(0xffeb0000),
                 ),
                 labelText: 'Address',
               ),
@@ -116,7 +117,7 @@ class Screen3 extends StatelessWidget {
               decoration: const InputDecoration(
                 icon: const Icon(
                   FontAwesomeIcons.mapMarker,
-                  color: Color(0xff11b719),
+                  color: Color(0xffeb0000),
                 ),
                 hintText: 'Ex: 500000',
                 labelText: 'Zip Code',
@@ -141,7 +142,7 @@ class Screen3 extends StatelessWidget {
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20,
-                        color: Color(0xff11b719)),
+                        color: Color(0xffeb0000)),
                   ),
                 ),
                 Container(
@@ -160,7 +161,7 @@ class Screen3 extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 RaisedButton(
-                    color: Color(0xff11b719),
+                    color: Color(0xffeb0000),
                     textColor: Colors.white,
                     child: Padding(
                         padding: EdgeInsets.all(10.0),

@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class Screen3 extends StatefulWidget {
-  Screen3(@required this.estimatedCost);
-  final double estimatedCost;
-
-  @override
-  _screenState createState() => _screenState();
-}
-
-class _screenState extends State<Screen3> {
+class AddUserDetails extends StatelessWidget {
   final GlobalKey<FormState> _formKeyValue = new GlobalKey<FormState>();
+
+  AddUserDetails(this.estimatedCost);
+  final double estimatedCost;
 
   showAlertDialog(BuildContext context) {
     // set up the buttons
@@ -69,7 +64,7 @@ class _screenState extends State<Screen3> {
                 decoration: const InputDecoration(
                   icon: const Icon(
                     FontAwesomeIcons.userCircle,
-                    color: Color(0xffDB4437),
+                    color: Colors.blue,
                   ),
                   hintText: 'Enter your Name',
                   labelText: 'Name',
@@ -86,7 +81,7 @@ class _screenState extends State<Screen3> {
                 decoration: const InputDecoration(
                   icon: const Icon(
                     FontAwesomeIcons.phone,
-                    color: Color(0xffDB4437),
+                    color: Colors.blue,
                   ),
                   hintText: 'Ex: 9700000000',
                   labelText: 'Phone',
@@ -106,7 +101,7 @@ class _screenState extends State<Screen3> {
                 decoration: const InputDecoration(
                   icon: const Icon(
                     FontAwesomeIcons.home,
-                    color: Color(0xffDB4437),
+                    color: Colors.blue,
                   ),
                   labelText: 'Address',
                 ),
@@ -121,7 +116,7 @@ class _screenState extends State<Screen3> {
                 decoration: const InputDecoration(
                   icon: const Icon(
                     FontAwesomeIcons.mapMarker,
-                    color: Color(0xffDB4437),
+                    color: Colors.blue,
                   ),
                   hintText: 'Ex: 500000',
                   labelText: 'Zip Code',
@@ -144,15 +139,16 @@ class _screenState extends State<Screen3> {
                     child: Text(
                       'Estimated Price: ',
                       style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Color(0xffDB4437)),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.blue,
+                      ),
                     ),
                   ),
                   Container(
                     margin: const EdgeInsets.all(20.0),
                     child: Text(
-                      'Rs. ' + widget.estimatedCost.toString(),
+                      'Rs. ' + estimatedCost.toString(),
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
@@ -166,7 +162,7 @@ class _screenState extends State<Screen3> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
                   RaisedButton(
-                      color: Color(0xffDB4437),
+                      color: Colors.blue,
                       textColor: Colors.white,
                       child: Padding(
                           padding: EdgeInsets.all(10.0),
@@ -192,3 +188,17 @@ class _screenState extends State<Screen3> {
     );
   }
 }
+
+//class Screen3 extends StatefulWidget {
+//  Screen3(@required this.estimatedCost);
+//  final double estimatedCost;
+//
+//  @override
+//  _screenState createState() => _screenState();
+//}
+//
+//class _screenState extends State<Screen3> {
+//
+//
+//
+//}

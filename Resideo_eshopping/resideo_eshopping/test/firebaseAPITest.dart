@@ -14,9 +14,38 @@ void main() {
   test('Returns 25 items', () async {
     final response = await http.get(url);
     var itemCount = response.body
-        .split('}') // split the text into an array
+        .split('},') // split the text into an array
         .toList()
         .length;
+
     expect(itemCount, 25);
+  });
+
+  test('Test for every field returns no null', () async {
+    var response = await http
+        .get(Uri.encodeFull(url), headers: {"Accept": "application/json"});
+
+    var data = json.decode(response.body);
+
+    expect(data[0]['Category'] != null ? true : false, true);
+    expect(data[0]['Image'] != null ? true : false, true);
+    expect(data[0]['Inventory'] != null ? true : false, true);
+    expect(data[0]['LongDescription'] != null ? true : false, true);
+    expect(data[0]['Price'] != null ? true : false, true);
+    expect(data[0]['ProductId'] != null ? true : false, true);
+    expect(data[0]['ProductName'] != null ? true : false, true);
+    expect(data[0]['Rating'] != null ? true : false, true);
+    expect(data[0]['Review'] != null ? true : false, true);
+    expect(data[0]['ShortDescription'] != null ? true : false, true);
+    expect(data[0]['Thumbnail'] != null ? true : false, true);
+  });
+
+  test('An Object contains 11 fields', () async {
+    var response = await http
+        .get(Uri.encodeFull(url), headers: {"Accept": "application/json"});
+
+    var data = json.decode(response.body);
+
+    expect(data[0].length, 11);
   });
 }

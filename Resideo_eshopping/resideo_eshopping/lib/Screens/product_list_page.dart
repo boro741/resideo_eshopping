@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:resideo_eshopping/model/eshopping_model.dart';
+import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/repository/products_repository.dart';
 import 'package:resideo_eshopping/util/dbhelper.dart';
 import 'package:resideo_eshopping/widgets/products_tile.dart';
@@ -14,7 +14,7 @@ class ProductsListPage extends StatefulWidget {
   _ProductsListPageState createState() => _ProductsListPageState();
 }
 
-class _ProductsListPageState extends State<ProductsListPage>{
+class _ProductsListPageState extends State<ProductsListPage> with SingleTickerProviderStateMixin{
 
   Dbhelper helper=Dbhelper();
   List<Product> newList=List<Product>();
@@ -40,7 +40,7 @@ class _ProductsListPageState extends State<ProductsListPage>{
       key: key,
       appBar: AppBar(
         title: Text(widget.title),
-        bottom: _createProgressIndicator(),f
+        bottom: _createProgressIndicator(),
         actions: <Widget>[
           Container(
             margin: EdgeInsets.symmetric(vertical: 10),
@@ -73,7 +73,7 @@ class _ProductsListPageState extends State<ProductsListPage>{
             ListView.builder(
               itemCount: _products.length,
               controller: _scrollController,
-              itemBuilder: (context, index) => ProductTile(_products[index]),
+              itemBuilder: (context, index) => ProductsTile(_products[index]),
             ),
           ],
         ),

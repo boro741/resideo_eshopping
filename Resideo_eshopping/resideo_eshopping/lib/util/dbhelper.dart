@@ -1,4 +1,4 @@
-import 'package:resideo_eshopping/model/eshopping_model.dart';
+import 'package:resideo_eshopping/model/product.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';

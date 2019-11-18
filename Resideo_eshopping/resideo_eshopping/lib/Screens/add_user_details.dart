@@ -1,31 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:resideo_eshopping/Screens/productsListPage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:resideo_eshopping/model/eshopping_model.dart';
+import 'package:resideo_eshopping/util/dbhelper.dart';
 
 class AddUserDetails extends StatelessWidget {
-  final GlobalKey<FormState> _formKeyValue = new GlobalKey<FormState>();
+  static final GlobalKey<FormState> _formKeyValue = new GlobalKey<FormState>();
+  Dbhelper helper = Dbhelper();
+  AddUserDetails(this.pd);
+  final Product pd;
+  
+  int decreaseInventoryCount(){
+    if(pd.quantity > 0)
+    return (pd.quantity - 1);
+    else
+    return 0;
+  }
 
-  AddUserDetails(this.estimatedCost);
-  final double estimatedCost;
+void navigateToHomePage(BuildContext context) async{
+    Navigator.push(context, MaterialPageRoute(builder:(context)=>ProductsListPage(title: 'Resideo e-Shopping')));
+  }
+
+  orderPlaced(BuildContext context){
+
+    AlertDialog alert = AlertDialog(
+      title: Text("Order Placed"),
+      content: Text("Thank you for placing order"),
+      actions: <Widget>[
+        FlatButton(
+          child: Text("Ok"),
+          onPressed: (){
+             navigateToHomePage(context);
+          },
+        )
+      ],
+    );
+    showDialog(context: context,
+    builder: (BuildContext context){
+      return alert;
+    });
+  }
 
   showAlertDialog(BuildContext context) {
     // set up the buttons
     Widget cancelButton = FlatButton(
       child: Text("No"),
       onPressed: () {
-        //Todo: Do Something
+        Navigator.pop(context);
       },
     );
     Widget continueButton = FlatButton(
       child: Text("Yes"),
       onPressed: () {
-        //Todo: Do Something
-      },
+         Navigator.pop(context);
+         helper.updateInventoryById(pd.id, decreaseInventoryCount()).then((result)=> orderPlaced(context));
+      }, 
     );
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
       title: Text("Order Confrimation"),
-      content: Text("Do you want to proceed?"),
+      content: Text("Do you want to place order?"),
       actions: [
         cancelButton,
         continueButton,
@@ -43,11 +78,12 @@ class AddUserDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: AppBar(
         title: Container(
           alignment: Alignment.center,
-          child: Text("Add User Details",
+          child: Text("Resideo e-Shopping",
               style: TextStyle(
                 color: Colors.white,
               )),
@@ -151,7 +187,7 @@ class AddUserDetails extends StatelessWidget {
                         Container(
                           margin: const EdgeInsets.all(20.0),
                           child: Text(
-                            'Rs. ' + estimatedCost.toString(),
+                            'Rs. ' + pd.price.toString(),
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 20),
                           ),
@@ -180,7 +216,7 @@ class AddUserDetails extends StatelessWidget {
                             )),
                         onPressed: () {
                           if (_formKeyValue.currentState.validate()) {
-                            showAlertDialog(context);
+                            showAlertDialog(context);                            
                           }
                         },
                         shape: new RoundedRectangleBorder(

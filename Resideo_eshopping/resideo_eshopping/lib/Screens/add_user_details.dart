@@ -30,7 +30,7 @@ void navigateToHomePage(BuildContext context) async{
         FlatButton(
           child: Text("Ok"),
           onPressed: (){
-             helper.updateInventoryById(pd.id, decreaseInventoryCount()).then((result)=>  navigateToHomePage(context));
+             navigateToHomePage(context);
           },
         )
       ],
@@ -53,10 +53,8 @@ void navigateToHomePage(BuildContext context) async{
       child: Text("Yes"),
       onPressed: () {
          Navigator.pop(context);
-         
-         orderPlaced(context);
-        
-      },
+         helper.updateInventoryById(pd.id, decreaseInventoryCount()).then((result)=> orderPlaced(context));
+      }, 
     );
 
     // set up the AlertDialog

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:resideo_eshopping/pages/productsListPage.dart';
-
+import 'package:resideo_eshopping/Screens/productsListPage.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {

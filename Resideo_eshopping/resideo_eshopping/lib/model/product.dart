@@ -106,7 +106,7 @@ class Product{
   _quantity = jsonMap['Inventory'],
   _lDesc = jsonMap['LongDescription'],
   _price = jsonMap['Price'],
-  _id = jsonMap['ProductId'],
+  //_id = jsonMap['ProductId'],
   _title = jsonMap['ProductName'],
   _rating = jsonMap['Rating'],
   _review = jsonMap['Review'],

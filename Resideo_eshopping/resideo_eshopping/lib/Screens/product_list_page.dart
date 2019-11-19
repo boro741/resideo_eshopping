@@ -77,7 +77,8 @@ class _ProductsListPageState extends State<ProductsListPage>
 
   Widget dropdownWidget() {
     return DropdownButton(
-      hint: new Text("Filter"),
+      icon: Icon(Icons.filter_list),
+      //hint: new Text("Filter"),
       items: [
         DropdownMenuItem<String>(child: new Text("All"), value: "All"),
         DropdownMenuItem<String>(child: new Text("Men"), value: "Men"),

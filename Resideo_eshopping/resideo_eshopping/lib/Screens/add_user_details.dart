@@ -5,7 +5,7 @@ import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/util/dbhelper.dart';
 
 class AddUserDetails extends StatelessWidget {
-  static final GlobalKey<FormState> _formKeyValue = new GlobalKey<FormState>();
+  static GlobalKey<FormState> _formKeyValue = new GlobalKey<FormState>();
   Dbhelper helper = Dbhelper();
   AddUserDetails(this.pd);
   final Product pd;
@@ -18,7 +18,7 @@ class AddUserDetails extends StatelessWidget {
   }
 
 void navigateToHomePage(BuildContext context) async{
-    Navigator.push(context, MaterialPageRoute(builder:(context)=>ProductsListPage(title: 'Resideo e-Shopping')));
+    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder:(context)=>ProductsListPage(title: 'Resideo e-Shopping')),(Route<dynamic> route)=> false);
   }
 
   orderPlaced(BuildContext context){
@@ -30,6 +30,7 @@ void navigateToHomePage(BuildContext context) async{
         FlatButton(
           child: Text("Ok"),
           onPressed: (){
+            _formKeyValue = new GlobalKey<FormState>();
              navigateToHomePage(context);
           },
         )

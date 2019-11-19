@@ -27,8 +27,6 @@ class _ProductsListPageState extends State<ProductsListPage> with SingleTickerPr
   Animation<double> animation;
   // int count;
 
-  String _currentlySelected = " "; 
-
   @override 
   Widget build(BuildContext context){
     var key = GlobalKey<ScaffoldState>();
@@ -103,7 +101,7 @@ class _ProductsListPageState extends State<ProductsListPage> with SingleTickerPr
   @override 
   void initState(){
     super.initState();
-    listenForProducts();
+    //listenForProducts();
     getProductList();
     controller = AnimationController(
         duration: const Duration(milliseconds: 10000),

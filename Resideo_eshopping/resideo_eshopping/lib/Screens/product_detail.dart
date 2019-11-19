@@ -107,7 +107,7 @@ class ProductDetail extends StatelessWidget
     if (quantity<5)
     return  Text("Only $quantity left",style: TextStyle(color: Colors.red,) );
     else
-    return  Text("In Stock $quantity",style: TextStyle(color: Colors.green,) );
+    return  Text("In Stock",style: TextStyle(color: Colors.green,) );
   }
 
   

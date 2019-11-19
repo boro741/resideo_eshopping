@@ -10,15 +10,20 @@ class AddUserDetails extends StatelessWidget {
   AddUserDetails(this.pd);
   final Product pd;
   
-  int decreaseInventoryCount(){
+  int _decreaseInventoryCount(){
     if(pd.quantity > 0)
     return (pd.quantity - 1);
     else
     return 0;
   }
-
+  
+  void _processedData(){
+    _formKeyValue.currentState?.reset();
+  }
 void navigateToHomePage(BuildContext context) async{
-    Navigator.push(context, MaterialPageRoute(builder:(context)=>ProductsListPage(title: 'Resideo e-Shopping')));
+    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+    ProductsListPage(title: 'Resideo e-Shopping')), (Route<dynamic> route) => false);
+    //Navigator.push(context, MaterialPageRoute(builder:(context)=>ProductsListPage(title: 'Resideo e-Shopping')));
   }
 
   orderPlaced(BuildContext context){
@@ -30,6 +35,7 @@ void navigateToHomePage(BuildContext context) async{
         FlatButton(
           child: Text("Ok"),
           onPressed: (){
+           
              navigateToHomePage(context);
           },
         )
@@ -53,7 +59,8 @@ void navigateToHomePage(BuildContext context) async{
       child: Text("Yes"),
       onPressed: () {
          Navigator.pop(context);
-         helper.updateInventoryById(pd.id, decreaseInventoryCount()).then((result)=> orderPlaced(context));
+         helper.updateInventoryById(pd.id, _decreaseInventoryCount()).then((result)=> orderPlaced(context));
+        //_processedData();
       }, 
     );
 
@@ -216,6 +223,7 @@ void navigateToHomePage(BuildContext context) async{
                             )),
                         onPressed: () {
                           if (_formKeyValue.currentState.validate()) {
+                           
                             showAlertDialog(context);                            
                           }
                         },

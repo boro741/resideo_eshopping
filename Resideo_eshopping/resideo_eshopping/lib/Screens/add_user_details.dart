@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:resideo_eshopping/Screens/productsListPage.dart';
+import 'package:resideo_eshopping/Screens/product_list_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:resideo_eshopping/model/eshopping_model.dart';
+import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/util/dbhelper.dart';
 
 class AddUserDetails extends StatelessWidget {
-  static final GlobalKey<FormState> _formKeyValue = new GlobalKey<FormState>();
+  static GlobalKey<FormState> _formKeyValue = new GlobalKey<FormState>();
   Dbhelper helper = Dbhelper();
   AddUserDetails(this.pd);
   final Product pd;

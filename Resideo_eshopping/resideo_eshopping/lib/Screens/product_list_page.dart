@@ -1,5 +1,9 @@
+import 'dart:io';
+import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/repository/products_repository.dart';
 import 'package:resideo_eshopping/util/dbhelper.dart';
@@ -19,23 +23,43 @@ class _ProductsListPageState extends State<ProductsListPage>
   Dbhelper helper = Dbhelper();
   List<Product> newList = List<Product>();
   String dropdownValue = 'Categories';
-  ScrollController _scrollController = ScrollController();
   List<Product> _products = <Product>[];
   List<Product> currentList = <Product>[];
-  AnimationController controller;
-  Animation<double> animation;
   String _currentlySelected = "All";
-
+  bool _isProgressBarShown = true;
+  
   @override
   Widget build(BuildContext context) {
     filterProducts();
     var key = GlobalKey<ScaffoldState>();
-    return Scaffold(
+    Widget widget;
+
+  if(_isProgressBarShown){
+    widget = Center(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+        child: PlatformCircularProgressIndicator(
+          android: (_) => MaterialProgressIndicatorData(),
+          ios: (_) => CupertinoProgressIndicatorData(),
+        ),
+      )
+    );
+  }
+  else{
+    widget = ListView.builder(
+      shrinkWrap: true,
+      padding: const EdgeInsets.all(0.0),
+
+      itemCount: currentList.length,
+      itemBuilder: (context, index) => ProductsTile(currentList[index]),
+    );
+  }
+
+    return PlatformScaffold(
       key: key,
-      appBar: AppBar(
-          title: Text(widget.title),
-          bottom: _createProgressIndicator(),
-          actions: <Widget>[
+      appBar: PlatformAppBar(
+          title: PlatformText("Resideo eShopping"),
+          trailingActions: <Widget> [
             Container(
               margin: EdgeInsets.symmetric(vertical: 10),
               height: 100,
@@ -58,20 +82,10 @@ class _ProductsListPageState extends State<ProductsListPage>
 //          ),
 //          //
               child: dropdownWidget(),
+              
             )
           ]),
-      body: Container(
-        padding: EdgeInsets.all(8.0),
-        child: Stack(
-          children: <Widget>[
-            ListView.builder(
-              itemCount: currentList.length,
-              controller: _scrollController,
-              itemBuilder: (context, index) => ProductsTile(currentList[index]),
-            ),
-          ],
-        ),
-      ),
+      body: widget,
     );
   }
 
@@ -80,10 +94,10 @@ class _ProductsListPageState extends State<ProductsListPage>
       icon: Icon(Icons.filter_list),
       //hint: new Text("Filter"),
       items: [
-        DropdownMenuItem<String>(child: new Text("All"), value: "All"),
-        DropdownMenuItem<String>(child: new Text("Men"), value: "Men"),
-        DropdownMenuItem<String>(child: new Text("Women"), value: "Women"),
-        DropdownMenuItem<String>(child: new Text("Kid"), value: "Kid")
+        DropdownMenuItem<String>(child: PlatformText("All"), value: "All"),
+        DropdownMenuItem<String>(child: PlatformText("Men"), value: "Men"),
+        DropdownMenuItem<String>(child: PlatformText("Women"), value: "Women"),
+        DropdownMenuItem<String>(child: PlatformText("Kid"), value: "Kid")
       ],
       onChanged: (String value) {
         _currentlySelected = value;
@@ -108,6 +122,7 @@ class _ProductsListPageState extends State<ProductsListPage>
                 listenForProducts();
               else {
                 setState(() {
+                  _isProgressBarShown = false;
                   _products = productlist;
                 });
               }
@@ -118,26 +133,36 @@ class _ProductsListPageState extends State<ProductsListPage>
   @override
   void initState() {
     super.initState();
+
+    Timer.run(() {
+      try {
+        InternetAddress.lookup('google.com').then((result) {
+          if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+            print('connected');
+          } else {
+            _showDialog(); // show dialog
+          }
+        }).catchError((error) {
+          _showDialog(); // show dialog
+        });
+      } on SocketException catch (_) {
+        _showDialog();
+        print('not connected'); // show dialog
+      }
+    });
+
     getProductList();
-    controller = AnimationController(
-        duration: const Duration(milliseconds: 10000), vsync: this);
-    animation = Tween(begin: 0.0, end: 20.0).animate(controller);
-    controller.repeat();
-    _scrollController.addListener(() {});
     filterProducts();
   }
 
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    controller.dispose();
-    super.dispose();
-  }
-
   void listenForProducts() async {
+    //_isProgressBarShown = true;
     Stream<Product> stream = await getProducts();
     stream.listen((Product products) {
-      setState(() => _products.add(products));
+      setState(() {
+        _isProgressBarShown = false;
+        _products.add(products);
+      } );
     }, onDone: () {
       helper.addAllProduct(_products);
     });
@@ -156,11 +181,17 @@ class _ProductsListPageState extends State<ProductsListPage>
     }
   }
 
-  PreferredSize _createProgressIndicator() => PreferredSize(
-      preferredSize: Size(double.infinity, 4.0),
-      child: SizedBox(
-          height: 4.0,
-          child: LinearProgressIndicator(
-            value: animation.value,
-          )));
+  void _showDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+            title: PlatformText("Internet needed!"),
+            content: PlatformText("You may want to exit the app here"),
+            actions: <Widget>[
+              FlatButton(child: PlatformText("Cancel"), onPressed: () => Navigator.of(context).pop(false)),
+              FlatButton(child: PlatformText("Exit"), onPressed: () => Navigator.of(context).pop(true))],
+          ),
+    );
+  }
+
 }

@@ -25,7 +25,7 @@ class StarDisplay extends StatelessWidget {
 class ProductDetail extends StatelessWidget
 {
  
-  Product pd;
+  final Product pd;
   ProductDetail(this.pd);
   bool buttonDisabled=false;
   String inventoryDetail;

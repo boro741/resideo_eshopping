@@ -24,6 +24,9 @@ dependencies:
   http: ^0.12.0+2
   flutter_platform_widgets: ^0.20.2
   giffy_dialog: ^1.6.1
+  carousel_pro: ^1.0.0
+  video_player: ^0.10.3+3
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -33,7 +36,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

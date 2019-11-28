@@ -7,6 +7,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/repository/products_repository.dart';
 import 'package:resideo_eshopping/util/dbhelper.dart';
+import 'package:resideo_eshopping/widgets/drawer.dart';
 import 'package:resideo_eshopping/widgets/products_tile.dart';
 
 class ProductsListPage extends StatefulWidget {
@@ -55,32 +56,16 @@ class _ProductsListPageState extends State<ProductsListPage>
     );
   }
 
-    return PlatformScaffold(
+    return Scaffold(
       key: key,
-      appBar: PlatformAppBar(
+      drawer: AppDrawer(),
+      appBar: AppBar(
           title: PlatformText("Resideo eShopping"),
-          trailingActions: <Widget> [
+          actions: <Widget> [
             Container(
               margin: EdgeInsets.symmetric(vertical: 10),
               height: 100,
               width: 100,
-//            child: PopupMenuButton(
-//                child:Icon(Icons.filter_list),
-//                //onSelected: () => setState(),
-//                itemBuilder: (context) => [
-//                  PopupMenuItem(
-//                    child: Text('Men'),
-//                  ),
-//                  PopupMenuItem(
-//                    child: Text('Women'),
-//                  ),
-//                  PopupMenuItem(
-//                    child: Text('Kids'),
-//                  )
-//                ]
-//            ),
-//          ),
-//          //
               child: dropdownWidget(),
               
             )

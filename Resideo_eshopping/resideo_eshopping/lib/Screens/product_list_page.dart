@@ -8,30 +8,35 @@ import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/repository/products_repository.dart';
 import 'package:resideo_eshopping/util/dbhelper.dart';
 import 'package:resideo_eshopping/widgets/drawer.dart';
+import 'package:resideo_eshopping/controller/product_controller.dart';
 import 'package:resideo_eshopping/widgets/products_tile.dart';
 
 class ProductsListPage extends StatefulWidget {
   ProductsListPage({Key key, this.title}) : super(key: key);
 
   final String title;
-
   @override
   _ProductsListPageState createState() => _ProductsListPageState();
 }
 
 class _ProductsListPageState extends State<ProductsListPage>
     with SingleTickerProviderStateMixin {
-  Dbhelper helper = Dbhelper();
-  List<Product> newList = List<Product>();
+  ProductController productController=ProductController();
   String dropdownValue = 'Categories';
   List<Product> _products = <Product>[];
   List<Product> currentList = <Product>[];
   String _currentlySelected = "All";
   bool _isProgressBarShown = true;
+  AnimationController controller;
+  Animation<double> animation;
+
+
+  void getProducts(String value){
+  productController.getProductList(value).then((result){setState((){currentList=result;});});
+  }
   
   @override
   Widget build(BuildContext context) {
-    filterProducts();
     var key = GlobalKey<ScaffoldState>();
     Widget widget;
 
@@ -85,34 +90,10 @@ class _ProductsListPageState extends State<ProductsListPage>
         DropdownMenuItem<String>(child: PlatformText("Kid"), value: "Kid")
       ],
       onChanged: (String value) {
-        _currentlySelected = value;
-        setState(() {
-          print("You Selected :$_currentlySelected");
-        });
+        getProducts(value);
       },
       isExpanded: false,
     );
-  }
-
-  List<Product> getProductList() {
-    List<Product> productlist = List<Product>();
-    helper
-        .initializedb()
-        .then((result) => helper.getProductListDb().then((result) {
-              int count = result.length;
-              for (int i = 0; i < count; i++) {
-                productlist.add(Product.fromObject(result[i]));
-              }
-              if (productlist.length == 0)
-                listenForProducts();
-              else {
-                setState(() {
-                  _isProgressBarShown = false;
-                  _products = productlist;
-                });
-              }
-            }));
-    return productlist;
   }
 
   @override
@@ -136,34 +117,7 @@ class _ProductsListPageState extends State<ProductsListPage>
       }
     });
 
-    getProductList();
-    filterProducts();
-  }
-
-  void listenForProducts() async {
-    //_isProgressBarShown = true;
-    Stream<Product> stream = await getProducts();
-    stream.listen((Product products) {
-      setState(() {
-        _isProgressBarShown = false;
-        _products.add(products);
-      } );
-    }, onDone: () {
-      helper.addAllProduct(_products);
-    });
-  }
-
-  filterProducts() {
-    currentList.clear();
-    if (_currentlySelected == "All") {
-      currentList.addAll(_products);
-    } else {
-      for (Product c in _products) {
-        if (c.category == _currentlySelected) {
-          currentList.add(c);
-        }
-      }
-    }
+    getProducts("All");
   }
 
   void _showDialog() {

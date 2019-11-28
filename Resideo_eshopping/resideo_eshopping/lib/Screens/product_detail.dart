@@ -25,9 +25,10 @@ class StarDisplay extends StatelessWidget {
 class ProductDetail extends StatelessWidget
 {
  
-  Product pd;
+  final Product pd;
   ProductDetail(this.pd);
-  bool _buttonDisabled=false;
+  bool buttonDisabled=false;
+  String inventoryDetail;
   @override
   Widget build(BuildContext context) {
     void navigateToCustomerAddress() async{
@@ -64,7 +65,7 @@ class ProductDetail extends StatelessWidget
                    Icon(FontAwesomeIcons.rupeeSign),
                    Text(pd.price.toString(),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 30),),
                    Spacer(),
-                   _getInventory(pd.quantity),     
+                   getInventory(pd.quantity),     
                 ],
                 ),
                 SizedBox(height: 20,),
@@ -76,7 +77,7 @@ class ProductDetail extends StatelessWidget
                   disabledColor: Colors.blueGrey,
                   disabledTextColor: Colors.black,
                   child: Text("Order Now",style: TextStyle(fontSize: 20),),
-                  onPressed: _buttonDisabled? null:(){navigateToCustomerAddress();
+                  onPressed: buttonDisabled? null:(){navigateToCustomerAddress();
                   },
                 ),
                 SizedBox(height: 20,),
@@ -97,17 +98,22 @@ class ProductDetail extends StatelessWidget
     
   }
   
-  dynamic _getInventory(int quantity){
+  dynamic getInventory(int quantity){
 
     if(quantity <=0){
-    _buttonDisabled=true;
-    return  Text("Out of Stock",style: TextStyle(color: Colors.red,) );
+    buttonDisabled=true;
+    inventoryDetail="Out of Stock";
+    return  Text(inventoryDetail,style: TextStyle(color: Colors.red,) );
     }
     else
-    if (quantity<5)
-    return  Text("Only $quantity left",style: TextStyle(color: Colors.red,) );
-    else
-    return  Text("In Stock $quantity",style: TextStyle(color: Colors.green,) );
+    if (quantity<5){
+    inventoryDetail="Only $quantity left";
+    return  Text(inventoryDetail,style: TextStyle(color: Colors.red,) );
+    }
+    else{
+    inventoryDetail="In Stock";
+    return  Text(inventoryDetail,style: TextStyle(color: Colors.green,) );
+    }
   }
 
   

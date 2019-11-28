@@ -2,23 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:resideo_eshopping/Screens/product_list_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:resideo_eshopping/model/product.dart';
-import 'package:resideo_eshopping/util/dbhelper.dart';
+import 'package:resideo_eshopping/controller/product_controller.dart';
 
 class AddUserDetails extends StatelessWidget {
   static GlobalKey<FormState> _formKeyValue = new GlobalKey<FormState>();
-  Dbhelper helper = Dbhelper();
-  AddUserDetails(this.pd);
-  final Product pd;
   
-  int decreaseInventoryCount(){
-    if(pd.quantity > 0)
-    return (pd.quantity - 1);
-    else
-    return 0;
-  }
-
+  AddUserDetails(this.product);
+  final Product product;
+  final ProductController productController=ProductController();
+  
 void navigateToHomePage(BuildContext context) async{
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder:(context)=>ProductsListPage(title: 'Resideo e-Shopping')),(Route<dynamic> route)=> false);
+    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+    ProductsListPage(title: 'Resideo e-Shopping')), (Route<dynamic> route) => false);
   }
 
   orderPlaced(BuildContext context){
@@ -29,8 +24,7 @@ void navigateToHomePage(BuildContext context) async{
       actions: <Widget>[
         FlatButton(
           child: Text("Ok"),
-          onPressed: (){
-            _formKeyValue = new GlobalKey<FormState>();
+          onPressed: (){           
              navigateToHomePage(context);
           },
         )
@@ -54,9 +48,9 @@ void navigateToHomePage(BuildContext context) async{
       child: Text("Yes"),
       onPressed: () {
          Navigator.pop(context);
-         helper.updateInventoryById(pd.id, decreaseInventoryCount()).then((result)=> orderPlaced(context));
-      }, 
-    );
+           productController.updateInventory(product);
+           orderPlaced(context);});
+     
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
@@ -188,7 +182,7 @@ void navigateToHomePage(BuildContext context) async{
                         Container(
                           margin: const EdgeInsets.all(20.0),
                           child: Text(
-                            'Rs. ' + pd.price.toString(),
+                            'Rs. ' + product.price.toString(),
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 20),
                           ),
@@ -217,6 +211,7 @@ void navigateToHomePage(BuildContext context) async{
                             )),
                         onPressed: () {
                           if (_formKeyValue.currentState.validate()) {
+                           
                             showAlertDialog(context);                            
                           }
                         },

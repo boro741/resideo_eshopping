@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:resideo_eshopping/Screens/product_list_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/controller/product_controller.dart';
+import 'package:resideo_eshopping/model/product.dart';
+import 'package:giffy_dialog/giffy_dialog.dart';
 
 class AddUserDetails extends StatelessWidget {
   static GlobalKey<FormState> _formKeyValue = new GlobalKey<FormState>();
@@ -18,7 +20,8 @@ void navigateToHomePage(BuildContext context) async{
 
   orderPlaced(BuildContext context){
 
-    AlertDialog alert = AlertDialog(
+    PlatformAlertDialog alert = PlatformAlertDialog(
+      /*
       title: Text("Order Placed"),
       content: Text("Thank you for placing order"),
       actions: <Widget>[
@@ -28,35 +31,56 @@ void navigateToHomePage(BuildContext context) async{
              navigateToHomePage(context);
           },
         )
-      ],
+      ],*/
     );
+  
+/*
     showDialog(context: context,
     builder: (BuildContext context){
       return alert;
     });
+*/
+    showDialog(
+  context: context,
+  builder: (_) => NetworkGiffyDialog(
+    image: Image.asset('assets/images/tenor.gif'),
+    title: Text('Order Placed!!',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+            fontSize: 22.0,
+            fontWeight: FontWeight.w600)),
+    description: Text("Thank you for placing order"),
+            onOkButtonPressed: () {
+              _formKeyValue = new GlobalKey<FormState>();
+             navigateToHomePage(context);
+            },
+  ) );
+    return alert;
   }
 
   showAlertDialog(BuildContext context) {
     // set up the buttons
-    Widget cancelButton = FlatButton(
-      child: Text("No"),
+    Widget cancelButton = PlatformButton(
+      child: PlatformText("No"),
       onPressed: () {
         Navigator.pop(context);
       },
+      androidFlat: (_) => MaterialFlatButtonData()
     );
-    Widget continueButton = FlatButton(
-      child: Text("Yes"),
+    Widget continueButton = PlatformButton(
+      child: PlatformText("Yes"),
       onPressed: () {
          Navigator.pop(context);
-           productController.updateInventory(product);
-           orderPlaced(context);});
-     
+         productController.updateInventory(product);
+           orderPlaced(context);},
+      androidFlat: (_) => MaterialFlatButtonData() 
+    );
 
     // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: Text("Order Confrimation"),
-      content: Text("Do you want to place order?"),
-      actions: [
+    PlatformAlertDialog alert = PlatformAlertDialog(
+      title: PlatformText("Order Confrimation"),
+      content: PlatformText("Do you want to place order?"),
+      actions: <Widget>[
         cancelButton,
         continueButton,
       ],
@@ -74,13 +98,13 @@ void navigateToHomePage(BuildContext context) async{
   @override
   Widget build(BuildContext context) {
     
-    return Scaffold(
-      appBar: AppBar(
+    return PlatformScaffold(
+      appBar: PlatformAppBar(
         title: Container(
           alignment: Alignment.center,
-          child: Text("Resideo e-Shopping",
+          child: PlatformText("Resideo e-Shopping",
               style: TextStyle(
-                color: Colors.white,
+                //color: Colors.white,
               )),
         ),
       ),
@@ -181,7 +205,7 @@ void navigateToHomePage(BuildContext context) async{
                         ),
                         Container(
                           margin: const EdgeInsets.all(20.0),
-                          child: Text(
+                          child: PlatformText(
                             'Rs. ' + product.price.toString(),
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 20),

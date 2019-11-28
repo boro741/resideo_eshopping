@@ -77,7 +77,9 @@ void navigateToHomePage(BuildContext context) async{
       child: PlatformText("Yes"),
       onPressed: () {
          Navigator.pop(context);
-         helper.updateInventoryById(pd.id, decreaseInventoryCount()).then((result)=> orderPlaced(context));
+         helper.updateInventoryById(pd.id, decreaseInventoryCount()).then((result){
+           if(result==1)
+           orderPlaced(context);});
       },
       androidFlat: (_) => MaterialFlatButtonData() 
     );

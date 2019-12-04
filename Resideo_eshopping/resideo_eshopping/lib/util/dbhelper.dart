@@ -23,6 +23,8 @@ class Dbhelper
   String _colrating="rating";
   String _colreview="review";
   String _colthumbnail="thumbnail";
+  String _colfaq="faq";
+  String _colpVideo="pVideo";
 
   Dbhelper.private();
 
@@ -55,7 +57,7 @@ class Dbhelper
   void _createdb(Database db,int newversion) async
   {
     try{
-     return await db.execute('CREATE TABLE $_tblname($_colid INTEGER PRIMARY KEY,$_coltitle TEXT,$_colsDesc TEXT,$_colimg TEXT,$_colprice INTEGER,$_colquantity INTEGER,$_collDesc TEXT,$_colcategory TEXT,$_colrating INTEGER,$_colreview TEXT,$_colthumbnail TEXT)');
+     return await db.execute('CREATE TABLE $_tblname($_colid INTEGER PRIMARY KEY,$_coltitle TEXT,$_colsDesc TEXT,$_colimg TEXT,$_colprice INTEGER,$_colquantity INTEGER,$_collDesc TEXT,$_colcategory TEXT,$_colrating INTEGER,$_colreview TEXT,$_colthumbnail TEXT,$_colfaq TEXT,$_colpVideo TEXT)');
     }catch(e){
       print("Exception Occured:$e");
     }

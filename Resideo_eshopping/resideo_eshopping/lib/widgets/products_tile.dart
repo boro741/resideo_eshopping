@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:resideo_eshopping/Screens/product_detail.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ProductsTile extends StatelessWidget {
   Product _products;
-  //Product pd;
   ProductsTile(this._products);
   Widget widget;
 
@@ -20,21 +18,22 @@ class ProductsTile extends StatelessWidget {
     return Column(
       children: <Widget>[
         Card(
-          color: (_products.quantity != 0 ? Color.fromRGBO(255, 255, 255, 1.0) : Color.fromRGBO(255, 255, 255, 0.1)),
+          color: (_products.quantity != 0 ? Color.fromRGBO(255, 255, 255, 1.0) : Color.fromRGBO(255, 255, 255, 0.5)),
           child: ListTile(
             isThreeLine: true,
-            title: PlatformText(_products.title),
+            title: Text(_products.title),
             subtitle:
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                PlatformText(_products.sDesc),
+                Text(_products.sDesc),
                 Row(
                   children: <Widget>[
                     Icon(FontAwesomeIcons.rupeeSign, size: 10,),
-                    PlatformText((_products.price).toString()),
+                    Text((_products.price).toString()),
                   ]   
                 ),
+                
               ],
             ),
             onTap: (){ navigateToProductdetail(_products);},

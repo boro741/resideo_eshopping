@@ -4,8 +4,8 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/Screens/add_user_details.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:carousel_pro/carousel_pro.dart';
-//import 'package:video_player/video_player.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:video_player/video_player.dart';
 
 class StarDisplay extends StatelessWidget {
   final int value;
@@ -25,19 +25,39 @@ class StarDisplay extends StatelessWidget {
   }
 }
 
-class ProductDetail extends StatelessWidget
+class ProductDetail extends StatefulWidget
 {
  
   final Product pd;
   ProductDetail(this.pd);
+
+  @override
+  _ProductDetailState createState() => _ProductDetailState();
+}
+
+class _ProductDetailState extends State<ProductDetail> {
   bool buttonDisabled=false;
+
   String inventoryDetail;
+
+  VideoPlayerController _videoPlayerController;
+
+  Future<void> _initializeVideoPlayerFuture;
+
+  @override
+  void initState() {
+    _videoPlayerController = VideoPlayerController.network(widget.pd.pVideo);
+    _initializeVideoPlayerFuture = _videoPlayerController.initialize();
+    _videoPlayerController.setLooping(true);
+    _videoPlayerController.setVolume(1.0);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     void navigateToCustomerAddress() async{
-     Navigator.push(context, MaterialPageRoute(builder: (context)=> AddUserDetails(pd)));
+     Navigator.push(context, MaterialPageRoute(builder: (context)=> AddUserDetails(widget.pd)));
   }
- 
     return PlatformScaffold(
       appBar: PlatformAppBar(
         title: PlatformText("Resideo e-Shopping"),
@@ -52,39 +72,59 @@ class ProductDetail extends StatelessWidget
                  Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
-                   PlatformText(pd.title,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.blue),),
+                   Text(widget.pd.title,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.blue),),
                    Spacer(),
-                   StarDisplay(value: pd.rating,),
+                   StarDisplay(value: widget.pd.rating,),
              
                 ],
                 ),
-                PlatformText(pd.sDesc),
+                Text(widget.pd.sDesc),
                 SizedBox(height: 20,),
                 //Image.network(pd.img),
-                SizedBox(
-                  height: 400.0,
-                  width: 400.0,
-                  child: Carousel(
-                    images: [
-                      Image.network(pd.img),
-                      //VideoPlayerController.network('https://flutter.github.io/assets-for-api-docs/assets/videos/butterfly.mp4'),
-                    ],
-                    dotSize: 6.0,
-                    dotSpacing: 15.0,
-                    dotColor: Colors.blue,
-                    indicatorBgPadding: 5.0,
-                    dotBgColor: Colors.white.withOpacity(0.5),
-                    borderRadius: true,
-                  ),
+        
+                FutureBuilder(
+                  future: _initializeVideoPlayerFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return SizedBox(
+                        //aspectRatio: _videoPlayerController.value.aspectRatio,
+                        child:
+                          CarouselSlider(
+                            height: 300.0,
+                            items: [
+                              Image.network(widget.pd.img, fit: BoxFit.fill,),
+                              VideoPlayer(_videoPlayerController),
+                            ],
+                          ), 
+                      );
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  },
                 ),
+                FloatingActionButton(
+                  backgroundColor: Colors.transparent,
+                  onPressed: () {
+                    setState(() {
+                      if (_videoPlayerController.value.isPlaying) {
+                        _videoPlayerController.pause();
+                      } else {
+                        _videoPlayerController.play();
+                      }
+                    });
+                  },
+                  child: Icon(
+                    _videoPlayerController.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                  ),
+                ), 
                 SizedBox(height: 20,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                    Icon(FontAwesomeIcons.rupeeSign),
-                   PlatformText(pd.price.toString(),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 30),),
+                   Text(widget.pd.price.toString(),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 30),),
                    Spacer(),
-                   getInventory(pd.quantity),     
+                   getInventory(widget.pd.quantity),     
                 ],
                 ),
                 SizedBox(height: 20,),
@@ -100,14 +140,15 @@ class ProductDetail extends StatelessWidget
                   },
                 ),
                 SizedBox(height: 20,),
-                PlatformText("About This Item",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                Text("About This Item",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
                 SizedBox(height: 10,),
-                PlatformText(pd.lDesc,style: TextStyle(fontSize: 15),),
+                Text(widget.pd.lDesc,style: TextStyle(fontSize: 15),),
                 SizedBox(height: 20,),
-                PlatformText('Customer Reviews',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                Text('Customer Reviews',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
                 SizedBox(height: 10,),
-                PlatformText(pd.review,style: TextStyle(fontSize: 15),)
-                      
+                Text(widget.pd.review,style: TextStyle(fontSize: 15),),
+
+                SizedBox(height: 20,),            
           ],
         ),
           ],
@@ -116,7 +157,14 @@ class ProductDetail extends StatelessWidget
     );
     
   }
-  
+
+  @override
+  void dispose() {
+    _videoPlayerController.dispose();
+
+    super.dispose();
+  }
+
   dynamic getInventory(int quantity){
 
     if(quantity <=0){
@@ -134,5 +182,4 @@ class ProductDetail extends StatelessWidget
     return  Text(inventoryDetail,style: TextStyle(color: Colors.green,) );
     }
   }
-
 }

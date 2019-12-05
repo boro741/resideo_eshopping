@@ -6,11 +6,20 @@ import 'package:resideo_eshopping/controller/product_controller.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:giffy_dialog/giffy_dialog.dart';
 
-class AddUserDetails extends StatelessWidget {
+
+
+class AddUserDetails extends StatefulWidget {
   static GlobalKey<FormState> _formKeyValue = new GlobalKey<FormState>();
   
   AddUserDetails(this.product);
   final Product product;
+
+
+  @override
+  _AddUserDetailsState createState() => _AddUserDetailsState();
+}
+
+class _AddUserDetailsState extends State<AddUserDetails> {
   final ProductController productController=ProductController();
   
 void navigateToHomePage(BuildContext context) async{
@@ -27,13 +36,13 @@ void navigateToHomePage(BuildContext context) async{
       actions: <Widget>[
         FlatButton(
           child: Text("Ok"),
-          onPressed: (){           
+          onPressed: (){
              navigateToHomePage(context);
           },
         )
       ],*/
     );
-  
+
 /*
     showDialog(context: context,
     builder: (BuildContext context){
@@ -51,7 +60,7 @@ void navigateToHomePage(BuildContext context) async{
             fontWeight: FontWeight.w600)),
     description: Text("Thank you for placing order"),
             onOkButtonPressed: () {
-              _formKeyValue = new GlobalKey<FormState>();
+              AddUserDetails._formKeyValue = new GlobalKey<FormState>();
              navigateToHomePage(context);
             },
   ) );
@@ -71,9 +80,11 @@ void navigateToHomePage(BuildContext context) async{
       child: PlatformText("Yes"),
       onPressed: () {
          Navigator.pop(context);
-         productController.updateInventory(product);
-           orderPlaced(context);},
-      androidFlat: (_) => MaterialFlatButtonData() 
+         productController.updateInventory(widget.product);
+           orderPlaced(context);
+           },
+           
+      androidFlat: (_) => MaterialFlatButtonData()
     );
 
     // set up the AlertDialog
@@ -94,10 +105,18 @@ void navigateToHomePage(BuildContext context) async{
       },
     );
   }
+  @override
+  void initState(){
+    super.initState();
+    productController.init();
+
+
+  }
+  
 
   @override
   Widget build(BuildContext context) {
-    
+
     return PlatformScaffold(
       appBar: PlatformAppBar(
         title: Container(
@@ -110,7 +129,7 @@ void navigateToHomePage(BuildContext context) async{
       ),
       body: SafeArea(
         child: Form(
-          key: _formKeyValue,
+          key: AddUserDetails._formKeyValue,
           autovalidate: true,
           child: Column(
             children: <Widget>[
@@ -206,7 +225,7 @@ void navigateToHomePage(BuildContext context) async{
                         Container(
                           margin: const EdgeInsets.all(20.0),
                           child: PlatformText(
-                            'Rs. ' + product.price.toString(),
+                            'Rs. ' + widget.product.price.toString(),
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 20),
                           ),
@@ -234,9 +253,9 @@ void navigateToHomePage(BuildContext context) async{
                               ],
                             )),
                         onPressed: () {
-                          if (_formKeyValue.currentState.validate()) {
-                           
-                            showAlertDialog(context);                            
+                          if (AddUserDetails._formKeyValue.currentState.validate()) {
+
+                            showAlertDialog(context);
                           }
                         },
                         shape: new RoundedRectangleBorder(

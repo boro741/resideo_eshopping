@@ -1,13 +1,13 @@
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/util/dbhelper.dart';
 import 'package:resideo_eshopping/repository/products_repository.dart';
-
-
+import 'package:resideo_eshopping/util/curd_operations.dart';
 
 class ProductController{
  static  List<Product> products=<Product>[];
    List<Product> currentList = List<Product>();
   Dbhelper helper=Dbhelper();
+ FirebaseDatabaseUtil help =new FirebaseDatabaseUtil();
   Future<List<Product>> getProductList(String value) async{
     if(products.length == 0){
     List<Product> productlist = List<Product>();
@@ -25,6 +25,11 @@ class ProductController{
             });
     }
     return filterProducts(value);
+  }
+
+  void init(){
+    
+    help.initState();
   }
 
   void listenForProducts() async {
@@ -62,5 +67,8 @@ class ProductController{
       if(result != null)
       product.quantity=product.quantity-1;
   });
+    help.updateUser(product,product.quantity);
   }
+
+  
 }

@@ -42,7 +42,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
       'password' : user.password,
       'address' : user.address,
       'Zipcode' : user.zipcode,
-      'imageUrl' : _uploadFileUrl
+      //'imageUrl' : _uploadFileUrl
     });
   }
 
@@ -329,8 +329,8 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
                           if (_formKeyValue.currentState.validate()) {
                                 user=User(_nameController.text,_emailController.text,_phoneController.text,_addressController.text,_zipcodeController.text,_passwordController.text);
                   
-                           uploadFile();
-                         //  _sendData();
+                          // uploadFile();
+                          _sendData();
                            // showAlertDialog(context);                            
                           }
                         },

@@ -86,8 +86,8 @@ class _ProductDetailState extends State<ProductDetail> {
                   future: _initializeVideoPlayerFuture,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
-                      return SizedBox(
-                        //aspectRatio: _videoPlayerController.value.aspectRatio,
+                      return AspectRatio(
+                        aspectRatio: _videoPlayerController.value.aspectRatio,
                         child:
                           CarouselSlider(
                             height: 300.0,

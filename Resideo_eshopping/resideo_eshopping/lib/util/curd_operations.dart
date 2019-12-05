@@ -5,8 +5,7 @@ import 'package:resideo_eshopping/model/product.dart';
 class FirebaseDatabaseUtil {
 
   DatabaseReference _userRef;
-  StreamSubscription<Event> _counterSubscription;
-  StreamSubscription<Event> _messagesSubscription;
+  
   FirebaseDatabase database = new FirebaseDatabase();
   DatabaseError error;
   Product product;
@@ -53,23 +52,11 @@ class FirebaseDatabaseUtil {
     int x = product.id;
        await _userRef.child((x -1).toString()).update({
       "Inventory": product.quantity,
-
     }).then((_) {
       print('Transaction  committed.');
     });
   }
-    updateUser1(String id,int newInventoryValue) async {
-      Product product;
+    
 
-    return(await _userRef.child(product.id.toString()).update({
-      "Inventory": 10
-    }).then((_) {
-      print('Transaction  committed.');
-    }));
-  }
-
-  void dispose() {
-    _messagesSubscription.cancel();
-    _counterSubscription.cancel();
-  }
+  
 }

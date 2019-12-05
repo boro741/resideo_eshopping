@@ -23,7 +23,7 @@ Future<Stream<Product>> getProducts() async {
 }*/
 
 Future<Stream<Product>> getProducts() async {
-  final String url = 'https://fluttercheck-5afbb.firebaseio.com/.json?auth=fzAIfjVy6umufLgQj9bd1KmgzzPd6Q6hDvj1r3u1';
+  final String url = 'https://fluttercheck-5afbb.firebaseio.com/Products.json?auth=fzAIfjVy6umufLgQj9bd1KmgzzPd6Q6hDvj1r3u1';
   try{
     var request = await HttpClient().getUrl(Uri.parse(url));
     var response = await request.close();

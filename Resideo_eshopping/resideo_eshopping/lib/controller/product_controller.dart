@@ -28,6 +28,7 @@ class ProductController{
   }
 
   void init(){
+    
     help.initState();
   }
 
@@ -66,10 +67,8 @@ class ProductController{
       if(result != null)
       product.quantity=product.quantity-1;
   });
-    help.updateUser(product,product.quantity));
+    help.updateUser(product,product.quantity);
   }
 
-  void dispose() {
-    help.dispose();
-  }
+  
 }

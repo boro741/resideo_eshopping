@@ -7,6 +7,7 @@ import 'package:resideo_eshopping/model/product.dart';
 import 'package:giffy_dialog/giffy_dialog.dart';
 
 
+
 class AddUserDetails extends StatefulWidget {
   static GlobalKey<FormState> _formKeyValue = new GlobalKey<FormState>();
   
@@ -20,7 +21,7 @@ class AddUserDetails extends StatefulWidget {
 
 class _AddUserDetailsState extends State<AddUserDetails> {
   final ProductController productController=ProductController();
-
+  
 void navigateToHomePage(BuildContext context) async{
     Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
     ProductsListPage(title: 'Resideo e-Shopping')), (Route<dynamic> route) => false);
@@ -80,7 +81,9 @@ void navigateToHomePage(BuildContext context) async{
       onPressed: () {
          Navigator.pop(context);
          productController.updateInventory(widget.product);
-           orderPlaced(context);},
+           orderPlaced(context);
+           },
+           
       androidFlat: (_) => MaterialFlatButtonData()
     );
 
@@ -102,18 +105,14 @@ void navigateToHomePage(BuildContext context) async{
       },
     );
   }
-
+  @override
   void initState(){
     super.initState();
     productController.init();
 
 
   }
-  void dispose(){
-    productController.dispose();
-    super.dispose();
-
-  }
+  
 
   @override
   Widget build(BuildContext context) {

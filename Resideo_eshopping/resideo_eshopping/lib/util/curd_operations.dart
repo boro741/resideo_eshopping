@@ -3,15 +3,15 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:resideo_eshopping/model/product.dart';
 
 class FirebaseDatabaseUtil {
+  DatabaseReference _productDBRef;
 
-  DatabaseReference _userRef;
-  
   FirebaseDatabase database = new FirebaseDatabase();
   DatabaseError error;
   Product product;
 
   static final FirebaseDatabaseUtil _instance =
-  new FirebaseDatabaseUtil.internal();
+      new FirebaseDatabaseUtil.internal();
+
   FirebaseDatabaseUtil.internal();
 
   factory FirebaseDatabaseUtil() {
@@ -19,44 +19,34 @@ class FirebaseDatabaseUtil {
   }
 
   void initState() {
-    // Demonstrates configuring to the database using a file
-
-    // Demonstrates configuring the database directly
-
-    _userRef = database.reference().child("Products");
+    _productDBRef = database.reference().child("Products");
     database.reference().child("Products").once().then((DataSnapshot snapshot) {
       print('Connected to second database and read ${snapshot.value}');
     });
     database.setPersistenceEnabled(true);
     database.setPersistenceCacheSizeBytes(10000000);
-
-
   }
 
   DatabaseError getError() {
     return error;
   }
 
-
-  DatabaseReference getUser() {
-    return _userRef;
+  DatabaseReference getProductDB() {
+    return _productDBRef;
   }
 
-  void deleteUser(Product product) async {
-    await _userRef.child(product.id.toString()).remove().then((_) {
+  void deleteProduct(Product product) async {
+    await _productDBRef.child(product.id.toString()).remove().then((_) {
       print('Transaction  committed.');
     });
   }
 
-   updateUser(Product product,int newInventoryValue) async {
+  updateProduct(Product product) async {
     int x = product.id;
-       await _userRef.child((x -1).toString()).update({
+    await _productDBRef.child((x - 1).toString()).update({
       "Inventory": product.quantity,
     }).then((_) {
       print('Transaction  committed.');
     });
   }
-    
-
-  
 }

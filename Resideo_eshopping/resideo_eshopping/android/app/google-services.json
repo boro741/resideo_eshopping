@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "474651593523",
+    "firebase_url": "https://fluttercheck-5afbb.firebaseio.com",
+    "project_id": "fluttercheck-5afbb",
+    "storage_bucket": "fluttercheck-5afbb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:474651593523:android:9cd425493378867fa44c46",
+        "android_client_info": {
+          "package_name": "com.resideo.resideo_eshopping"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "474651593523-vfqsmukdr7sl0julnk22m4la5jivclbf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPHtNLwo-UcSf_xnPNvy6XitX8Y1oP3DA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "474651593523-vfqsmukdr7sl0julnk22m4la5jivclbf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:474651593523:android:56a969837b405acaa44c46",
+        "android_client_info": {
+          "package_name": "com.resideo.resideo_eshoppings"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "474651593523-vfqsmukdr7sl0julnk22m4la5jivclbf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPHtNLwo-UcSf_xnPNvy6XitX8Y1oP3DA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "474651593523-vfqsmukdr7sl0julnk22m4la5jivclbf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

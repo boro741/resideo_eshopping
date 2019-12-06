@@ -1,23 +1,32 @@
 import 'dart:io';
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:resideo_eshopping/Screens/signup.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/controller/product_controller.dart';
 import 'package:resideo_eshopping/widgets/products_tile.dart';
+import 'package:resideo_eshopping/services/authentication.dart';
+import 'package:resideo_eshopping/controller/root_page.dart';
+import 'package:resideo_eshopping/Screens/signup.dart';
 
 class ProductsListPage extends StatefulWidget {
-  ProductsListPage({Key key, this.title}) : super(key: key);
-
-  final String title;
+ // ProductsListPage({Key key,this.userLogin}) : super(key: key);
+ // final UserLogin userLogin;
+ ProductsListPage(this.user,this.online,this.offline,this.auth);
+ final FirebaseUser user;
+ final VoidCallback online;
+ final VoidCallback offline;
+ final BaseAuth auth;
   @override
   _ProductsListPageState createState() => _ProductsListPageState();
 }
 
-class _ProductsListPageState extends State<ProductsListPage>
+class _ProductsListPageState extends State<ProductsListPage> 
     with SingleTickerProviderStateMixin {
   ProductController productController=ProductController();
   String dropdownValue = 'Categories';
@@ -25,6 +34,16 @@ class _ProductsListPageState extends State<ProductsListPage>
   bool _isProgressBarShown = true;
   AnimationController controller;
   Animation<double> animation;
+  String _name;
+  String _email;
+  String _imageUrl;
+  bool isProfile=false;
+
+  void profile(){
+   setState(() {
+     isProfile=false;
+   });
+  }
   
 
   getProduct(String value){
@@ -36,10 +55,10 @@ class _ProductsListPageState extends State<ProductsListPage>
   @override
   Widget build(BuildContext context) {
     var key = GlobalKey<ScaffoldState>();
-    Widget widget;
+    Widget widget1;
 
   if(_isProgressBarShown){
-    widget = Center(
+    widget1 = Center(
       child: Padding(
         padding: const EdgeInsets.only(left: 16.0, right: 16.0),
         child: PlatformCircularProgressIndicator(
@@ -50,7 +69,7 @@ class _ProductsListPageState extends State<ProductsListPage>
     );
   }
   else{
-    widget = ListView.builder(
+    widget1 = ListView.builder(
       shrinkWrap: true,
       padding: const EdgeInsets.all(0.0),
 
@@ -58,7 +77,10 @@ class _ProductsListPageState extends State<ProductsListPage>
       itemBuilder: (context, index) => ProductsTile(currentList[index]),
     );
   }
-
+   if(isProfile)
+   {
+     return SignUp(widget.user,profile);
+   }else{
     return Scaffold(
       key: key,
       drawer: Drawer(
@@ -68,7 +90,7 @@ class _ProductsListPageState extends State<ProductsListPage>
           Container(
                 child: UserAccountsDrawerHeader(
                   accountName: Text("Name"),
-                  accountEmail: Text("abc@gmail.com"),
+                  accountEmail: Text("widget.user.email.toString()"),
                   currentAccountPicture: CircleAvatar(
                     backgroundColor:
                         Theme.of(context).platform == TargetPlatform.iOS
@@ -93,21 +115,16 @@ class _ProductsListPageState extends State<ProductsListPage>
           ),
           Divider(),
           _createDrawerItem(icon: FontAwesomeIcons.user, text: 'My Account'),
-          PlatformButton(
-            onPressed: (){},
-            child: PlatformText('LOG OUT'),
-            color: Color.fromRGBO(255, 0, 0, 1.0),
-            android: (_) => MaterialRaisedButtonData(),
-            ios: (_) => CupertinoButtonData()
-          )
+          _loginSignupButton(),
         ],
       ),
     ),
       appBar: AppBar(
           title: PlatformText("Resideo eShopping"),
           ),
-      body: widget,
+      body: widget1,
     );
+   }
   }
 
 /*
@@ -128,6 +145,37 @@ class _ProductsListPageState extends State<ProductsListPage>
     );
   }
 */
+  Widget _loginSignupButton(){
+       if(widget.user != null)
+          {
+            return PlatformButton(
+            onPressed: () async{
+             try {
+                   await widget.auth.signOut();
+                  widget.offline();
+                  } catch (e) {
+                   print(e);
+                  }
+            },
+            child: PlatformText('LOG OUT'),
+            color: Color.fromRGBO(255, 0, 0, 1.0),
+            android: (_) => MaterialRaisedButtonData(),
+            ios: (_) => CupertinoButtonData()
+          );
+          }
+          else
+          {
+          return PlatformButton(
+            onPressed: (){
+            widget.online();
+            },
+            child: PlatformText('LOG In'),
+            color: Color.fromRGBO(255, 0, 0, 1.0),
+            android: (_) => MaterialRaisedButtonData(),
+            ios: (_) => CupertinoButtonData()
+          );
+          }
+  }
 
   Widget _createDrawerItem(
       {IconData icon, String text, String value, GestureTapCallback onTap}) {
@@ -141,7 +189,12 @@ class _ProductsListPageState extends State<ProductsListPage>
           )
         ],
       ),
-      onTap: onTap,
+      onTap: (){
+        setState(() {
+          isProfile=true;
+        });
+       // Navigator.push(context, MaterialPageRoute(builder: (context)=>SignUp(widget.user,widget.online,widget.offline,widget.auth)));
+        },
     );
   }
 
@@ -165,10 +218,19 @@ class _ProductsListPageState extends State<ProductsListPage>
         print('not connected'); // show dialog
       }
     });
-
+   // RootPage(auth: Auth(),checkIn: this,);
 
     getProduct("All");
   }
+
+  // @override
+  //  void userCheckIn(FirebaseUser user)
+  //  {
+  //     setState(() {
+  //     _email=user.email.toString();
+  //   });
+  //  }
+  
  
   void _showDialog() {
     showDialog(
@@ -180,3 +242,7 @@ class _ProductsListPageState extends State<ProductsListPage>
   }
 
 }
+
+// abstract class UserLogin{
+//   void login();
+// }

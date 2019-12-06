@@ -1,13 +1,19 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:resideo_eshopping/Screens/product_list_page.dart';
 import 'dart:io';
 import 'package:resideo_eshopping/controller/image_picker_handler.dart';
-import 'package:resideo_eshopping/model/user.dart';
+import 'package:resideo_eshopping/model/User.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:resideo_eshopping/services/authentication.dart';
 
 class SignUp extends StatefulWidget{
+  SignUp(this.user,this.profile);
   _SignUpState obj;
+  final FirebaseUser user;
+  VoidCallback profile;
   @override
   State<StatefulWidget> createState() {
     obj=_SignUpState();
@@ -17,7 +23,7 @@ class SignUp extends StatefulWidget{
 }
 
 class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePickerListener{
-  static GlobalKey<FormState> _formKeyValue = new GlobalKey<FormState>();
+  final _formKeyValue = new GlobalKey<FormState>();
   
   File _image;
   String _uploadFileUrl;
@@ -27,19 +33,19 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
   final DatabaseReference database=FirebaseDatabase.instance.reference().child("Customer");
 
   final _nameController =TextEditingController();
-  final _emailController =TextEditingController();
+  //final _emailController =TextEditingController();
   final _phoneController =TextEditingController();
   final _addressController =TextEditingController();
   final _zipcodeController =TextEditingController();
-  final _passwordController =TextEditingController();
+  //final _passwordController =TextEditingController();
 
   _sendData()
   {
-    database.push().set({
+    database.child(widget.user.uid).set({
       'name' : user.name,
-      'email' : user.email,
+      //'email' : user.email,
       'phone' : user.phone,
-      'password' : user.password,
+     // 'password' : user.password,
       'address' : user.address,
       'Zipcode' : user.zipcode,
       'imageUrl' : _uploadFileUrl
@@ -47,7 +53,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
   }
 
    Future uploadFile() async {    
-   StorageReference storageReference = FirebaseStorage.instance.ref().child("profile pic");
+   StorageReference storageReference = FirebaseStorage.instance.ref().child("profile pic"+widget.user.uid.toString());
    StorageUploadTask uploadTask = storageReference.putFile(_image);   
    await uploadTask.onComplete;  
    print('File Uploaded');    
@@ -210,25 +216,25 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
                       },
                       keyboardType: TextInputType.number,
                     ),
-                    TextFormField(
-                      controller: _emailController,
-                      decoration: const InputDecoration(
-                        icon: const Icon(
-                          FontAwesomeIcons.envelopeOpen,
-                          color: Colors.blue,
-                        ),
-                        hintText: 'Ex: abc@xyz.com',
-                        labelText: 'Email',
-                      ),
-                      validator: (val) {
-                        Pattern pattern = r'^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$';
-                        RegExp regex = new RegExp(pattern);
-                        if (!regex.hasMatch(val))
-                          return 'Enter Valid Email Id';
-                        else
-                          return null;
-                      },
-                    ),
+                    // TextFormField(
+                    //   controller: _emailController,
+                    //   decoration: const InputDecoration(
+                    //     icon: const Icon(
+                    //       FontAwesomeIcons.envelopeOpen,
+                    //       color: Colors.blue,
+                    //     ),
+                    //     hintText: 'Ex: abc@xyz.com',
+                    //     labelText: 'Email',
+                    //   ),
+                    //   validator: (val) {
+                    //     Pattern pattern = r'^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$';
+                    //     RegExp regex = new RegExp(pattern);
+                    //     if (!regex.hasMatch(val))
+                    //       return 'Enter Valid Email Id';
+                    //     else
+                    //       return null;
+                    //   },
+                    // ),
                     TextFormField(
                       controller: _addressController,
                       maxLines: 3,
@@ -266,47 +272,47 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
                       },
                       keyboardType: TextInputType.number,
                     ),
-                    TextFormField(
-                      controller: _passwordController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        icon: const Icon(
-                          FontAwesomeIcons.key,
-                          color: Colors.blue,
-                        ),
-                       // hintText: 'Ex: 500000',
-                        labelText: 'Password',
-                      ),
-                      validator: (val) {
-                        if(val.isEmpty)
-                        return 'Enter Valid Password';
-                        else
-                        if (val.length <= 8)
-                          return 'Password must be atleast 8 charecters or longer';
-                        else
-                          return null;
-                      },
-                    ),
-                    TextFormField(
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        icon: const Icon(
-                          FontAwesomeIcons.check,
-                          color: Colors.blue,
-                        ),
-                       // hintText: 'Ex: 500000',
-                        labelText: 'Confirm Password',
-                      ),
-                      validator: (val) {
-                        if(val.isEmpty)
-                        return 'Enter Password Again';
-                        else
-                        if (val != _passwordController.text)
-                          return 'Password is not matching';
-                        else
-                          return null;
-                      },
-                    ),
+                    // TextFormField(
+                    //   controller: _passwordController,
+                    //   obscureText: true,
+                    //   decoration: const InputDecoration(
+                    //     icon: const Icon(
+                    //       FontAwesomeIcons.key,
+                    //       color: Colors.blue,
+                    //     ),
+                    //    // hintText: 'Ex: 500000',
+                    //     labelText: 'Password',
+                    //   ),
+                    //   validator: (val) {
+                    //     if(val.isEmpty)
+                    //     return 'Enter Valid Password';
+                    //     else
+                    //     if (val.length <= 8)
+                    //       return 'Password must be atleast 8 charecters or longer';
+                    //     else
+                    //       return null;
+                    //   },
+                    // ),
+                    // TextFormField(
+                    //   obscureText: true,
+                    //   decoration: const InputDecoration(
+                    //     icon: const Icon(
+                    //       FontAwesomeIcons.check,
+                    //       color: Colors.blue,
+                    //     ),
+                    //    // hintText: 'Ex: 500000',
+                    //     labelText: 'Confirm Password',
+                    //   ),
+                    //   validator: (val) {
+                    //     if(val.isEmpty)
+                    //     return 'Enter Password Again';
+                    //     else
+                    //     if (val != _passwordController.text)
+                    //       return 'Password is not matching';
+                    //     else
+                    //       return null;
+                    //   },
+                    // ),
                     SizedBox(height: 20,),
                      RaisedButton(
                         color: Colors.blue,
@@ -316,7 +322,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
-                                Text("Proceed",
+                                Text("Update Profile",
                                     style: TextStyle(fontSize: 24.0)),
                               ],
                             )),
@@ -326,12 +332,13 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
                         //    uploadFile();
                         // },
                         onPressed: () {
-                          if (_formKeyValue.currentState.validate()) {
-                                user=User(_nameController.text,_emailController.text,_phoneController.text,_addressController.text,_zipcodeController.text,_passwordController.text);
-                  
-                           uploadFile();
-                          //_sendData();
-                           // showAlertDialog(context);                            
+                          final  form=_formKeyValue.currentState;
+                          if (form.validate()) {
+                              form.save();
+                              user=User(_nameController.text,_phoneController.text,_addressController.text,_zipcodeController.text);
+                              uploadFile();
+                              widget.profile();
+                             // Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductsListPage(widget.user,widget.online,widget.offline,widget.auth)));
                           }
                         },
                         shape: new RoundedRectangleBorder(

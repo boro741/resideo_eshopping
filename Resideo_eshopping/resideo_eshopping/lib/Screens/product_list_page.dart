@@ -6,11 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:resideo_eshopping/Screens/signup.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/controller/product_controller.dart';
 import 'package:resideo_eshopping/widgets/products_tile.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
 import 'package:resideo_eshopping/controller/root_page.dart';
+import 'package:resideo_eshopping/Screens/signup.dart';
 
 class ProductsListPage extends StatefulWidget {
  // ProductsListPage({Key key,this.userLogin}) : super(key: key);
@@ -35,6 +37,13 @@ class _ProductsListPageState extends State<ProductsListPage>
   String _name;
   String _email;
   String _imageUrl;
+  bool isProfile=false;
+
+  void profile(){
+   setState(() {
+     isProfile=false;
+   });
+  }
   
 
   getProduct(String value){
@@ -68,7 +77,10 @@ class _ProductsListPageState extends State<ProductsListPage>
       itemBuilder: (context, index) => ProductsTile(currentList[index]),
     );
   }
-
+   if(isProfile)
+   {
+     return SignUp(widget.user,profile);
+   }else{
     return Scaffold(
       key: key,
       drawer: Drawer(
@@ -112,6 +124,7 @@ class _ProductsListPageState extends State<ProductsListPage>
           ),
       body: widget1,
     );
+   }
   }
 
 /*
@@ -176,7 +189,12 @@ class _ProductsListPageState extends State<ProductsListPage>
           )
         ],
       ),
-      onTap: onTap,
+      onTap: (){
+        setState(() {
+          isProfile=true;
+        });
+       // Navigator.push(context, MaterialPageRoute(builder: (context)=>SignUp(widget.user,widget.online,widget.offline,widget.auth)));
+        },
     );
   }
 

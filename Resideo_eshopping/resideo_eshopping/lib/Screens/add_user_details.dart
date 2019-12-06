@@ -23,8 +23,8 @@ class _AddUserDetailsState extends State<AddUserDetails> {
   final ProductController productController=ProductController();
   
 void navigateToHomePage(BuildContext context) async{
-    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-    ProductsListPage(title: 'Resideo e-Shopping')), (Route<dynamic> route) => false);
+   // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+   // ProductsListPage()), (Route<dynamic> route) => false);
   }
 
   orderPlaced(BuildContext context){

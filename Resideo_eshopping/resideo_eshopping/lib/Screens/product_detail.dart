@@ -53,7 +53,7 @@ class ProductDetail extends StatefulWidget
 class _ProductDetailState extends State<ProductDetail> {
   Product product;
   String assetPDFPath = "";
-  String urlPDFPath = "";
+  String urlPDFPath ;
   bool buttonDisabled=false;
   PDFDocument document;
   String inventoryDetail;

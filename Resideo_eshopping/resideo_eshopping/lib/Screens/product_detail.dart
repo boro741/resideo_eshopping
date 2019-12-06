@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -6,19 +7,33 @@ import 'package:resideo_eshopping/Screens/add_user_details.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:video_player/video_player.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart';
+// import 'package:flutter_full_pdf_viewer/flutter_full_pdf_viewer.dart';
+// import 'package:flutter_full_pdf_viewer/full_pdf_viewer_plugin.dart';
+// import 'package:flutter_full_pdf_viewer/full_pdf_viewer_scaffold.dart';
+import 'package:flutter_plugin_pdf_viewer/flutter_plugin_pdf_viewer.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 
-class StarDisplay extends StatelessWidget {
+class StarDisplay extends StatefulWidget {
   final int value;
   const StarDisplay({Key key, this.value = 0})
       : assert(value != null),
         super(key: key);
+
+  @override
+  _StarDisplayState createState() => _StarDisplayState();
+}
+
+class _StarDisplayState extends State<StarDisplay> {
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: List.generate(5, (index) {
         return Icon(
-          index < value ? Icons.star : Icons.star_border,
+          index < widget.value ? Icons.star : Icons.star_border,
         );
       }),
     );
@@ -36,8 +51,11 @@ class ProductDetail extends StatefulWidget
 }
 
 class _ProductDetailState extends State<ProductDetail> {
+  Product product;
+  String assetPDFPath = "";
+  String urlPDFPath ;
   bool buttonDisabled=false;
-
+  PDFDocument document;
   String inventoryDetail;
 
   VideoPlayerController _videoPlayerController;
@@ -51,6 +69,44 @@ class _ProductDetailState extends State<ProductDetail> {
     _videoPlayerController.setLooping(true);
     _videoPlayerController.setVolume(1.0);
     super.initState();
+    // getFileFromAsset("assets/sample.pdf").then((f) {
+    //   setState(() {
+    //     assetPDFPath = f.path;
+    //     print(assetPDFPath);
+    //   });
+    // });
+    getFileFromUrl(widget.pd.faq).then((f) {
+      setState(() {
+        urlPDFPath = f.path;
+        print(urlPDFPath);
+      });
+    });
+  }
+  // Future<File> getFileFromAsset(String asset) async {
+  //   try {
+  //     var data = await rootBundle.load(asset);
+  //     var bytes = data.buffer.asUint8List();
+  //     var dir = await getApplicationDocumentsDirectory();
+  //     File file = File("${dir.path}/sample.pdf");
+
+  //     File assetFile = await file.writeAsBytes(bytes);
+  //     return assetFile;
+  //   } catch (e) {
+  //     throw Exception("Error opening asset file");
+  //   }
+  // }
+  Future<File> getFileFromUrl(String url) async {
+    try {
+      var data = await http.get(url);
+      var bytes = data.bodyBytes;
+      var dir = await getApplicationDocumentsDirectory();
+      File file = File("${dir.path}/mypdfonline.pdf");
+
+      File urlFile = await file.writeAsBytes(bytes);
+      return urlFile;
+    } catch (e) {
+      throw Exception("Error opening url file");
+    }
   }
 
   @override
@@ -148,7 +204,27 @@ class _ProductDetailState extends State<ProductDetail> {
                 SizedBox(height: 10,),
                 Text(widget.pd.review,style: TextStyle(fontSize: 15),),
 
-                SizedBox(height: 20,),            
+                SizedBox(height: 20,), 
+                ButtonTheme(
+                  minWidth:400.0,
+                  height:40.0,
+                  child:RaisedButton(
+                      
+                      color: Colors.amber,
+                      // width: double.infinity,
+                      child: Text("FAQ"),
+                      onPressed: () {
+                        if (urlPDFPath != null) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                         PdfViewPage(path: urlPDFPath)));
+                                      // PdfViewPage(path: widget.pd.faq)));
+                        }
+                      },
+                    ),  
+                )        
           ],
         ),
           ],
@@ -181,5 +257,87 @@ class _ProductDetailState extends State<ProductDetail> {
     inventoryDetail="In Stock";
     return  Text(inventoryDetail,style: TextStyle(color: Colors.green,) );
     }
+  }
+}
+class PdfViewPage extends StatefulWidget {
+  final String path;
+
+  const PdfViewPage({Key key, this.path}) : super(key: key);
+  @override
+  _PdfViewPageState createState() => _PdfViewPageState();
+}
+
+class _PdfViewPageState extends State<PdfViewPage> {
+  int _totalPages = 0;
+  int _currentPage = 0;
+  bool pdfReady = false;
+  PDFViewController _pdfViewController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("My Document"),
+      ),
+      body: Stack(
+        children: <Widget>[
+          PDFView(
+            filePath: widget.path,
+            //filePath:"https://firebasestorage.googleapis.com/v0/b/fluttercheck-5afbb.appspot.com/o/FAQ.pdf?alt=media&token=5d699a22-00a4-4277-8504-acab8126a162",
+            autoSpacing: true,
+            enableSwipe: true,
+            pageSnap: true,
+            swipeHorizontal: true,
+            nightMode: false,
+            onError: (e) {
+              print(e);
+            },
+            onRender: (_pages) {
+              setState(() {
+                _totalPages = _pages;
+                pdfReady = true;
+              });
+            },
+            onViewCreated: (PDFViewController vc) {
+              _pdfViewController = vc;
+            },
+            onPageChanged: (int page, int total) {
+              setState(() {});
+            },
+            onPageError: (page, e) {},
+          ),
+          !pdfReady
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : Offstage()
+        ],
+      ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          _currentPage > 0
+              ? FloatingActionButton.extended(
+                  backgroundColor: Colors.red,
+                  label: Text("Go to ${_currentPage - 1}"),
+                  onPressed: () {
+                    _currentPage -= 1;
+                    _pdfViewController.setPage(_currentPage);
+                  },
+                )
+              : Offstage(),
+          _currentPage+1 < _totalPages
+              ? FloatingActionButton.extended(
+                  backgroundColor: Colors.green,
+                  label: Text("Go to ${_currentPage + 1}"),
+                  onPressed: () {
+                    _currentPage += 1;
+                    _pdfViewController.setPage(_currentPage);
+                  },
+                )
+              : Offstage(),
+        ],
+      ),
+    );
   }
 }

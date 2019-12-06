@@ -9,10 +9,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter/services.dart';
-// import 'package:flutter_full_pdf_viewer/flutter_full_pdf_viewer.dart';
-// import 'package:flutter_full_pdf_viewer/full_pdf_viewer_plugin.dart';
-// import 'package:flutter_full_pdf_viewer/full_pdf_viewer_scaffold.dart';
 import 'package:flutter_plugin_pdf_viewer/flutter_plugin_pdf_viewer.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 
@@ -52,7 +48,6 @@ class ProductDetail extends StatefulWidget
 
 class _ProductDetailState extends State<ProductDetail> {
   Product product;
-  String assetPDFPath = "";
   String urlPDFPath ;
   bool buttonDisabled=false;
   PDFDocument document;
@@ -69,12 +64,6 @@ class _ProductDetailState extends State<ProductDetail> {
     _videoPlayerController.setLooping(true);
     _videoPlayerController.setVolume(1.0);
     super.initState();
-    // getFileFromAsset("assets/sample.pdf").then((f) {
-    //   setState(() {
-    //     assetPDFPath = f.path;
-    //     print(assetPDFPath);
-    //   });
-    // });
     getFileFromUrl(widget.pd.faq).then((f) {
       setState(() {
         urlPDFPath = f.path;
@@ -82,19 +71,6 @@ class _ProductDetailState extends State<ProductDetail> {
       });
     });
   }
-  // Future<File> getFileFromAsset(String asset) async {
-  //   try {
-  //     var data = await rootBundle.load(asset);
-  //     var bytes = data.buffer.asUint8List();
-  //     var dir = await getApplicationDocumentsDirectory();
-  //     File file = File("${dir.path}/sample.pdf");
-
-  //     File assetFile = await file.writeAsBytes(bytes);
-  //     return assetFile;
-  //   } catch (e) {
-  //     throw Exception("Error opening asset file");
-  //   }
-  // }
   Future<File> getFileFromUrl(String url) async {
     try {
       var data = await http.get(url);
@@ -277,13 +253,12 @@ class _PdfViewPageState extends State<PdfViewPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("My Document"),
+        title: Text("FAQ"),
       ),
       body: Stack(
         children: <Widget>[
           PDFView(
             filePath: widget.path,
-            //filePath:"https://firebasestorage.googleapis.com/v0/b/fluttercheck-5afbb.appspot.com/o/FAQ.pdf?alt=media&token=5d699a22-00a4-4277-8504-acab8126a162",
             autoSpacing: true,
             enableSwipe: true,
             pageSnap: true,

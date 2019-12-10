@@ -24,12 +24,16 @@ class _RootPageState extends State<RootPage> {
   String _userId = "";
   bool logIn=true;
   FirebaseUser _user;
+  //User userInfo;
+ // FirebaseDatabaseUtil firebaseDatabaseUtil;
   //VoidCallback userCheckin;
 
   @override
   void initState() {
     super.initState();
     //ProductsListPage(userLogin: this);
+    //firebaseDatabaseUtil =new FirebaseDatabaseUtil();
+    //firebaseDatabaseUtil.initState();
     widget.auth.getCurrentUser().then((user) {
       setState(() {
         if (user != null) {
@@ -109,6 +113,8 @@ class _RootPageState extends State<RootPage> {
       case AuthStatus.LOGGED_IN:
         if (_userId.length > 0 && _userId != null) {
           return new ProductsListPage(_user,_logIn,_onSignedOut,widget.auth);
+         
+          
        //  widget.checkIn.userCheckIn(_user);
         } else return _buildWaitingScreen();
         break;

@@ -9,10 +9,12 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:resideo_eshopping/Screens/signup.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/controller/product_controller.dart';
+import 'package:resideo_eshopping/util/curd_operations.dart';
 import 'package:resideo_eshopping/widgets/products_tile.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
 import 'package:resideo_eshopping/controller/root_page.dart';
 import 'package:resideo_eshopping/Screens/signup.dart';
+import 'package:resideo_eshopping/model/User.dart';
 
 class ProductsListPage extends StatefulWidget {
  // ProductsListPage({Key key,this.userLogin}) : super(key: key);
@@ -29,14 +31,16 @@ class ProductsListPage extends StatefulWidget {
 class _ProductsListPageState extends State<ProductsListPage> 
     with SingleTickerProviderStateMixin {
   ProductController productController=ProductController();
+  FirebaseDatabaseUtil firebaseDatabaseUtil;
   String dropdownValue = 'Categories';
   List<Product> currentList = <Product>[];
   bool _isProgressBarShown = true;
   AnimationController controller;
   Animation<double> animation;
-  String _name;
-  String _email;
-  String _imageUrl;
+  User userInfo;
+  String _name= "";
+  String _email = "";
+  String _imageUrl = "";
   bool isProfile=false;
 
   void profile(){
@@ -45,6 +49,19 @@ class _ProductsListPageState extends State<ProductsListPage>
    });
   }
   
+  getUserDetail(){
+     firebaseDatabaseUtil.getUserData(widget.user).then((result){
+            userInfo=result;
+            setState(() {
+                if(userInfo != null)
+                  {
+                      _name=userInfo.name;
+                      _email=widget.user.email.toString();
+                      _imageUrl=userInfo.imageUrl;
+                  }
+            });
+          });
+  }
 
   getProduct(String value){
   productController.getProductList(value).then((result){setState((){currentList=result;
@@ -88,20 +105,38 @@ class _ProductsListPageState extends State<ProductsListPage>
         padding: EdgeInsets.zero,
         children: <Widget>[
           Container(
-                child: UserAccountsDrawerHeader(
-                  accountName: Text("Name"),
-                  accountEmail: Text("widget.user.email.toString()"),
+                child: _imageUrl != ""?
+                 UserAccountsDrawerHeader(
+                  accountName: Text(_name),
+                  accountEmail: Text(_email),
                   currentAccountPicture: CircleAvatar(
+                    backgroundImage: NetworkImage(_imageUrl),
+                    backgroundColor:
+                        Theme.of(context).platform == TargetPlatform.iOS
+                            ? Colors.blue
+                            : Colors.white,
+                    // child: Text(
+                    //   "P",
+                    //   style: TextStyle(fontSize: 40.0),
+                    // ),
+                  ),
+                )
+                :
+                 UserAccountsDrawerHeader(
+                  accountName: Text(_name),
+                  accountEmail: Text(_email),
+                  currentAccountPicture: CircleAvatar(
+                    backgroundImage: NetworkImage(_imageUrl),
                     backgroundColor:
                         Theme.of(context).platform == TargetPlatform.iOS
                             ? Colors.blue
                             : Colors.white,
                     child: Text(
-                      "A",
+                      "P",
                       style: TextStyle(fontSize: 40.0),
                     ),
                   ),
-                ),
+                )
               ),
               
           ExpansionTile(
@@ -114,7 +149,7 @@ class _ProductsListPageState extends State<ProductsListPage>
             ],
           ),
           Divider(),
-          _createDrawerItem(icon: FontAwesomeIcons.user, text: 'My Account'),
+          _createDrawerItem(icon: FontAwesomeIcons.user, text: 'My Account',onTap: (){setState(() {isProfile=true;});}),
           _loginSignupButton(),
         ],
       ),
@@ -189,19 +224,16 @@ class _ProductsListPageState extends State<ProductsListPage>
           )
         ],
       ),
-      onTap: (){
-        setState(() {
-          isProfile=true;
-        });
-       // Navigator.push(context, MaterialPageRoute(builder: (context)=>SignUp(widget.user,widget.online,widget.offline,widget.auth)));
-        },
+      onTap: onTap,
     );
   }
 
   @override
   void initState() {
     super.initState();
-
+    firebaseDatabaseUtil=FirebaseDatabaseUtil();
+    firebaseDatabaseUtil.initState();
+    getUserDetail();
     Timer.run(() {
       try {
         InternetAddress.lookup('google.com').then((result) {

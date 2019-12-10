@@ -112,14 +112,16 @@ class _ProductDetailState extends State<ProductDetail> {
                 ),
                 Text(widget.pd.sDesc),
                 SizedBox(height: 20,),
+                _showSlides(),
                 //Image.network(pd.img),
         
+        /*
                 FutureBuilder(
                   future: _initializeVideoPlayerFuture,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
-                      return SizedBox(
-                        //aspectRatio: _videoPlayerController.value.aspectRatio,
+                      return AspectRatio(
+                        aspectRatio: _videoPlayerController.value.aspectRatio,
                         child:
                           CarouselSlider(
                             height: 300.0,
@@ -149,6 +151,8 @@ class _ProductDetailState extends State<ProductDetail> {
                     _videoPlayerController.value.isPlaying ? Icons.pause : Icons.play_arrow,
                   ),
                 ), 
+
+                */
                 SizedBox(height: 20,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -234,7 +238,66 @@ class _ProductDetailState extends State<ProductDetail> {
     return  Text(inventoryDetail,style: TextStyle(color: Colors.green,) );
     }
   }
+
+  Widget _showVideo(){
+    return Stack(
+      children: <Widget>[
+        Center(
+          child: FutureBuilder(
+          future: _initializeVideoPlayerFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return AspectRatio(
+                        aspectRatio: _videoPlayerController.value.aspectRatio,
+                        child: VideoPlayer(_videoPlayerController),
+                      );
+                    } else {
+                      return Center(child: CircularProgressIndicator());
+                    }
+                  },
+          ),
+        ),
+        Center(
+              child:
+              ButtonTheme(
+                  height: 10.0,
+                  minWidth: 20.0,
+                  child: RaisedButton(
+                    padding: EdgeInsets.all(6.0),
+                    color: Colors.transparent,
+                    textColor: Colors.white,
+                    onPressed: () {
+                      setState(() {
+                        if (_videoPlayerController.value.isPlaying) {
+                          _videoPlayerController.pause();
+                        } else {
+                          _videoPlayerController.play();
+                        }
+                      });
+                    },
+                    child: Icon(
+                      _videoPlayerController.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                      size: 120.0,
+                    ),
+                  )
+              )
+          )
+        ],
+      );
+
+  }
+
+  Widget _showSlides(){
+    return CarouselSlider(
+      height: 300.0,
+      items: [
+        Image.network(widget.pd.img, fit: BoxFit.fill,),
+         _showVideo(),
+      ],
+    );
 }
+}
+
 class PdfViewPage extends StatefulWidget {
   final String path;
 

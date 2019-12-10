@@ -294,7 +294,10 @@ class _ProductDetailState extends State<ProductDetail> {
         Image.network(widget.pd.img, fit: BoxFit.fill,),
          _showVideo(),
       ],
+    );
 }
+}
+
 class PdfViewPage extends StatefulWidget {
   final String path;
 

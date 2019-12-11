@@ -6,9 +6,7 @@ import 'package:resideo_eshopping/services/authentication.dart';
 
 class RootPage extends StatefulWidget {
   RootPage({this.auth});
-
   final BaseAuth auth;
- // final CheckIn checkIn;
   @override
   State<StatefulWidget> createState() => new _RootPageState();
 }
@@ -22,18 +20,12 @@ enum AuthStatus {
 class _RootPageState extends State<RootPage> {
   AuthStatus authStatus = AuthStatus.NOT_DETERMINED;
   String _userId = "";
-  bool logIn=true;
+  bool _logInButtonPress=false;
   FirebaseUser _user;
-  //User userInfo;
- // FirebaseDatabaseUtil firebaseDatabaseUtil;
-  //VoidCallback userCheckin;
 
   @override
   void initState() {
     super.initState();
-    //ProductsListPage(userLogin: this);
-    //firebaseDatabaseUtil =new FirebaseDatabaseUtil();
-    //firebaseDatabaseUtil.initState();
     widget.auth.getCurrentUser().then((user) {
       setState(() {
         if (user != null) {
@@ -46,9 +38,9 @@ class _RootPageState extends State<RootPage> {
     });
   }
   
-  void _logIn(){
+  void _onlogInButtonPress(){
     setState(() {
-      logIn=false;
+      _logInButtonPress=true;
     });
   }
 
@@ -68,7 +60,7 @@ class _RootPageState extends State<RootPage> {
   void _onSignedOut() {
     setState(() {
       authStatus = AuthStatus.NOT_LOGGED_IN;
-      logIn=true;
+      _logInButtonPress=true;
       _userId = "";
       _user=null;
     });
@@ -91,25 +83,22 @@ class _RootPageState extends State<RootPage> {
         break;
       case AuthStatus.NOT_LOGGED_IN:
       {
-        if(logIn)
+        if(_logInButtonPress)
         {
-          return new ProductsListPage(_user,_logIn,_onSignedOut,widget.auth);
-          
+          return new LoginSignUpPage(
+          auth: widget.auth,
+          onSignedIn: _onLoggedIn);
+        
         }else
         {
-        return new LoginSignUpPage(
-          auth: widget.auth,
-          onSignedIn: _onLoggedIn,
-        );
+         return new ProductsListPage(_user,_onlogInButtonPress,_onSignedOut,widget.auth);
+          
         }    
       }   
       break;
       case AuthStatus.LOGGED_IN:
-        if (_userId.length > 0 && _userId != null) {
-          return new ProductsListPage(_user,_logIn,_onSignedOut,widget.auth);
-         
-          
-       //  widget.checkIn.userCheckIn(_user);
+        if (_userId != null && _userId.length > 0) {
+          return new ProductsListPage(_user,_onlogInButtonPress,_onSignedOut,widget.auth);
         } else return _buildWaitingScreen();
         break;
       default:
@@ -117,7 +106,3 @@ class _RootPageState extends State<RootPage> {
     }
   }
 }
-
-// abstract class CheckIn{
-//   void userCheckIn(FirebaseUser user);
-// }

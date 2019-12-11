@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:io';
 import 'package:resideo_eshopping/controller/image_picker_handler.dart';
 import 'package:resideo_eshopping/model/User.dart';
-import 'package:resideo_eshopping/util/curd_operations.dart';
+import 'package:resideo_eshopping/util/crud_operations.dart';
 
 class SignUp extends StatefulWidget{
   SignUp(this.user,this.profile);

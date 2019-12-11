@@ -8,7 +8,7 @@ import 'package:resideo_eshopping/Screens/add_user_details.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
-import 'package:resideo_eshopping/util/curd_operations.dart';
+import 'package:resideo_eshopping/util/crud_operations.dart';
 import 'package:video_player/video_player.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;

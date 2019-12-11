@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:resideo_eshopping/Screens/product_list_page.dart';
+import 'package:resideo_eshopping/Screens/signup.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginSignUpPage extends StatefulWidget {
   LoginSignUpPage({this.auth, this.onSignedIn});
@@ -46,6 +49,11 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       try {
         if (_formMode == FormMode.LOGIN) {
           userId = await widget.auth.signIn(_email, _password);
+          //SharedPreferences prefs = await SharedPreferences.getInstance();
+          //prefs.setString('email', _email);
+          //prefs.setBool(true);
+          //Navigator.pushReplacement(context,
+               //MaterialPageRoute(builder: (BuildContext ctx) => Blankpage()));
           print('Signed in: $userId');
         } else {
           userId = await widget.auth.signUp(_email, _password);
@@ -196,6 +204,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 50.0, 0.0, 0.0),
       child: new TextFormField(
+        autovalidate: true,
         maxLines: 1,
         keyboardType: TextInputType.emailAddress,
         autofocus: false,
@@ -205,12 +214,12 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
               Icons.mail,
               color: Colors.grey,
             )),
-        validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
-        onSaved: (value) => _email = value.trim(),
+            onSaved: (value) => _email = value.trim(),
+            validator: FieldValidator.validateEmail,
       ),
     );
   }
-
+  
   Widget _showPasswordInput() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
@@ -265,4 +274,23 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         ));
   }
   
+}
+
+class FieldValidator{
+  static String validateEmail(String value)
+  {
+    if(value.isEmpty) return 'Enter Email';
+    Pattern pattern = r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+    RegExp regex = new RegExp(pattern);
+    if(!regex.hasMatch(value)){
+      return 'Enter valid email';
+    }
+    return null;
+  }
+
+  static String validatePassword(String value)
+  {
+    if(value.isEmpty) return 'Enter Password';
+    return null;
+  }
 }

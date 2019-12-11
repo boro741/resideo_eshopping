@@ -1,8 +1,11 @@
+import 'dart:ffi';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:resideo_eshopping/Screens/login_signup_page.dart';
 import 'package:resideo_eshopping/Screens/product_list_page.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RootPage extends StatefulWidget {
   RootPage({this.auth});
@@ -24,7 +27,7 @@ class _RootPageState extends State<RootPage> {
   FirebaseUser _user;
 
   @override
-  void initState() {
+  void initState()  {
     super.initState();
     widget.auth.getCurrentUser().then((user) {
       setState(() {

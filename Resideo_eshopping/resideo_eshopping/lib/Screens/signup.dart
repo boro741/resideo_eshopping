@@ -7,9 +7,10 @@ import 'package:resideo_eshopping/model/User.dart';
 import 'package:resideo_eshopping/util/crud_operations.dart';
 
 class SignUp extends StatefulWidget{
-  SignUp(this.user,this.profile);
+  SignUp(this.user,this.profile,this.userInfo);
   final FirebaseUser user;
   final VoidCallback profile;
+  final User userInfo;
   @override
   State<StatefulWidget> createState() => _SignUpState();
 
@@ -19,42 +20,39 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
   final _formKeyValue = new GlobalKey<FormState>();
   
   File _image;
-  //String _uploadFileUrl;
   AnimationController _controler;
   ImagePickerHandler imagePicker;
   FirebaseDatabaseUtil firebaseDatabaseUtil;
+  String _imageUrl;
+  String _buttonName="";
+  String _alertMessage="";
+  bool _isEdit=false;
   User user;
- // final DatabaseReference database=FirebaseDatabase.instance.reference().child("Users");
 
-  final _nameController =TextEditingController();
-  final _phoneController =TextEditingController();
-  final _addressController =TextEditingController();
-  final _zipcodeController =TextEditingController();
+  var _nameController =TextEditingController();
+  var _phoneController =TextEditingController();
+  var _addressController =TextEditingController();
+  var _zipcodeController =TextEditingController();
 
-//   _sendData()
-//   {
-//     database.child(widget.user.uid.toString()).set({
-//       'name' : user.name,
-//       'phone' : user.phone,
-//       'address' : user.address,
-//       'Zipcode' : user.zipcode,
-//       'imageUrl' : _uploadFileUrl
-//     });
-//   }
 
-//    Future uploadFile() async {    
-//    StorageReference storageReference = FirebaseStorage.instance.ref().child("profile pic"+widget.user.uid.toString());
-//    StorageUploadTask uploadTask = storageReference.putFile(_image);   
-//    await uploadTask.onComplete;  
-//    print('File Uploaded');    
-//    storageReference.getDownloadURL().then((fileURL) {    
-//      setState(() {    
-//        _uploadFileUrl = fileURL;    
-//        _sendData();
-//       widget.profile();
-//      });    
-//    });    
-//  } 
+  _fillUserDetail(){
+    if(widget.userInfo != null)
+      {
+        _isEdit=true;
+        _buttonName="Update Profile";
+        _alertMessage="Updated";
+        _nameController.text=widget.userInfo.name;
+        _phoneController.text=widget.userInfo.phone;
+        _addressController.text=widget.userInfo.address;
+        _zipcodeController.text=widget.userInfo.zipcode;
+        _imageUrl=widget.userInfo.imageUrl;
+      }else {
+      _buttonName = "Create Profile";
+      _alertMessage = "Created";
+    }
+
+  }
+
   
   showAlertDialog(BuildContext context) {
     // set up the buttons
@@ -64,16 +62,11 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
         Navigator.pop(context);
       },
     );
-    // Widget continueButton = FlatButton(
-    //   child: Text("Yes"),
-    //   onPressed: () {}
-    //   );
-     
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
       title: Text("Profile"),
-      content: Text("Profile Update Successful"),
+      content: Text("Profile $_alertMessage Successful"),
       actions: [
         cancelButton,
        // continueButton,
@@ -88,6 +81,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
       },
     );
   }
+
   @override
   void initState()
   {
@@ -98,6 +92,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
     imagePicker.init();
     firebaseDatabaseUtil = FirebaseDatabaseUtil();
     firebaseDatabaseUtil.initState();
+    _fillUserDetail();
   }
 
   @override
@@ -142,7 +137,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
               GestureDetector(
         onTap: ()=> imagePicker.showDialog(context),
         child:
-           _image == null
+        (_imageUrl != null && _image == null)
               ? new Center(
                 child: Column(
                   children: <Widget>[
@@ -151,26 +146,41 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
     
                         radius: 80.0,
                         backgroundColor: Colors.transparent,
+                        backgroundImage: NetworkImage(_imageUrl),
+                      ),
+                  ],
+                )
+              )
+              :(_image == null?
+              new Center(
+                  child: Column(
+                    children: <Widget>[
+                      SizedBox(height: 30,),
+                      new CircleAvatar(
+
+                        radius: 80.0,
+                        backgroundColor: Colors.transparent,
                         backgroundImage: AssetImage("assets/images/user_profile.png"),
                       ),
-                  ],
-                )
+                    ],
+                  )
               )
               :
-              new Center(
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(height: 30,),
-                    //Image.file(_image,height: 10,width: 10),
-                      new CircleAvatar(
-                        radius: 80.0,
-                        backgroundColor: const Color(0xFF778899),
-                        backgroundImage: FileImage(_image),
-                      ),
-                  ],
-                )
-              )
+               new Center(
+               child: Column(
+               children: <Widget>[
+                 SizedBox(height: 30,),
+                //Image.file(_image,height: 10,width: 10),
+                 new CircleAvatar(
+                 radius: 80.0,
+                 backgroundColor: const Color(0xFF778899),
+                 backgroundImage: FileImage(_image),
+               ),
+              ],
+             )
+           )
       ),
+              ),
        SizedBox(height: 30,),
               Flexible(
                 child: ListView(
@@ -260,7 +270,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
-                                Text("Update Profile",
+                                Text(_buttonName,
                                     style: TextStyle(fontSize: 24.0)),
                               ],
                             )),
@@ -270,10 +280,14 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
                               form.save();
                               user=User(_nameController.text,_phoneController.text,_addressController.text,_zipcodeController.text);
                               if(_image != null)
-                              firebaseDatabaseUtil.updateUserProfile(widget.user,_image,user).then((result){showAlertDialog(context);});
+                              firebaseDatabaseUtil.updateUserProfile(widget.user,_image,user,_isEdit).then((result){showAlertDialog(context);});
                               else
-                              firebaseDatabaseUtil.sendData(widget.user, user,null).then((result){showAlertDialog(context);});
-                              }
+                                if(_isEdit)
+                              firebaseDatabaseUtil.updateData(widget.user, user,null).then((result){showAlertDialog(context);});
+                                else
+                                  firebaseDatabaseUtil.sendData(widget.user, user,null).then((result){showAlertDialog(context);});
+
+                          }
                         },
                         shape: new RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(30.0))

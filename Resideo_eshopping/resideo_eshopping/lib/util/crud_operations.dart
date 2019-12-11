@@ -64,13 +64,42 @@ class FirebaseDatabaseUtil {
       'name' : userInfo.name,
       'phone' : userInfo.phone,
       'address' : userInfo.address,
-      'Zipcode' : userInfo.zipcode,
+      'zipcode' : userInfo.zipcode,
       'imageUrl' : _uploadFileUrl
     }).then((result){
       print("profile updated");
     }).catchError((onError){
       print(onError);
     });
+  }
+
+  Future updateData(FirebaseUser user,User userInfo,String _uploadFileUrl) async
+  {
+    if(_uploadFileUrl != null) {
+      await _userDBRef.child(user.uid.toString()).update({
+        'name': userInfo.name,
+        'phone': userInfo.phone,
+        'address': userInfo.address,
+        'zipcode': userInfo.zipcode,
+        'imageUrl': _uploadFileUrl
+      }).then((result) {
+        print("profile updated");
+      }).catchError((onError) {
+        print(onError);
+      });
+    }else
+      {
+        await _userDBRef.child(user.uid.toString()).update({
+          'name': userInfo.name,
+          'phone': userInfo.phone,
+          'address': userInfo.address,
+          'zipcode': userInfo.zipcode,
+        }).then((result) {
+          print("profile updated");
+        }).catchError((onError) {
+          print(onError);
+        });
+      }
   }
 
   Future<User> getUserData(FirebaseUser _user) async
@@ -85,13 +114,16 @@ class FirebaseDatabaseUtil {
     return user;
   }
  
- Future updateUserProfile(FirebaseUser user,File image,User userInfo) async {    
+ Future updateUserProfile(FirebaseUser user,File image,User userInfo,bool isEdit) async {
    StorageReference storageReference = FirebaseStorage.instance.ref().child("profile pic"+user.uid.toString());
    StorageUploadTask uploadTask = storageReference.putFile(image);   
    await uploadTask.onComplete;  
    print('File Uploaded');    
-   storageReference.getDownloadURL().then((fileURL) {    
-    sendData(user, userInfo, fileURL);  
+   storageReference.getDownloadURL().then((fileURL) {
+     if(isEdit)
+       updateData(user, userInfo, fileURL);
+     else
+       sendData(user, userInfo, fileURL);
    });    
  } 
 

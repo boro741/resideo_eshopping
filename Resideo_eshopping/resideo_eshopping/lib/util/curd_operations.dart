@@ -75,9 +75,13 @@ class FirebaseDatabaseUtil {
 
   Future<User> getUserData(FirebaseUser _user) async
   {
+    try{
     await _userDBRef.child(_user.uid.toString()).once().then((DataSnapshot snapshot){
       user=User.fromSnapshot(snapshot);
     });
+    }catch(e){
+     print(e);
+    }
     return user;
   }
  

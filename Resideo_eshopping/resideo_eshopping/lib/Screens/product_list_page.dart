@@ -38,18 +38,29 @@ class _ProductsListPageState extends State<ProductsListPage>
   AnimationController controller;
   Animation<double> animation;
   User userInfo;
-  String _name= "";
-  String _email = "";
-  String _imageUrl = "";
+  String _name="";
+  String _email="";
+  String _imageUrl="";
   bool isProfile=false;
 
   void profile(){
    setState(() {
      isProfile=false;
+     getUserDetail();
    });
   }
   
+  void setProfile(){
+    if(widget.user == null)
+    {
+      _name="";
+      _email="";
+      _imageUrl="";
+    }
+  }
+
   getUserDetail(){
+    if(widget.user != null){
      firebaseDatabaseUtil.getUserData(widget.user).then((result){
             userInfo=result;
             setState(() {
@@ -61,6 +72,7 @@ class _ProductsListPageState extends State<ProductsListPage>
                   }
             });
           });
+    }
   }
 
   getProduct(String value){
@@ -73,7 +85,7 @@ class _ProductsListPageState extends State<ProductsListPage>
   Widget build(BuildContext context) {
     var key = GlobalKey<ScaffoldState>();
     Widget widget1;
-
+    setProfile();
   if(_isProgressBarShown){
     widget1 = Center(
       child: Padding(
@@ -91,7 +103,7 @@ class _ProductsListPageState extends State<ProductsListPage>
       padding: const EdgeInsets.all(0.0),
 
       itemCount: currentList.length,
-      itemBuilder: (context, index) => ProductsTile(currentList[index]),
+      itemBuilder: (context, index) => ProductsTile(currentList[index],widget.user,widget.online,widget.offline,widget.auth),
     );
   }
    if(isProfile)
@@ -115,10 +127,7 @@ class _ProductsListPageState extends State<ProductsListPage>
                         Theme.of(context).platform == TargetPlatform.iOS
                             ? Colors.blue
                             : Colors.white,
-                    // child: Text(
-                    //   "P",
-                    //   style: TextStyle(fontSize: 40.0),
-                    // ),
+                 
                   ),
                 )
                 :
@@ -126,7 +135,7 @@ class _ProductsListPageState extends State<ProductsListPage>
                   accountName: Text(_name),
                   accountEmail: Text(_email),
                   currentAccountPicture: CircleAvatar(
-                    backgroundImage: NetworkImage(_imageUrl),
+                    //backgroundImage: NetworkImage(_imageUrl),
                     backgroundColor:
                         Theme.of(context).platform == TargetPlatform.iOS
                             ? Colors.blue
@@ -233,7 +242,7 @@ class _ProductsListPageState extends State<ProductsListPage>
     super.initState();
     firebaseDatabaseUtil=FirebaseDatabaseUtil();
     firebaseDatabaseUtil.initState();
-    getUserDetail();
+    getUserDetail(); 
     Timer.run(() {
       try {
         InternetAddress.lookup('google.com').then((result) {
@@ -250,19 +259,10 @@ class _ProductsListPageState extends State<ProductsListPage>
         print('not connected'); // show dialog
       }
     });
-   // RootPage(auth: Auth(),checkIn: this,);
 
     getProduct("All");
   }
 
-  // @override
-  //  void userCheckIn(FirebaseUser user)
-  //  {
-  //     setState(() {
-  //     _email=user.email.toString();
-  //   });
-  //  }
-  
  
   void _showDialog() {
     showDialog(
@@ -274,7 +274,3 @@ class _ProductsListPageState extends State<ProductsListPage>
   }
 
 }
-
-// abstract class UserLogin{
-//   void login();
-// }

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
@@ -6,11 +7,14 @@ import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/Screens/add_user_details.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:resideo_eshopping/services/authentication.dart';
+import 'package:resideo_eshopping/util/curd_operations.dart';
 import 'package:video_player/video_player.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_plugin_pdf_viewer/flutter_plugin_pdf_viewer.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:resideo_eshopping/model/User.dart';
 
 class StarDisplay extends StatefulWidget {
   final int value;
@@ -40,7 +44,11 @@ class ProductDetail extends StatefulWidget
 {
  
   final Product pd;
-  ProductDetail(this.pd);
+  final FirebaseUser user;
+  final VoidCallback online;
+  final VoidCallback offline;
+  final BaseAuth auth;
+  ProductDetail(this.pd,this.user,this.online,this.offline,this.auth);
 
   @override
   _ProductDetailState createState() => _ProductDetailState();
@@ -52,11 +60,20 @@ class _ProductDetailState extends State<ProductDetail> {
   bool buttonDisabled=false;
   PDFDocument document;
   String inventoryDetail;
+  User userInfo;
+  FirebaseDatabaseUtil firebaseDatabaseUtil;
 
   VideoPlayerController _videoPlayerController;
 
   Future<void> _initializeVideoPlayerFuture;
 
+  getUserDetail(){
+    if(widget.user != null){
+     firebaseDatabaseUtil.getUserData(widget.user).then((result){
+            userInfo=result;
+          });
+    }
+  }
   @override
   void initState() {
     _videoPlayerController = VideoPlayerController.network(widget.pd.pVideo);
@@ -64,6 +81,9 @@ class _ProductDetailState extends State<ProductDetail> {
     _videoPlayerController.setLooping(true);
     _videoPlayerController.setVolume(1.0);
     super.initState();
+    firebaseDatabaseUtil=FirebaseDatabaseUtil();
+    firebaseDatabaseUtil.initState();
+    getUserDetail();
     getFileFromUrl(widget.pd.faq).then((f) {
       setState(() {
         urlPDFPath = f.path;
@@ -87,8 +107,8 @@ class _ProductDetailState extends State<ProductDetail> {
 
   @override
   Widget build(BuildContext context) {
-    void navigateToCustomerAddress() async{
-     Navigator.push(context, MaterialPageRoute(builder: (context)=> AddUserDetails(widget.pd)));
+    void navigateToCustomerAddress(User userInfo) async{
+     Navigator.push(context, MaterialPageRoute(builder: (context)=> AddUserDetails(widget.pd,userInfo,widget.user,widget.online,widget.offline,widget.auth)));
   }
     return PlatformScaffold(
       appBar: PlatformAppBar(
@@ -168,7 +188,17 @@ class _ProductDetailState extends State<ProductDetail> {
                   disabledColor: Colors.blueGrey,
                   disabledTextColor: Colors.black,
                   child: Text("Order Now",style: TextStyle(fontSize: 20),),
-                  onPressed: buttonDisabled? null:(){navigateToCustomerAddress();
+                  onPressed: buttonDisabled? null:(){
+                    if(widget.user == null)
+                    {
+                      Navigator.pop(context);
+                      widget.online();
+                    }else
+                    if(userInfo == null || userInfo.address == null || userInfo.phone == null)
+                    {
+                      showAlertDialog(context);
+                    }else
+                    navigateToCustomerAddress(userInfo);
                   },
                 ),
                 SizedBox(height: 20,),
@@ -215,6 +245,33 @@ class _ProductDetailState extends State<ProductDetail> {
     _videoPlayerController.dispose();
 
     super.dispose();
+  }
+
+   showAlertDialog(BuildContext context) {
+    // set up the buttons
+    Widget cancelButton = PlatformButton(
+      child: PlatformText("ok"),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+      androidFlat: (_) => MaterialFlatButtonData()
+    );
+    // set up the AlertDialog
+    PlatformAlertDialog alert = PlatformAlertDialog(
+      title: PlatformText("Update User Profile"),
+      content: PlatformText("Please update Address and phone No in your user Profile"),
+      actions: <Widget>[
+        cancelButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   dynamic getInventory(int quantity){

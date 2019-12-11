@@ -82,13 +82,7 @@ class _RootPageState extends State<RootPage> {
       ),
     );
   }
-
-  // @override
-  // void login()
-  // {
-  //  Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginSignUpPage(auth: widget.auth,onSignedIn: _onLoggedIn,)));
-  // }
-
+  
   @override
   Widget build(BuildContext context) {
     switch (authStatus) {

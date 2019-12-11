@@ -233,7 +233,12 @@ class _ProductsListPageState extends State<ProductsListPage>
           )
         ],
       ),
-      onTap: onTap,
+      onTap: (){
+        setState(() {
+          isProfile=true;
+        });
+       // Navigator.push(context, MaterialPageRoute(builder: (context)=>SignUp(widget.user,widget.online,widget.offline,widget.auth)));
+        },
     );
   }
 
@@ -274,3 +279,7 @@ class _ProductsListPageState extends State<ProductsListPage>
   }
 
 }
+
+// abstract class UserLogin{
+//   void login();
+// }

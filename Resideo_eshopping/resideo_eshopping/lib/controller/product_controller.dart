@@ -1,7 +1,7 @@
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/util/dbhelper.dart';
 import 'package:resideo_eshopping/repository/products_repository.dart';
-import 'package:resideo_eshopping/util/curd_operations.dart';
+import 'package:resideo_eshopping/util/crud_operations.dart';
 
 class ProductController {
   static List<Product> products = <Product>[];
@@ -63,7 +63,6 @@ class ProductController {
   }
 
   void updateInventory(Product product) {
-    _decreaseInventoryCount(product);
     helper
         .updateInventoryById(product.id, _decreaseInventoryCount(product))
         .then((result) {

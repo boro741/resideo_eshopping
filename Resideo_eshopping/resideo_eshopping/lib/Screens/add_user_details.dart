@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:resideo_eshopping/Screens/product_list_page.dart';
@@ -5,15 +6,22 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:resideo_eshopping/controller/product_controller.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:giffy_dialog/giffy_dialog.dart';
+import 'package:resideo_eshopping/model/User.dart';
+import 'package:resideo_eshopping/services/authentication.dart';
+import 'package:resideo_eshopping/controller/root_page.dart';
 
 
 
 class AddUserDetails extends StatefulWidget {
-  static GlobalKey<FormState> _formKeyValue = new GlobalKey<FormState>();
+ // static GlobalKey<FormState> _formKeyValue = new GlobalKey<FormState>();
   
-  AddUserDetails(this.product);
+  AddUserDetails(this.product,this.userInfo,this.user,this.online,this.offline,this.auth);
   final Product product;
-
+  final User userInfo;
+  final FirebaseUser user;
+  final VoidCallback online;
+  final VoidCallback offline;
+  final BaseAuth auth;
 
   @override
   _AddUserDetailsState createState() => _AddUserDetailsState();
@@ -23,32 +31,14 @@ class _AddUserDetailsState extends State<AddUserDetails> {
   final ProductController productController=ProductController();
   
 void navigateToHomePage(BuildContext context) async{
-   // Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-   // ProductsListPage()), (Route<dynamic> route) => false);
+  //  Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+  //   ProductsListPage(widget.user,widget.online,widget.offline,widget.auth)), (Route<dynamic> route) => false);
+   Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+    RootPage(auth: widget.auth,)), (Route<dynamic> route) => false);
+  
   }
 
   orderPlaced(BuildContext context){
-
-    PlatformAlertDialog alert = PlatformAlertDialog(
-      /*
-      title: Text("Order Placed"),
-      content: Text("Thank you for placing order"),
-      actions: <Widget>[
-        FlatButton(
-          child: Text("Ok"),
-          onPressed: (){
-             navigateToHomePage(context);
-          },
-        )
-      ],*/
-    );
-
-/*
-    showDialog(context: context,
-    builder: (BuildContext context){
-      return alert;
-    });
-*/
     showDialog(
   context: context,
   builder: (_) => NetworkGiffyDialog(
@@ -60,11 +50,9 @@ void navigateToHomePage(BuildContext context) async{
             fontWeight: FontWeight.w600)),
     description: Text("Thank you for placing order"),
             onOkButtonPressed: () {
-              AddUserDetails._formKeyValue = new GlobalKey<FormState>();
              navigateToHomePage(context);
             },
   ) );
-    return alert;
   }
 
   showAlertDialog(BuildContext context) {
@@ -109,8 +97,6 @@ void navigateToHomePage(BuildContext context) async{
   void initState(){
     super.initState();
     productController.init();
-
-
   }
   
 
@@ -127,86 +113,35 @@ void navigateToHomePage(BuildContext context) async{
               )),
         ),
       ),
-      body: SafeArea(
-        child: Form(
-          key: AddUserDetails._formKeyValue,
-          autovalidate: true,
-          child: Column(
+      body: Column(
             children: <Widget>[
               Flexible(
                 child: ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
                   children: <Widget>[
-                    TextFormField(
-                      decoration: const InputDecoration(
-                        icon: const Icon(
-                          FontAwesomeIcons.userCircle,
-                          color: Colors.blue,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          margin: const EdgeInsets.all(20.0),
+                          child: Text(
+                            'Product: ',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.blue,
+                            ),
+                          ),
                         ),
-                        hintText: 'Enter your Name',
-                        labelText: 'Name',
-                      ),
-                      validator: (val) {
-                        if (val.isEmpty) {
-                          return 'Name field should not be empty';
-                        } else {
-                          return null;
-                        }
-                      },
-                    ),
-                    TextFormField(
-                      decoration: const InputDecoration(
-                        icon: const Icon(
-                          FontAwesomeIcons.phone,
-                          color: Colors.blue,
+                        Container(
+                          margin: const EdgeInsets.all(20.0),
+                          child: PlatformText(
+                             widget.product.title,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
                         ),
-                        hintText: 'Ex: 9700000000',
-                        labelText: 'Phone',
-                      ),
-                      validator: (val) {
-                        Pattern pattern = r'^(?:[+0]9)?[0-9]{10}$';
-                        RegExp regex = new RegExp(pattern);
-                        if (!regex.hasMatch(val))
-                          return 'Enter Valid Phone Number';
-                        else
-                          return null;
-                      },
-                      keyboardType: TextInputType.number,
-                    ),
-                    TextFormField(
-                      maxLines: 3,
-                      decoration: const InputDecoration(
-                        icon: const Icon(
-                          FontAwesomeIcons.home,
-                          color: Colors.blue,
-                        ),
-                        labelText: 'Address',
-                      ),
-                      validator: (val) {
-                        if (val.isEmpty)
-                          return 'Address Field should not be empty';
-                        else
-                          return null;
-                      },
-                    ),
-                    TextFormField(
-                      decoration: const InputDecoration(
-                        icon: const Icon(
-                          FontAwesomeIcons.mapMarker,
-                          color: Colors.blue,
-                        ),
-                        hintText: 'Ex: 500000',
-                        labelText: 'Zip Code',
-                      ),
-                      validator: (val) {
-                        Pattern pattern = r'^[1-9][0-9]{5}$';
-                        RegExp regex = new RegExp(pattern);
-                        if (!regex.hasMatch(val))
-                          return 'Enter Valid ZipCode';
-                        else
-                          return null;
-                      },
-                      keyboardType: TextInputType.number,
+                      ],
                     ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,6 +161,54 @@ void navigateToHomePage(BuildContext context) async{
                           margin: const EdgeInsets.all(20.0),
                           child: PlatformText(
                             'Rs. ' + widget.product.price.toString(),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          margin: const EdgeInsets.all(20.0),
+                          child: Text(
+                            'Deliver To: ',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.all(20.0),
+                          child: PlatformText(
+                             widget.userInfo.address.toString(),
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 20),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          margin: const EdgeInsets.all(20.0),
+                          child: Text(
+                            'Phone No: ',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.all(20.0),
+                          child: PlatformText(
+                            widget.userInfo.phone.toString(),
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 20),
                           ),
@@ -253,10 +236,7 @@ void navigateToHomePage(BuildContext context) async{
                               ],
                             )),
                         onPressed: () {
-                          if (AddUserDetails._formKeyValue.currentState.validate()) {
-
-                            showAlertDialog(context);
-                          }
+                            showAlertDialog(context);                         
                         },
                         shape: new RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(30.0))),
@@ -265,8 +245,6 @@ void navigateToHomePage(BuildContext context) async{
               ),
             ],
           ),
-        ),
-      ),
-    );
+      );
   }
 }

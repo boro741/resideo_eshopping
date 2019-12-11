@@ -1,24 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:resideo_eshopping/Screens/product_list_page.dart';
 import 'dart:io';
 import 'package:resideo_eshopping/controller/image_picker_handler.dart';
 import 'package:resideo_eshopping/model/User.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:resideo_eshopping/services/authentication.dart';
+import 'package:resideo_eshopping/util/crud_operations.dart';
 
 class SignUp extends StatefulWidget{
   SignUp(this.user,this.profile);
-  _SignUpState obj;
   final FirebaseUser user;
-  VoidCallback profile;
+  final VoidCallback profile;
   @override
-  State<StatefulWidget> createState() {
-    obj=_SignUpState();
-    return obj;
-  }
+  State<StatefulWidget> createState() => _SignUpState();
 
 }
 
@@ -26,66 +19,64 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
   final _formKeyValue = new GlobalKey<FormState>();
   
   File _image;
-  String _uploadFileUrl;
+  //String _uploadFileUrl;
   AnimationController _controler;
   ImagePickerHandler imagePicker;
+  FirebaseDatabaseUtil firebaseDatabaseUtil;
   User user;
-  final DatabaseReference database=FirebaseDatabase.instance.reference().child("Customer");
+ // final DatabaseReference database=FirebaseDatabase.instance.reference().child("Users");
 
   final _nameController =TextEditingController();
-  //final _emailController =TextEditingController();
   final _phoneController =TextEditingController();
   final _addressController =TextEditingController();
   final _zipcodeController =TextEditingController();
-  //final _passwordController =TextEditingController();
 
-  _sendData()
-  {
-    database.child(widget.user.uid).set({
-      'name' : user.name,
-      //'email' : user.email,
-      'phone' : user.phone,
-     // 'password' : user.password,
-      'address' : user.address,
-      'Zipcode' : user.zipcode,
-      'imageUrl' : _uploadFileUrl
-    });
-  }
+//   _sendData()
+//   {
+//     database.child(widget.user.uid.toString()).set({
+//       'name' : user.name,
+//       'phone' : user.phone,
+//       'address' : user.address,
+//       'Zipcode' : user.zipcode,
+//       'imageUrl' : _uploadFileUrl
+//     });
+//   }
 
-   Future uploadFile() async {    
-   StorageReference storageReference = FirebaseStorage.instance.ref().child("profile pic"+widget.user.uid.toString());
-   StorageUploadTask uploadTask = storageReference.putFile(_image);   
-   await uploadTask.onComplete;  
-   print('File Uploaded');    
-   storageReference.getDownloadURL().then((fileURL) {    
-     setState(() {    
-       _uploadFileUrl = fileURL;    
-       _sendData();
-     });    
-   });    
- } 
+//    Future uploadFile() async {    
+//    StorageReference storageReference = FirebaseStorage.instance.ref().child("profile pic"+widget.user.uid.toString());
+//    StorageUploadTask uploadTask = storageReference.putFile(_image);   
+//    await uploadTask.onComplete;  
+//    print('File Uploaded');    
+//    storageReference.getDownloadURL().then((fileURL) {    
+//      setState(() {    
+//        _uploadFileUrl = fileURL;    
+//        _sendData();
+//       widget.profile();
+//      });    
+//    });    
+//  } 
   
   showAlertDialog(BuildContext context) {
     // set up the buttons
     Widget cancelButton = FlatButton(
-      child: Text("No"),
+      child: Text("ok"),
       onPressed: () {
         Navigator.pop(context);
       },
     );
-    Widget continueButton = FlatButton(
-      child: Text("Yes"),
-      onPressed: () {}
-      );
+    // Widget continueButton = FlatButton(
+    //   child: Text("Yes"),
+    //   onPressed: () {}
+    //   );
      
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Order Confrimation"),
-      content: Text("Do you want to place order?"),
+      title: Text("Profile"),
+      content: Text("Profile Update Successful"),
       actions: [
         cancelButton,
-        continueButton,
+       // continueButton,
       ],
     );
 
@@ -103,10 +94,10 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
     super.initState();
     _controler=AnimationController(vsync: this,
     duration: const Duration(microseconds: 500));
-    imagePicker=ImagePickerHandler(this._controler);
-    imagePicker.listener=widget.obj;
-    imagePicker.ipl=imagePicker;
+    imagePicker=ImagePickerHandler(this,this._controler);
     imagePicker.init();
+    firebaseDatabaseUtil = FirebaseDatabaseUtil();
+    firebaseDatabaseUtil.initState();
   }
 
   @override
@@ -134,6 +125,13 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
                 color: Colors.white,
               )),
         ),
+        actions: <Widget>[
+           new IconButton(
+             icon: new Icon(Icons.close),
+            onPressed: () => widget.profile(),
+           ),
+         ],
+        leading: new Container(),
       ),
       body: SafeArea(  
           child:Form(
@@ -216,25 +214,6 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
                       },
                       keyboardType: TextInputType.number,
                     ),
-                    // TextFormField(
-                    //   controller: _emailController,
-                    //   decoration: const InputDecoration(
-                    //     icon: const Icon(
-                    //       FontAwesomeIcons.envelopeOpen,
-                    //       color: Colors.blue,
-                    //     ),
-                    //     hintText: 'Ex: abc@xyz.com',
-                    //     labelText: 'Email',
-                    //   ),
-                    //   validator: (val) {
-                    //     Pattern pattern = r'^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$';
-                    //     RegExp regex = new RegExp(pattern);
-                    //     if (!regex.hasMatch(val))
-                    //       return 'Enter Valid Email Id';
-                    //     else
-                    //       return null;
-                    //   },
-                    // ),
                     TextFormField(
                       controller: _addressController,
                       maxLines: 3,
@@ -272,47 +251,6 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
                       },
                       keyboardType: TextInputType.number,
                     ),
-                    // TextFormField(
-                    //   controller: _passwordController,
-                    //   obscureText: true,
-                    //   decoration: const InputDecoration(
-                    //     icon: const Icon(
-                    //       FontAwesomeIcons.key,
-                    //       color: Colors.blue,
-                    //     ),
-                    //    // hintText: 'Ex: 500000',
-                    //     labelText: 'Password',
-                    //   ),
-                    //   validator: (val) {
-                    //     if(val.isEmpty)
-                    //     return 'Enter Valid Password';
-                    //     else
-                    //     if (val.length <= 8)
-                    //       return 'Password must be atleast 8 charecters or longer';
-                    //     else
-                    //       return null;
-                    //   },
-                    // ),
-                    // TextFormField(
-                    //   obscureText: true,
-                    //   decoration: const InputDecoration(
-                    //     icon: const Icon(
-                    //       FontAwesomeIcons.check,
-                    //       color: Colors.blue,
-                    //     ),
-                    //    // hintText: 'Ex: 500000',
-                    //     labelText: 'Confirm Password',
-                    //   ),
-                    //   validator: (val) {
-                    //     if(val.isEmpty)
-                    //     return 'Enter Password Again';
-                    //     else
-                    //     if (val != _passwordController.text)
-                    //       return 'Password is not matching';
-                    //     else
-                    //       return null;
-                    //   },
-                    // ),
                     SizedBox(height: 20,),
                      RaisedButton(
                         color: Colors.blue,
@@ -326,20 +264,16 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
                                     style: TextStyle(fontSize: 24.0)),
                               ],
                             )),
-                        // onPressed: (){
-                        //   user=User(_nameController.text,_emailController.text,_phoneController.text,_addressController.text,_zipcodeController.text,_passwordController.text);
-                        //   _sendData();
-                        //    uploadFile();
-                        // },
                         onPressed: () {
                           final  form=_formKeyValue.currentState;
                           if (form.validate()) {
                               form.save();
                               user=User(_nameController.text,_phoneController.text,_addressController.text,_zipcodeController.text);
-                              uploadFile();
-                              widget.profile();
-                             // Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductsListPage(widget.user,widget.online,widget.offline,widget.auth)));
-                          }
+                              if(_image != null)
+                              firebaseDatabaseUtil.updateUserProfile(widget.user,_image,user).then((result){showAlertDialog(context);});
+                              else
+                              firebaseDatabaseUtil.sendData(widget.user, user,null).then((result){showAlertDialog(context);});
+                              }
                         },
                         shape: new RoundedRectangleBorder(
                             borderRadius: new BorderRadius.circular(30.0))

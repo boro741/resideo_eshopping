@@ -10,17 +10,7 @@ class ImagePickerHandler{
   AnimationController _controler;
   ImagePickerListener _listener;
   ImagePickerDialog imagePicker;
-  ImagePickerHandler _ipl;
-
-  set listener(ImagePickerListener listener){
-    this._listener=listener;
-  }
-  set ipl(ImagePickerHandler ipl){
-    this._ipl=ipl;
-  }
-  
-  //ImagePickerHandler();
-  ImagePickerHandler(this._controler);
+  ImagePickerHandler(this._listener,this._controler);
   
    openCamera() async {
     imagePicker.dismissDialog();
@@ -42,10 +32,6 @@ class ImagePickerHandler{
    Future cropImage(File image) async {
     File croppedFile = await ImageCropper.cropImage(
       sourcePath: image.path,
-     // ratioX: 1.0,
-     // ratioY: 1.0,
-     // maxWidth: 512,
-      //maxHeight: 512,
       aspectRatioPresets: [
         CropAspectRatioPreset.square,
         CropAspectRatioPreset.ratio3x2,
@@ -55,8 +41,6 @@ class ImagePickerHandler{
       ],
       androidUiSettings: AndroidUiSettings(
           toolbarTitle: 'Cropper',
-         // toolbarColor: Colors.deepOrange,
-          //toolbarWidgetColor: Colors.white,
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false),
     );
@@ -64,8 +48,7 @@ class ImagePickerHandler{
   }
 
   void init(){
-   imagePicker= ImagePickerDialog(this._controler);
-   imagePicker.listener=_ipl;
+   imagePicker= ImagePickerDialog(this,this._controler);
    imagePicker.initState();
   }
 

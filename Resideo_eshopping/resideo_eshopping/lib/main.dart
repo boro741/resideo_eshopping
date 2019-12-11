@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
       ),
       //home: MyHomePage(title: 'Resideo e-Shopping'),
 
+     // home: ProductsListPage(),
       home: RootPage(auth: Auth()),
     );
   }

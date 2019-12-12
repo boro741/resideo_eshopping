@@ -279,13 +279,9 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
                           if (form.validate()) {
                               form.save();
                               user=User(_nameController.text,_phoneController.text,_addressController.text,_zipcodeController.text);
-                              if(_image != null)
-                              firebaseDatabaseUtil.updateUserProfile(widget.user,_image,user,_isEdit).then((result){showAlertDialog(context);});
-                              else
-                                if(_isEdit)
-                              firebaseDatabaseUtil.updateData(widget.user, user,null).then((result){showAlertDialog(context);});
-                                else
-                                  firebaseDatabaseUtil.sendData(widget.user, user,null).then((result){showAlertDialog(context);});
+                              firebaseDatabaseUtil.updateUserProfile(widget.user,_image,user,_isEdit).then((result){
+                                if(result)
+                                showAlertDialog(context);});
 
                           }
                         },

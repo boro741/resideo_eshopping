@@ -114,19 +114,31 @@ class FirebaseDatabaseUtil {
     return user;
   }
  
- Future updateUserProfile(FirebaseUser user,File image,User userInfo,bool isEdit) async {
-   StorageReference storageReference = FirebaseStorage.instance.ref().child("profile pic"+user.uid.toString());
-   StorageUploadTask uploadTask = storageReference.putFile(image);   
-   await uploadTask.onComplete;  
-   print('File Uploaded');    
-   storageReference.getDownloadURL().then((fileURL) {
-     if(isEdit)
-       updateData(user, userInfo, fileURL);
-     else
-       sendData(user, userInfo, fileURL);
-   });    
- } 
-
+ Future<bool> updateUserProfile(FirebaseUser user,File image,User userInfo,bool isEdit) async {
+    bool _isCreateUpdateSuccessfull=false;
+   if (isEdit && image == null)
+     await updateData(user, userInfo, null).then((result) {
+       _isCreateUpdateSuccessfull=true;
+     });
+   else if (image == null)
+     await sendData(user, userInfo, null).then((result) {
+       _isCreateUpdateSuccessfull=true;
+     });
+   else {
+     StorageReference storageReference = FirebaseStorage.instance.ref().child(
+         "profile pic" + user.uid.toString());
+     StorageUploadTask uploadTask = storageReference.putFile(image);
+     await uploadTask.onComplete;
+     print('File Uploaded');
+     await storageReference.getDownloadURL().then((fileURL) {
+       if (isEdit)
+         updateData(user, userInfo, fileURL).then((result){_isCreateUpdateSuccessfull=true;});
+       else
+         sendData(user, userInfo, fileURL).then((result){_isCreateUpdateSuccessfull=true;});
+     });
+   }
+   return _isCreateUpdateSuccessfull;
+ }
 }
 
  

@@ -43,12 +43,17 @@ class ProductsTile extends StatelessWidget {
               ],
             ),
             onTap: (){ navigateToProductdetail(_products,user,online,offline,auth);},
-            
-            leading: 
+
+            leading:
             Container(
-              margin: EdgeInsets.only(left: 6.0),
-              child: Image.network(_products.thumbnail, height: 50.0, fit: BoxFit.fill,),
-            ),
+                margin: EdgeInsets.only(left: 6.0),
+                child: Stack(
+                    children: <Widget> [
+                      Image.network(_products.thumbnail, height: 50.0, fit: BoxFit.fill,),
+                      (_products.quantity != 0) ? Text('') : Text('OUT OF STOCK!', style: TextStyle(color: Colors.red, fontSize: 11.0), textAlign: TextAlign.center, ),
+                    ]
+                )
+            )
           ),
         ),
         //Divider()

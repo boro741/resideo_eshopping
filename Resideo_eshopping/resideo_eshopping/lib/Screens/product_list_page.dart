@@ -12,13 +12,9 @@ import 'package:resideo_eshopping/controller/product_controller.dart';
 import 'package:resideo_eshopping/util/crud_operations.dart';
 import 'package:resideo_eshopping/widgets/products_tile.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
-import 'package:resideo_eshopping/controller/root_page.dart';
-import 'package:resideo_eshopping/Screens/signup.dart';
 import 'package:resideo_eshopping/model/User.dart';
 
 class ProductsListPage extends StatefulWidget {
- // ProductsListPage({Key key,this.userLogin}) : super(key: key);
- // final UserLogin userLogin;
  ProductsListPage(this.user,this.online,this.offline,this.auth);
  final FirebaseUser user;
  final VoidCallback online;
@@ -43,39 +39,43 @@ class _ProductsListPageState extends State<ProductsListPage>
   String _imageUrl="";
   bool isProfile=false;
 
-  void profile(){
+  void _closeUserProfile(){
    setState(() {
      isProfile=false;
-     getUserDetail();
+     _getUserDetail();
    });
   }
   
-  void setProfile(){
+  void _setProfile(){
     if(widget.user == null)
     {
       _name="";
       _email="";
       _imageUrl="";
-    }
+    }else
+      {
+        _email=widget.user.email.toString();
+      }
   }
 
-  getUserDetail(){
+  _getUserDetail(){
     if(widget.user != null){
      firebaseDatabaseUtil.getUserData(widget.user).then((result){
             userInfo=result;
+            if(userInfo != null)
+            {
             setState(() {
-                if(userInfo != null)
-                  {
+
                       _name=userInfo.name;
-                      _email=widget.user.email.toString();
                       _imageUrl=userInfo.imageUrl;
-                  }
+
             });
+            }
           });
     }
   }
 
-  getProduct(String value){
+  _getProduct(String value){
   productController.getProductList(value).then((result){setState((){currentList=result;
   _isProgressBarShown = false;
   });});
@@ -85,7 +85,7 @@ class _ProductsListPageState extends State<ProductsListPage>
   Widget build(BuildContext context) {
     var key = GlobalKey<ScaffoldState>();
     Widget widget1;
-    setProfile();
+    _setProfile();
   if(_isProgressBarShown){
     widget1 = Center(
       child: Padding(
@@ -108,7 +108,7 @@ class _ProductsListPageState extends State<ProductsListPage>
   }
    if(isProfile)
    {
-     return SignUp(widget.user,profile);
+     return SignUp(widget.user,_closeUserProfile,userInfo);
    }else{
     return Scaffold(
       key: key,
@@ -151,10 +151,10 @@ class _ProductsListPageState extends State<ProductsListPage>
           ExpansionTile(
             title: Text("Filter"),
             children: <Widget>[
-              _createDrawerItem(icon: FontAwesomeIcons.male, text: 'All',onTap: () => getProduct('All')),
-              _createDrawerItem(icon: FontAwesomeIcons.male, text: 'Men',onTap: () => getProduct('Men')),
-              _createDrawerItem(icon: FontAwesomeIcons.female, text: 'Women', onTap: () => getProduct('Women')),
-              _createDrawerItem(icon: FontAwesomeIcons.child, text: 'Kids', onTap: () => getProduct('Kid')),
+              _createDrawerItem(icon: FontAwesomeIcons.male, text: 'All',onTap: () => _getProduct('All')),
+              _createDrawerItem(icon: FontAwesomeIcons.male, text: 'Men',onTap: () => _getProduct('Men')),
+              _createDrawerItem(icon: FontAwesomeIcons.female, text: 'Women', onTap: () => _getProduct('Women')),
+              _createDrawerItem(icon: FontAwesomeIcons.child, text: 'Kids', onTap: () => _getProduct('Kid')),
             ],
           ),
           Divider(),
@@ -171,24 +171,7 @@ class _ProductsListPageState extends State<ProductsListPage>
    }
   }
 
-/*
-  Widget dropdownWidget() {
-    return DropdownButton(
-      icon: Icon(Icons.filter_list),
-      //hint: new Text("Filter"),
-      items: [
-        DropdownMenuItem<String>(child: PlatformText("All"), value: "All",),
-        DropdownMenuItem<String>(child: PlatformText("Men"), value: "Men"),
-        DropdownMenuItem<String>(child: PlatformText("Women"), value: "Women"),
-        DropdownMenuItem<String>(child: PlatformText("Kid"), value: "Kid")
-      ],
-      onChanged: (String value) {
-        getProduct(value);
-      },
-      isExpanded: false,
-    );
-  }
-*/
+
   Widget _loginSignupButton(){
        if(widget.user != null)
           {
@@ -233,12 +216,8 @@ class _ProductsListPageState extends State<ProductsListPage>
           )
         ],
       ),
-      onTap: (){
-        setState(() {
-          isProfile=true;
-        });
-       // Navigator.push(context, MaterialPageRoute(builder: (context)=>SignUp(widget.user,widget.online,widget.offline,widget.auth)));
-        },
+      onTap: onTap,
+
     );
   }
 
@@ -247,7 +226,7 @@ class _ProductsListPageState extends State<ProductsListPage>
     super.initState();
     firebaseDatabaseUtil=FirebaseDatabaseUtil();
     firebaseDatabaseUtil.initState();
-    getUserDetail(); 
+    _getUserDetail();
     Timer.run(() {
       try {
         InternetAddress.lookup('google.com').then((result) {
@@ -265,7 +244,7 @@ class _ProductsListPageState extends State<ProductsListPage>
       }
     });
 
-    getProduct("All");
+    _getProduct("All");
   }
 
  
@@ -279,7 +258,3 @@ class _ProductsListPageState extends State<ProductsListPage>
   }
 
 }
-
-// abstract class UserLogin{
-//   void login();
-// }

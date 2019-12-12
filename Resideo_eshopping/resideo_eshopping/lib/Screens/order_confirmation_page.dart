@@ -1,8 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:resideo_eshopping/Screens/product_list_page.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:resideo_eshopping/controller/product_controller.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:giffy_dialog/giffy_dialog.dart';
@@ -13,8 +11,7 @@ import 'package:resideo_eshopping/controller/root_page.dart';
 
 
 class AddUserDetails extends StatefulWidget {
- // static GlobalKey<FormState> _formKeyValue = new GlobalKey<FormState>();
-  
+
   AddUserDetails(this.product,this.userInfo,this.user,this.online,this.offline,this.auth);
   final Product product;
   final User userInfo;
@@ -31,8 +28,6 @@ class _AddUserDetailsState extends State<AddUserDetails> {
   final ProductController productController=ProductController();
   
 void navigateToHomePage(BuildContext context) async{
-  //  Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-  //   ProductsListPage(widget.user,widget.online,widget.offline,widget.auth)), (Route<dynamic> route) => false);
    Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
     RootPage(auth: widget.auth,)), (Route<dynamic> route) => false);
   
@@ -167,30 +162,40 @@ void navigateToHomePage(BuildContext context) async{
                         ),
                       ],
                     ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          margin: const EdgeInsets.all(20.0),
-                          child: Text(
-                            'Deliver To: ',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: Colors.blue,
+
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Container(
+                              margin: const EdgeInsets.all(20.0),
+                              child: Text(
+                                'Deliver To: ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: Colors.blue,
+                                ),
+                              ),
                             ),
-                          ),
+                            Container(
+                                //margin: const EdgeInsets.all(20.0),
+
+                                    child:Flexible(
+                                      child: PlatformText(
+                                        widget.userInfo.address.toString(),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 5,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold, fontSize: 20),
+                                      ),
+                                    )
+
+
+                            ),
+                          ],
                         ),
-                        Container(
-                          margin: const EdgeInsets.all(20.0),
-                          child: PlatformText(
-                             widget.userInfo.address.toString(),
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20),
-                          ),
-                        ),
-                      ],
-                    ),
+
+
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[

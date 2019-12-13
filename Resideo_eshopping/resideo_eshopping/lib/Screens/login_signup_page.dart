@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:resideo_eshopping/Screens/product_list_page.dart';
-import 'package:resideo_eshopping/Screens/signup.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 class LoginSignUpPage extends StatefulWidget {
   LoginSignUpPage({this.auth, this.onSignedIn});

@@ -13,6 +13,8 @@ import 'package:resideo_eshopping/util/crud_operations.dart';
 import 'package:resideo_eshopping/widgets/products_tile.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
 import 'package:resideo_eshopping/model/User.dart';
+import 'package:mobx/mobx.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class ProductsListPage extends StatefulWidget {
  ProductsListPage(this.user,this.online,this.offline,this.auth);
@@ -26,11 +28,23 @@ class ProductsListPage extends StatefulWidget {
 
 class _ProductsListPageState extends State<ProductsListPage> 
     with SingleTickerProviderStateMixin {
+
+  @observable
   ProductController productController=ProductController();
+
+  @observable
   FirebaseDatabaseUtil firebaseDatabaseUtil;
+
+  @observable
   String dropdownValue = 'Categories';
+
+  @observable
   List<Product> currentList = <Product>[];
+
+  @observable
   bool _isProgressBarShown = true;
+
+  @observable
   AnimationController controller;
   Animation<double> animation;
   User userInfo;
@@ -166,7 +180,9 @@ class _ProductsListPageState extends State<ProductsListPage>
       appBar: AppBar(
           title: PlatformText("Resideo eShopping"),
           ),
-      body: widget1,
+      body: Observer(
+        builder: (context) => widget1,
+      ),
     );
    }
   }

@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+//import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:resideo_eshopping/controller/product_controller.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:giffy_dialog/giffy_dialog.dart';
@@ -52,28 +52,28 @@ void navigateToHomePage(BuildContext context) async{
 
   showAlertDialog(BuildContext context) {
     // set up the buttons
-    Widget cancelButton = PlatformButton(
-      child: PlatformText("No"),
+    Widget cancelButton = MaterialButton(
+      child: Text("No"),
       onPressed: () {
         Navigator.pop(context);
       },
-      androidFlat: (_) => MaterialFlatButtonData()
+      //androidFlat: (_) => MaterialFlatButtonData()
     );
-    Widget continueButton = PlatformButton(
-      child: PlatformText("Yes"),
+    Widget continueButton = MaterialButton(
+      child: Text("Yes"),
       onPressed: () {
          Navigator.pop(context);
          productController.updateInventory(widget.product);
            orderPlaced(context);
            },
            
-      androidFlat: (_) => MaterialFlatButtonData()
+      //androidFlat: (_) => MaterialFlatButtonData()
     );
 
     // set up the AlertDialog
-    PlatformAlertDialog alert = PlatformAlertDialog(
-      title: PlatformText("Order Confrimation"),
-      content: PlatformText("Do you want to place order?"),
+    AlertDialog alert = AlertDialog(
+      title: Text("Order Confrimation"),
+      content: Text("Do you want to place order?"),
       actions: <Widget>[
         cancelButton,
         continueButton,
@@ -98,11 +98,11 @@ void navigateToHomePage(BuildContext context) async{
   @override
   Widget build(BuildContext context) {
 
-    return PlatformScaffold(
-      appBar: PlatformAppBar(
+    return Scaffold(
+      appBar: AppBar(
         title: Container(
           alignment: Alignment.center,
-          child: PlatformText("Resideo e-Shopping",
+          child: Text("Resideo e-Shopping",
               style: TextStyle(
                 //color: Colors.white,
               )),
@@ -130,7 +130,7 @@ void navigateToHomePage(BuildContext context) async{
                         ),
                         Container(
                           margin: const EdgeInsets.all(20.0),
-                          child: PlatformText(
+                          child: Text(
                              widget.product.title,
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 20),
@@ -154,7 +154,7 @@ void navigateToHomePage(BuildContext context) async{
                         ),
                         Container(
                           margin: const EdgeInsets.all(20.0),
-                          child: PlatformText(
+                          child: Text(
                             'Rs. ' + widget.product.price.toString(),
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 20),
@@ -181,7 +181,7 @@ void navigateToHomePage(BuildContext context) async{
                                 //margin: const EdgeInsets.all(20.0),
 
                                     child:Flexible(
-                                      child: PlatformText(
+                                      child: Text(
                                         widget.userInfo.address.toString(),
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 5,
@@ -212,7 +212,7 @@ void navigateToHomePage(BuildContext context) async{
                         ),
                         Container(
                           margin: const EdgeInsets.all(20.0),
-                          child: PlatformText(
+                          child: Text(
                             widget.userInfo.phone.toString(),
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 20),

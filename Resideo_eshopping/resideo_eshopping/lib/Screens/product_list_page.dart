@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+//import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:resideo_eshopping/Screens/signup.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/controller/product_controller.dart';
@@ -104,9 +104,9 @@ class _ProductsListPageState extends State<ProductsListPage>
     widget1 = Center(
       child: Padding(
         padding: const EdgeInsets.only(left: 16.0, right: 16.0),
-        child: PlatformCircularProgressIndicator(
-          android: (_) => MaterialProgressIndicatorData(),
-          ios: (_) => CupertinoProgressIndicatorData(),
+        child: CircularProgressIndicator(
+//          android: (_) => MaterialProgressIndicatorData(),
+//          ios: (_) => CupertinoProgressIndicatorData(),
         ),
       )
     );
@@ -178,7 +178,7 @@ class _ProductsListPageState extends State<ProductsListPage>
       ),
     ),
       appBar: AppBar(
-          title: PlatformText("Resideo eShopping"),
+          title: Text("Resideo eShopping"),
           ),
       body: Observer(
         builder: (context) => widget1,
@@ -191,7 +191,7 @@ class _ProductsListPageState extends State<ProductsListPage>
   Widget _loginSignupButton(){
        if(widget.user != null)
           {
-            return PlatformButton(
+            return MaterialButton(
             onPressed: () async{
              try {
                    await widget.auth.signOut();
@@ -200,22 +200,22 @@ class _ProductsListPageState extends State<ProductsListPage>
                    print(e);
                   }
             },
-            child: PlatformText('LOG OUT'),
+            child: Text('LOG OUT'),
             color: Color.fromRGBO(255, 0, 0, 1.0),
-            android: (_) => MaterialRaisedButtonData(),
-            ios: (_) => CupertinoButtonData()
+//            android: (_) => MaterialRaisedButtonData(),
+//            ios: (_) => CupertinoButtonData()
           );
           }
           else
           {
-          return PlatformButton(
+          return MaterialButton(
             onPressed: (){
             widget.online();
             },
-            child: PlatformText('LOG In'),
+            child: Text('LOG In'),
             color: Color.fromRGBO(255, 0, 0, 1.0),
-            android: (_) => MaterialRaisedButtonData(),
-            ios: (_) => CupertinoButtonData()
+//            android: (_) => MaterialRaisedButtonData(),
+//            ios: (_) => CupertinoButtonData()
           );
           }
   }

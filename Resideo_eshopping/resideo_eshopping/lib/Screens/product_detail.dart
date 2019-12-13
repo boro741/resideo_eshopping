@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+//import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/Screens/order_confirmation_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -110,9 +110,9 @@ class _ProductDetailState extends State<ProductDetail> {
     void navigateToCustomerAddress(User userInfo) async{
      Navigator.push(context, MaterialPageRoute(builder: (context)=> AddUserDetails(widget.pd,userInfo,widget.user,widget.online,widget.offline,widget.auth)));
   }
-    return PlatformScaffold(
-      appBar: PlatformAppBar(
-        title: PlatformText("Resideo e-Shopping"),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Resideo e-Shopping"),
       ),
       body: Container(
         padding: EdgeInsets.all(15.0),
@@ -253,17 +253,17 @@ class _ProductDetailState extends State<ProductDetail> {
 
    showAlertDialog(BuildContext context) {
     // set up the buttons
-    Widget cancelButton = PlatformButton(
-      child: PlatformText("ok"),
+    Widget cancelButton = MaterialButton(
+      child: Text("ok"),
       onPressed: () {
         Navigator.pop(context);
       },
-      androidFlat: (_) => MaterialFlatButtonData()
+//      androidFlat: (_) => MaterialFlatButtonData()
     );
     // set up the AlertDialog
-    PlatformAlertDialog alert = PlatformAlertDialog(
-      title: PlatformText("Update User Profile"),
-      content: PlatformText("Please update Address and phone No in your user Profile"),
+    AlertDialog alert = AlertDialog(
+      title: Text("Update User Profile"),
+      content: Text("Please update Address and phone No in your user Profile"),
       actions: <Widget>[
         cancelButton,
       ],

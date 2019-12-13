@@ -76,7 +76,7 @@ class _ProductDetailState extends State<ProductDetail> {
   }
   @override
   void initState() {
-    _videoPlayerController = VideoPlayerController.network(widget.pd.pVideo);
+    _videoPlayerController = VideoPlayerController.network(widget.pd.pVideoUrl);
     _initializeVideoPlayerFuture = _videoPlayerController.initialize();
     _videoPlayerController.setLooping(true);
     _videoPlayerController.setVolume(1.0);
@@ -84,7 +84,7 @@ class _ProductDetailState extends State<ProductDetail> {
     firebaseDatabaseUtil=FirebaseDatabaseUtil();
     firebaseDatabaseUtil.initState();
     getUserDetail();
-    getFileFromUrl(widget.pd.faq).then((f) {
+    getFileFromUrl(widget.pd.faqUrl).then((f) {
       setState(() {
         urlPDFPath = f.path;
         print(urlPDFPath);

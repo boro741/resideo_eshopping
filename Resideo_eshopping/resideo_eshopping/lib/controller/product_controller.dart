@@ -18,7 +18,7 @@ class ProductController {
       await helper.getProductListDb().then((result) async{
         int count = result.length;
         for (int i = 0; i < count; i++) {
-          productlist.add(Product.fromObject(result[i]));
+          productlist.add(Product.fromJSON(result[i]));
         }
         if (productlist.length == 0)
            await updateProductModel();

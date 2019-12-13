@@ -44,10 +44,13 @@ dependencies:
   flutter_full_pdf_viewer: ^1.0.6
   flutter_plugin_pdf_viewer: any
   flutter_pdfview: any
+  json_annotation: ^2.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  build_runner: ^1.0.0
+  json_serializable: ^2.0.0
   
 
 # For information on the generic Dart part of this file, see the

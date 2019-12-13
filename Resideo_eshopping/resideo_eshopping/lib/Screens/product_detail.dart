@@ -348,7 +348,7 @@ class _ProductDetailState extends State<ProductDetail> {
     return CarouselSlider(
       height: 300.0,
       items: [
-        Image.network(widget.pd.img, fit: BoxFit.fill,),
+        Image.network(widget.pd.imgUrl, fit: BoxFit.fill,),
          _showVideo(),
       ],
     );

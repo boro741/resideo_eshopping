@@ -1,134 +1,80 @@
+
+import 'package:json_annotation/json_annotation.dart';
+
+part 'product.g.dart';
+
+@JsonSerializable()
 class Product{
 
-  int _id;
-  String _title;
-  String _sDesc;
-  String _imgUrl;
-  int _price;
-  int _quantity;
-  String _lDesc;
-  String _category;
-  int _rating;
-  String _review;
-  String _thumbnailUrl;
-  String _faq;
-  String _pVideo;
+  @JsonKey(name: 'ProductId')
+  int id;
+  @JsonKey(name: 'ProductName')
+  String title;
+  @JsonKey(name: 'ShortDescription')
+  String sDesc;
+  @JsonKey(name: 'Image')
+  String imgUrl;
+  @JsonKey(name: 'Price')
+  int price;
+  @JsonKey(name: 'Inventory')
+  int quantity;
+  @JsonKey(name: 'LongDescription')
+  String lDesc;
+  @JsonKey(name: 'Category')
+  String category;
+  @JsonKey(name: 'Rating')
+  int rating;
+  @JsonKey(name: 'Review')
+  String review;
+  @JsonKey(name: 'Thumbnail')
+  String thumbnailUrl;
+  @JsonKey(name: 'FAQ')
+  String faq;
+  @JsonKey(name: 'ProductVideo')
+  String pVideo;
   
-  Product(this._title,this._sDesc,this._imgUrl,this._price,this._quantity,this._lDesc,this._category,this._rating,this._review,this._thumbnailUrl,this._faq,this._pVideo);
-  Product.withId(this._id,this._title,this._sDesc,this._imgUrl,this._price,this._quantity,this._lDesc,this._category,this._rating,this._review,this._thumbnailUrl,this._faq,this._pVideo);
+  Product(this.title,this.sDesc,this.imgUrl,this.price,this.quantity,this.lDesc,this.category,this.rating,this.review,this.thumbnailUrl,this.faq,this.pVideo);
+  Product.withId(this.id,this.title,this.sDesc,this.imgUrl,this.price,this.quantity,this.lDesc,this.category,this.rating,this.review,this.thumbnailUrl,this.faq,this.pVideo);
 
-  int get id => _id;
-  String get title => _title;
-  String get sDesc => _sDesc;
-  String get img => _imgUrl;
-  int get price => _price;
-  int get quantity => _quantity;
-  String get lDesc => _lDesc;
-  String get category => _category;
-  int get rating => _rating;
-  String get review => _review;
-  String get thumbnail => _thumbnailUrl;
-  String get faq => _faq;
-  String get pVideo => _pVideo;
 
-  set title(String newtitle)
-  {
-    _title=newtitle;
-  }
 
-  set sDesc(String newSDesc){
-     _sDesc=newSDesc;
-  }
 
-  set img(String newimg){
-    _imgUrl=newimg;
-  }
-
-  set price(int newprice){
-    _price=newprice;
-  }
-
-  set quantity(int newquantity){
-    _quantity=newquantity;
-  }
-
-  set lesc(String newLDesc){
-    _lDesc=newLDesc;
-  }
-
-  set category(String newcategory){
-    _category=newcategory;
-  }
-
-  set rating(int newrating){
-    _rating=newrating;
-  }
-
-  set review(String newreview){
-    _review=newreview;
-  }
-  
-  set thumbnail(String newthumbnail){
-    _thumbnailUrl=newthumbnail;
-  }
-
-  set faq(String newfaq){
-    _faq=newfaq;
-  }
-
-  set pVideo(String newpVideo){
-    _pVideo=newpVideo;
-  }
 
   Map<String,dynamic> tomap()
   {
     Map<String,dynamic> productList=Map<String,dynamic>();
-    productList['id']=_id;
-    productList['title']=_title;
-    productList['s_desc']=_sDesc;
-    productList['img']=_imgUrl;
-    productList['price']=_price;
-    productList['quantity']=_quantity;
-    productList['l_desc']=_lDesc;
-    productList['category']=_category;
-    productList['rating']=_rating;
-    productList['review']=_review;
-    productList['thumbnail']=_thumbnailUrl;
-    productList['faq']=_faq;
-    productList['pVideo']=_pVideo;
+    productList['id']=id;
+    productList['title']=title;
+    productList['s_desc']=sDesc;
+    productList['img']=imgUrl;
+    productList['price']=price;
+    productList['quantity']=quantity;
+    productList['l_desc']=lDesc;
+    productList['category']=category;
+    productList['rating']=rating;
+    productList['review']=review;
+    productList['thumbnail']=thumbnailUrl;
+    productList['faq']=faq;
+    productList['pVideo']=pVideo;
     return productList;
   }
 
   Product.fromObject(dynamic o)
   {
-    this._id=o['id'];
-    this._title=o['title'];
-    this._sDesc=o['s_desc'];
-    this._imgUrl=o['img'];
-    this._price=o['price'];
-    this._quantity=o['quantity'];
-    this._lDesc=o['l_desc'];
-    this._category=o['category'];
-    this._rating=o['rating'];
-    this._review=o['review'];
-    this._thumbnailUrl=o['thumbnail'];
-    this._faq=o['faq'];
-    this._pVideo=o['pVideo'];
+    this.id=o['id'];
+    this.title=o['title'];
+    this.sDesc=o['s_desc'];
+    this.imgUrl=o['img'];
+    this.price=o['price'];
+    this.quantity=o['quantity'];
+    this.lDesc=o['l_desc'];
+    this.category=o['category'];
+    this.rating=o['rating'];
+    this.review=o['review'];
+    this.thumbnailUrl=o['thumbnail'];
+    this.faq=o['faq'];
+    this.pVideo=o['pVideo'];
   }
 
-  Product.fromJSON(Map<String, dynamic> jsonMap) :
-  _category = jsonMap['Category'],
-  _faq = jsonMap['FAQ'],
-  _imgUrl = jsonMap['Image'],
-  _quantity = jsonMap['Inventory'],
-  _lDesc = jsonMap['LongDescription'],
-  _price = jsonMap['Price'],
-  _id = jsonMap['ProductId'],
-  _title = jsonMap['ProductName'],
-  _pVideo = jsonMap['ProductVideo'],
-  _rating = jsonMap['Rating'],
-  _review = jsonMap['Review'],
-  _sDesc = jsonMap['ShortDescription'],
-  _thumbnailUrl = jsonMap['Thumbnail'];
-
+   factory Product.fromJSON(Map<String,dynamic> jsonMap) => _$ProductFromJson(jsonMap);
 }

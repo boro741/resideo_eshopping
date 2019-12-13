@@ -1,16 +1,20 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'dart:io';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:async';
 import 'package:resideo_eshopping/controller/image_picker_dialog.dart';
+import 'package:resideo_eshopping/util/crud_operations.dart';
 
 class ImagePickerHandler{
 
   AnimationController _controler;
   ImagePickerListener _listener;
   ImagePickerDialog imagePicker;
-  ImagePickerHandler(this._listener,this._controler);
+  FirebaseUser _user;
+  FirebaseDatabaseUtil _firebaseDatabaseUtil;
+  ImagePickerHandler(this._listener,this._controler,this._user);
   
    openCamera() async {
     imagePicker.dismissDialog();
@@ -26,7 +30,10 @@ class ImagePickerHandler{
 
   removePicture() async{
     imagePicker.dismissDialog();
+    await _firebaseDatabaseUtil.deleteProfilePicture(_user).then((result){
+      if(result)
       _listener.userImage(null);
+    });
   }
 
    Future cropImage(File image) async {
@@ -48,6 +55,7 @@ class ImagePickerHandler{
   }
 
   void init(){
+   _firebaseDatabaseUtil = FirebaseDatabaseUtil();
    imagePicker= ImagePickerDialog(this,this._controler);
    imagePicker.initState();
   }

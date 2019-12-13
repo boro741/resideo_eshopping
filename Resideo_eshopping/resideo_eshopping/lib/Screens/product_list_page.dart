@@ -7,6 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 //import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:resideo_eshopping/Screens/signup.dart';
+import 'package:resideo_eshopping/Screens/user_profile.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/controller/product_controller.dart';
 import 'package:resideo_eshopping/util/crud_operations.dart';
@@ -127,7 +128,7 @@ class _ProductsListPageState extends State<ProductsListPage>
         padding: EdgeInsets.zero,
         children: <Widget>[
           Container(
-                child: _imageUrl != ""?
+                child: (_imageUrl != "" && _imageUrl != null)?
                  UserAccountsDrawerHeader(
                   accountName: Text(_name),
                   accountEmail: Text(_email),

@@ -66,7 +66,7 @@ class Dbhelper
   Future<int> _addProduct(Database db,Product pd) async{
     var result;
     try{
-    result=await db.insert(_tblname, pd.tomap());
+    result=await db.insert(_tblname, pd.toJson());
     }catch(e){
       print("Exception Occured:$e");
     }

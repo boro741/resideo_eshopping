@@ -29,22 +29,17 @@ class ProductsListPage extends StatefulWidget {
 class _ProductsListPageState extends State<ProductsListPage> 
     with SingleTickerProviderStateMixin {
 
-  @observable
   ProductController productController=ProductController();
 
-  @observable
   FirebaseDatabaseUtil firebaseDatabaseUtil;
 
-  @observable
+
   String dropdownValue = 'Categories';
 
-  @observable
   List<Product> currentList = <Product>[];
 
-  @observable
   bool _isProgressBarShown = true;
 
-  @observable
   AnimationController controller;
   Animation<double> animation;
   User userInfo;
@@ -99,6 +94,7 @@ class _ProductsListPageState extends State<ProductsListPage>
   Widget build(BuildContext context) {
     var key = GlobalKey<ScaffoldState>();
     Widget widget1;
+
     _setProfile();
   if(_isProgressBarShown){
     widget1 = Center(
@@ -113,12 +109,12 @@ class _ProductsListPageState extends State<ProductsListPage>
   }
   else{
     widget1 = ListView.builder(
-      shrinkWrap: true,
-      padding: const EdgeInsets.all(0.0),
+          shrinkWrap: true,
+          padding: const EdgeInsets.all(0.0),
 
-      itemCount: currentList.length,
-      itemBuilder: (context, index) => ProductsTile(currentList[index],widget.user,widget.online,widget.offline,widget.auth),
-    );
+          itemCount: currentList.length,
+          itemBuilder: (context, index) => ProductsTile(currentList[index],widget.user,widget.online,widget.offline,widget.auth),
+        );
   }
    if(isProfile)
    {
@@ -180,9 +176,7 @@ class _ProductsListPageState extends State<ProductsListPage>
       appBar: AppBar(
           title: Text("Resideo eShopping"),
           ),
-      body: Observer(
-        builder: (context) => widget1,
-      ),
+      body: widget1,
     );
    }
   }

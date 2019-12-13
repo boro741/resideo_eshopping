@@ -142,7 +142,7 @@ class FirebaseDatabaseUtil {
  Future<bool> updateUserProfile(FirebaseUser user,File image,User userInfo,bool isEdit) async {
     bool _isCreateUpdateSuccessfull=false;
    if (isEdit && image == null)
-     await updateData(user, userInfo, null).then((result) {
+     await updateData(user, userInfo, null,false).then((result) {
        _isCreateUpdateSuccessfull=true;
      });
    else if (image == null)
@@ -155,11 +155,11 @@ class FirebaseDatabaseUtil {
      StorageUploadTask uploadTask = storageReference.putFile(image);
      await uploadTask.onComplete;
      print('File Uploaded');
-     await storageReference.getDownloadURL().then((fileURL) {
+     await storageReference.getDownloadURL().then((fileURL) async{
        if (isEdit)
-         updateData(user, userInfo, fileURL).then((result){_isCreateUpdateSuccessfull=true;});
+         await updateData(user, userInfo, fileURL,false).then((result){_isCreateUpdateSuccessfull=true;});
        else
-         sendData(user, userInfo, fileURL).then((result){_isCreateUpdateSuccessfull=true;});
+         await sendData(user, userInfo, fileURL).then((result){_isCreateUpdateSuccessfull=true;});
      });
    }
    return _isCreateUpdateSuccessfull;

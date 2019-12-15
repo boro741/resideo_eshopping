@@ -14,41 +14,20 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_plugin_pdf_viewer/flutter_plugin_pdf_viewer.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:resideo_eshopping/model/User.dart';
+import 'package:resideo_eshopping/widgets/rating_start.dart';
 
-class StarDisplay extends StatefulWidget {
-  final int value;
-  const StarDisplay({Key key, this.value = 0})
-      : assert(value != null),
-        super(key: key);
 
-  @override
-  _StarDisplayState createState() => _StarDisplayState();
-}
-
-class _StarDisplayState extends State<StarDisplay> {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: List.generate(5, (index) {
-        return Icon(
-          index < widget.value ? Icons.star : Icons.star_border,
-        );
-      }),
-    );
-  }
-}
 
 class ProductDetail extends StatefulWidget
 {
  
-  final Product pd;
+  final Product product;
   final FirebaseUser user;
   final VoidCallback online;
   final VoidCallback offline;
   final BaseAuth auth;
   final User userInfo;
-  ProductDetail(this.pd,this.user,this.online,this.offline,this.auth,this.userInfo);
+  ProductDetail(this.product,this.user,this.online,this.offline,this.auth,this.userInfo);
 
   @override
   _ProductDetailState createState() => _ProductDetailState();
@@ -66,18 +45,19 @@ class _ProductDetailState extends State<ProductDetail> {
 
   @override
   void initState() {
-    _videoPlayerController = VideoPlayerController.network(widget.pd.pVideoUrl);
+    _videoPlayerController = VideoPlayerController.network(widget.product.pVideoUrl);
     _initializeVideoPlayerFuture = _videoPlayerController.initialize();
     _videoPlayerController.setLooping(true);
     _videoPlayerController.setVolume(1.0);
     super.initState();
-    getFileFromUrl(widget.pd.faqUrl).then((f) {
+    getFileFromUrl(widget.product.faqUrl).then((f) {
       setState(() {
         urlPDFPath = f.path;
         print(urlPDFPath);
       });
     });
   }
+
   Future<File> getFileFromUrl(String url) async {
     try {
       var data = await http.get(url);
@@ -95,7 +75,7 @@ class _ProductDetailState extends State<ProductDetail> {
   @override
   Widget build(BuildContext context) {
     void navigateToCustomerAddress() async{
-     Navigator.push(context, MaterialPageRoute(builder: (context)=> AddUserDetails(widget.pd,widget.userInfo,widget.user,widget.online,widget.offline,widget.auth)));
+     Navigator.push(context, MaterialPageRoute(builder: (context)=> AddUserDetails(widget.product,widget.userInfo,widget.user,widget.online,widget.offline,widget.auth)));
   }
     return PlatformScaffold(
       appBar: PlatformAppBar(
@@ -111,12 +91,12 @@ class _ProductDetailState extends State<ProductDetail> {
                  Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
-                   Text(widget.pd.title,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.blue),),
+                   Text(widget.product.title,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.blue),),
                    Spacer(),
-                   StarDisplay(value: widget.pd.rating,),
+                   StarDisplay(value: widget.product.rating,),
                 ],
                 ),
-                Text(widget.pd.sDesc),
+                Text(widget.product.sDesc),
                 SizedBox(height: 20,),
                 _showSlides(),
                 SizedBox(height: 20,),
@@ -124,9 +104,9 @@ class _ProductDetailState extends State<ProductDetail> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                    Icon(FontAwesomeIcons.rupeeSign),
-                   Text(widget.pd.price.toString(),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 30),),
+                   Text(widget.product.price.toString(),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 30),),
                    Spacer(),
-                   getInventory(widget.pd.quantity),     
+                   getInventory(widget.product.quantity),
                 ],
                 ),
                 SizedBox(height: 20,),
@@ -154,11 +134,11 @@ class _ProductDetailState extends State<ProductDetail> {
                 SizedBox(height: 20,),
                 Text("About This Item",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
                 SizedBox(height: 10,),
-                Text(widget.pd.lDesc,style: TextStyle(fontSize: 15),),
+                Text(widget.product.lDesc,style: TextStyle(fontSize: 15),),
                 SizedBox(height: 20,),
                 Text('Customer Reviews',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
                 SizedBox(height: 10,),
-                Text(widget.pd.review,style: TextStyle(fontSize: 15),),
+                Text(widget.product.review,style: TextStyle(fontSize: 15),),
 
                 SizedBox(height: 20,), 
                 ButtonTheme(
@@ -294,7 +274,7 @@ class _ProductDetailState extends State<ProductDetail> {
     return CarouselSlider(
       height: 300.0,
       items: [
-        Image.network(widget.pd.imgUrl, fit: BoxFit.fill,),
+        Image.network(widget.product.imgUrl, fit: BoxFit.fill,),
          _showVideo(),
       ],
     );

@@ -103,7 +103,7 @@ class _ProductsListPageState extends State<ProductsListPage>
       padding: const EdgeInsets.all(0.0),
 
       itemCount: currentList.length,
-      itemBuilder: (context, index) => ProductsTile(currentList[index],widget.user,widget.online,widget.offline,widget.auth),
+      itemBuilder: (context, index) => ProductsTile(currentList[index],widget.user,widget.online,widget.offline,widget.auth,userInfo),
     );
   }
    if(isProfile)

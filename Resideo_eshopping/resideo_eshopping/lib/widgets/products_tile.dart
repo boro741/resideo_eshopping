@@ -5,6 +5,7 @@ import 'package:resideo_eshopping/model/product.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
+import 'package:resideo_eshopping/model/User.dart';
 
 class ProductsTile extends StatelessWidget {
   Product _products;
@@ -12,14 +13,15 @@ class ProductsTile extends StatelessWidget {
   VoidCallback online;
   VoidCallback offline;
   BaseAuth auth;
-  ProductsTile(this._products,this.user,this.online,this.offline,this.auth);
+  User userInfo;
+  ProductsTile(this._products,this.user,this.online,this.offline,this.auth,this.userInfo);
   Widget widget;
 
   @override 
   Widget build(BuildContext context) { 
-  void navigateToProductdetail(Product pd,FirebaseUser user,VoidCallback online,VoidCallback offline,BaseAuth auth) async{
+  void navigateToProductdetail(Product pd,FirebaseUser user,VoidCallback online,VoidCallback offline,BaseAuth auth,User userInfo) async{
   //Navigator.push(context, MaterialPageRoute(builder: (context)=> ProductDetail(pd)));
-  Navigator.push(context, ScaleRoute(page: ProductDetail(pd,user,online,offline,auth)));
+  Navigator.push(context, ScaleRoute(page: ProductDetail(pd,user,online,offline,auth,userInfo)));
   }
     return Column(
       children: <Widget>[
@@ -42,7 +44,7 @@ class ProductsTile extends StatelessWidget {
                 
               ],
             ),
-            onTap: (){ navigateToProductdetail(_products,user,online,offline,auth);},
+            onTap: (){ navigateToProductdetail(_products,user,online,offline,auth,userInfo);},
 
             leading:
             Container(

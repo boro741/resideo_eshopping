@@ -8,7 +8,6 @@ import 'package:resideo_eshopping/Screens/order_confirmation_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
-import 'package:resideo_eshopping/util/crud_operations.dart';
 import 'package:video_player/video_player.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
@@ -48,7 +47,8 @@ class ProductDetail extends StatefulWidget
   final VoidCallback online;
   final VoidCallback offline;
   final BaseAuth auth;
-  ProductDetail(this.pd,this.user,this.online,this.offline,this.auth);
+  final User userInfo;
+  ProductDetail(this.pd,this.user,this.online,this.offline,this.auth,this.userInfo);
 
   @override
   _ProductDetailState createState() => _ProductDetailState();
@@ -60,20 +60,10 @@ class _ProductDetailState extends State<ProductDetail> {
   bool buttonDisabled=false;
   PDFDocument document;
   String inventoryDetail;
-  User userInfo;
-  FirebaseDatabaseUtil firebaseDatabaseUtil;
-
   VideoPlayerController _videoPlayerController;
 
   Future<void> _initializeVideoPlayerFuture;
 
-  getUserDetail(){
-    if(widget.user != null){
-     firebaseDatabaseUtil.getUserData(widget.user).then((result){
-            userInfo=result;
-          });
-    }
-  }
   @override
   void initState() {
     _videoPlayerController = VideoPlayerController.network(widget.pd.pVideoUrl);
@@ -81,9 +71,6 @@ class _ProductDetailState extends State<ProductDetail> {
     _videoPlayerController.setLooping(true);
     _videoPlayerController.setVolume(1.0);
     super.initState();
-    firebaseDatabaseUtil=FirebaseDatabaseUtil();
-    firebaseDatabaseUtil.initState();
-    getUserDetail();
     getFileFromUrl(widget.pd.faqUrl).then((f) {
       setState(() {
         urlPDFPath = f.path;
@@ -107,8 +94,8 @@ class _ProductDetailState extends State<ProductDetail> {
 
   @override
   Widget build(BuildContext context) {
-    void navigateToCustomerAddress(User userInfo) async{
-     Navigator.push(context, MaterialPageRoute(builder: (context)=> AddUserDetails(widget.pd,userInfo,widget.user,widget.online,widget.offline,widget.auth)));
+    void navigateToCustomerAddress() async{
+     Navigator.push(context, MaterialPageRoute(builder: (context)=> AddUserDetails(widget.pd,widget.userInfo,widget.user,widget.online,widget.offline,widget.auth)));
   }
     return PlatformScaffold(
       appBar: PlatformAppBar(
@@ -127,52 +114,11 @@ class _ProductDetailState extends State<ProductDetail> {
                    Text(widget.pd.title,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.blue),),
                    Spacer(),
                    StarDisplay(value: widget.pd.rating,),
-             
                 ],
                 ),
                 Text(widget.pd.sDesc),
                 SizedBox(height: 20,),
                 _showSlides(),
-                //Image.network(pd.img),
-        
-        /*
-                FutureBuilder(
-                  future: _initializeVideoPlayerFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return AspectRatio(
-                        aspectRatio: _videoPlayerController.value.aspectRatio,
-                        child:
-                          CarouselSlider(
-                            height: 300.0,
-                            items: [
-                              Image.network(widget.pd.img, fit: BoxFit.fill,),
-                              VideoPlayer(_videoPlayerController),
-                            ],
-                          ), 
-                      );
-                    } else {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                  },
-                ),
-                FloatingActionButton(
-                  backgroundColor: Colors.transparent,
-                  onPressed: () {
-                    setState(() {
-                      if (_videoPlayerController.value.isPlaying) {
-                        _videoPlayerController.pause();
-                      } else {
-                        _videoPlayerController.play();
-                      }
-                    });
-                  },
-                  child: Icon(
-                    _videoPlayerController.value.isPlaying ? Icons.pause : Icons.play_arrow,
-                  ),
-                ), 
-
-                */
                 SizedBox(height: 20,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -198,11 +144,11 @@ class _ProductDetailState extends State<ProductDetail> {
                       Navigator.pop(context);
                       widget.online();
                     }else
-                    if(userInfo == null || userInfo.address == null || userInfo.phone == null)
+                    if(widget.userInfo == null || widget.userInfo.address == null || widget.userInfo.phone == null)
                     {
                       showAlertDialog(context);
                     }else
-                    navigateToCustomerAddress(userInfo);
+                    navigateToCustomerAddress();
                   },
                 ),
                 SizedBox(height: 20,),

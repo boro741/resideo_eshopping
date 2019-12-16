@@ -9,7 +9,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:resideo_eshopping/Screens/user_profile.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/controller/product_controller.dart';
-import 'package:resideo_eshopping/util/crud_operations.dart';
+import 'package:resideo_eshopping/util/firebase_database_helper.dart';
 import 'package:resideo_eshopping/widgets/products_tile.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
 import 'package:resideo_eshopping/model/User.dart';
@@ -103,7 +103,7 @@ class _ProductsListPageState extends State<ProductsListPage>
       padding: const EdgeInsets.all(0.0),
 
       itemCount: currentList.length,
-      itemBuilder: (context, index) => ProductsTile(currentList[index],widget.user,widget.online,widget.offline,widget.auth),
+      itemBuilder: (context, index) => ProductsTile(currentList[index],widget.user,widget.online,widget.offline,widget.auth,userInfo),
     );
   }
    if(isProfile)

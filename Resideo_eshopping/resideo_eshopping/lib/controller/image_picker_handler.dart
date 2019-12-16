@@ -18,14 +18,21 @@ class ImagePickerHandler{
   
    openCamera() async {
     imagePicker.dismissDialog();
-    var image = await ImagePicker.pickImage(source: ImageSource.camera);
-    cropImage(image);
+    await ImagePicker.pickImage(source: ImageSource.camera).then((image){
+      cropImage(image);
+    }).catchError((error){
+      print(error);
+    });
+
   }
 
   openGallery() async {
     imagePicker.dismissDialog();
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    cropImage(image);
+    await ImagePicker.pickImage(source: ImageSource.gallery).then((image){
+      cropImage(image);
+    }).catchError((error){
+      print(error);
+    });
   }
 
   removePicture() async{
@@ -33,11 +40,13 @@ class ImagePickerHandler{
     await _firebaseDatabaseUtil.deleteProfilePicture(_user).then((result){
       if(result)
       _listener.userImage(null);
+    }).catchError((error){
+      print(error);
     });
   }
 
    Future cropImage(File image) async {
-    File croppedFile = await ImageCropper.cropImage(
+    await ImageCropper.cropImage(
       sourcePath: image.path,
       aspectRatioPresets: [
         CropAspectRatioPreset.square,
@@ -50,8 +59,12 @@ class ImagePickerHandler{
           toolbarTitle: 'Cropper',
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false),
-    );
-    _listener.userImage(croppedFile);
+    ).then((croppedFile){
+      _listener.userImage(croppedFile);
+    }).then((error){
+      print(error);
+    });
+
   }
 
   void init(){

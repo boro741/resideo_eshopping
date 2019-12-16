@@ -20,7 +20,6 @@ class ProductsTile extends StatelessWidget {
   @override 
   Widget build(BuildContext context) { 
   void navigateToProductdetail(Product pd,FirebaseUser user,VoidCallback online,VoidCallback offline,BaseAuth auth,User userInfo) async{
-  //Navigator.push(context, MaterialPageRoute(builder: (context)=> ProductDetail(pd)));
   Navigator.push(context, ScaleRoute(page: ProductDetail(pd,user,online,offline,auth,userInfo)));
   }
     return Column(
@@ -62,35 +61,6 @@ class ProductsTile extends StatelessWidget {
       ],
     );
   }
-
-/*  
-  Widget showThumbnail(int quantity){
-    if(quantity != 0){
-      return Container(
-        child: Stack(
-          children: <Widget>[
-            Container(
-              margin: EdgeInsets.only(left: 6.0),
-              child: Image.network(_products.thumbnail, height: 50.0, fit: BoxFit.fill,),
-            ),
-            Center(
-              child: Text("OUT OF STOCK",
-              style: TextStyle(fontWeight: FontWeight.bold,
-              fontSize: 8.0,
-              color: Colors.red)),
-            )
-          ],
-        ),
-      );
-    }
-    else{
-      return Container(
-              margin: EdgeInsets.only(left: 6.0),
-              child: Image.network(_products.thumbnail, height: 50.0, fit: BoxFit.fill,),
-            );
-    }
-  }
-  */
 }
 
 class ScaleRoute extends PageRouteBuilder {

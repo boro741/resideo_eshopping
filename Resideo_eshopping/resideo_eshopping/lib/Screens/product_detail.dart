@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:resideo_eshopping/controller/product_controller.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/Screens/order_confirmation_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -36,11 +37,10 @@ class ProductDetail extends StatefulWidget
 class _ProductDetailState extends State<ProductDetail> {
   Product product;
   String urlPDFPath ;
-  bool buttonDisabled=false;
+  bool buttonDisabled;
   PDFDocument document;
-  String inventoryDetail;
   VideoPlayerController _videoPlayerController;
-
+  ProductController _productController;
   Future<void> _initializeVideoPlayerFuture;
 
   @override
@@ -49,6 +49,7 @@ class _ProductDetailState extends State<ProductDetail> {
     _initializeVideoPlayerFuture = _videoPlayerController.initialize();
     _videoPlayerController.setLooping(true);
     _videoPlayerController.setVolume(1.0);
+    _productController=ProductController();
     super.initState();
     getFileFromUrl(widget.product.faqUrl).then((f) {
       setState(() {
@@ -74,8 +75,9 @@ class _ProductDetailState extends State<ProductDetail> {
 
   @override
   Widget build(BuildContext context) {
+    buttonDisabled=_productController.enableDisableOrderNowButton(widget.product.quantity);
     void navigateToCustomerAddress() async{
-     Navigator.push(context, MaterialPageRoute(builder: (context)=> AddUserDetails(widget.product,widget.userInfo,widget.user,widget.online,widget.offline,widget.auth)));
+     Navigator.push(context, MaterialPageRoute(builder: (context)=> OrderConfirmationPage(widget.product,widget.userInfo,widget.user,widget.online,widget.offline,widget.auth)));
   }
     return PlatformScaffold(
       appBar: PlatformAppBar(
@@ -106,7 +108,8 @@ class _ProductDetailState extends State<ProductDetail> {
                    Icon(FontAwesomeIcons.rupeeSign),
                    Text(widget.product.price.toString(),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 30),),
                    Spacer(),
-                   getInventory(widget.product.quantity),
+                   //getInventory(widget.product.quantity),
+                   Text(_productController.inventoryDetail(widget.product.quantity),style: TextStyle(color: _productController.inventoryDetailColor(widget.product.quantity),) ),
                 ],
                 ),
                 SizedBox(height: 20,),
@@ -186,6 +189,7 @@ class _ProductDetailState extends State<ProductDetail> {
       },
       androidFlat: (_) => MaterialFlatButtonData()
     );
+
     // set up the AlertDialog
     PlatformAlertDialog alert = PlatformAlertDialog(
       title: PlatformText("Update User Profile"),
@@ -204,23 +208,7 @@ class _ProductDetailState extends State<ProductDetail> {
     );
   }
 
-  dynamic getInventory(int quantity){
 
-    if(quantity <=0){
-    buttonDisabled=true;
-    inventoryDetail="Out of Stock";
-    return  Text(inventoryDetail,style: TextStyle(color: Colors.red,) );
-    }
-    else
-    if (quantity<5){
-    inventoryDetail="Only $quantity left";
-    return  Text(inventoryDetail,style: TextStyle(color: Colors.red,) );
-    }
-    else{
-    inventoryDetail="In Stock";
-    return  Text(inventoryDetail,style: TextStyle(color: Colors.green,) );
-    }
-  }
 
   Widget _showVideo(){
     return Stack(

@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:async';
-import 'package:resideo_eshopping/controller/image_picker_dialog.dart';
-import 'package:resideo_eshopping/util/crud_operations.dart';
+import 'package:resideo_eshopping/Screens/image_picker_dialog.dart';
+import 'package:resideo_eshopping/util/firebase_database_helper.dart';
 
 class ImagePickerHandler{
 

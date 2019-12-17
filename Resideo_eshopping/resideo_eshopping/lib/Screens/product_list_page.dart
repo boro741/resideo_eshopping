@@ -71,14 +71,25 @@ class _ProductsListPageState extends State<ProductsListPage>
 
             });
             }
-          });
+          }).catchError((error){
+            print(error);
+     });
     }
   }
 
   _getProduct(String value){
-  productController.getProductList(value).then((result){setState((){currentList=result;
+  productController.getProductList(value).then((result){
+    if(result != null){
+    setState((){currentList=result;
   _isProgressBarShown = false;
-  });});
+  });}
+    else
+      {
+        print("product list is empty");
+      }
+  }).catchError((error){
+    print(error);
+  });
   }
   
   @override

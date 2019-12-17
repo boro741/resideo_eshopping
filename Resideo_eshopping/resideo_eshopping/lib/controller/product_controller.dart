@@ -119,7 +119,7 @@ class ProductController {
     helper
         .updateInventoryById(product.id, _decreaseInventoryCount(product))
         .then((result) {
-      if (result != null) {
+      if (result == 1) {
         product.quantity = product.quantity - 1;
         _firebaseDatabaseUtil.updateProduct(product);
       }else

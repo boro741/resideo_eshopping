@@ -90,17 +90,6 @@ class Dbhelper {
     return result;
   }
 
-  Future<List> getProductById(int id) async {
-    Database db = await this.db;
-    var result;
-    try {
-      result = await db.rawQuery('SELECT * FROM $_tblname WHERE $_colid = $id');
-    } catch (e) {
-      print("Exception Occured:$e");
-    }
-    close();
-    return result;
-  }
 
   Future<int> updateInventoryById(int id, int newInventoryValue) async {
     Database db = await this.db;

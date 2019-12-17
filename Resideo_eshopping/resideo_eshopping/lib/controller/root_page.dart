@@ -53,11 +53,10 @@ class _RootPageState extends State<RootPage> {
       setState(() {
         _user=user;
         _userId = user.uid.toString();
+        authStatus = AuthStatus.LOGGED_IN;
       });
-    });
-    setState(() {
-      authStatus = AuthStatus.LOGGED_IN;
-     
+    }).catchError((error){
+      print(error);
     });
   }
 

@@ -80,7 +80,7 @@ class FirebaseDatabaseUtil {
 
   Future updateData(FirebaseUser user, User userInfo, String _uploadFileUrl,
       bool _deleteProfilePicture) async {
-    if(user != null && userInfo != null) {
+    if(user != null) {
       if (_deleteProfilePicture) {
         await _dbRef
             .child('Users')
@@ -90,32 +90,35 @@ class FirebaseDatabaseUtil {
         }).catchError((onError) {
           print(onError);
         });
-      } else if (_uploadFileUrl != null) {
-        await _dbRef.child('Users').child(user.uid.toString()).update({
-          'name': userInfo.name,
-          'phone': userInfo.phone,
-          'address': userInfo.address,
-          'zipcode': userInfo.zipcode,
-          'imageUrl': _uploadFileUrl
-        }).then((result) {
-          print("profile updated with profile picture");
-        }).catchError((onError) {
-          print(onError);
-        });
-      } else {
-        await _dbRef.child('Users').child(user.uid.toString()).update({
-          'name': userInfo.name,
-          'phone': userInfo.phone,
-          'address': userInfo.address,
-          'zipcode': userInfo.zipcode,
-        }).then((result) {
-          print("profile updated without profile picture");
-        }).catchError((onError) {
-          print(onError);
-        });
-      }
+      } else if (userInfo != null) {
+        if (_uploadFileUrl != null) {
+          await _dbRef.child('Users').child(user.uid.toString()).update({
+            'name': userInfo.name,
+            'phone': userInfo.phone,
+            'address': userInfo.address,
+            'zipcode': userInfo.zipcode,
+            'imageUrl': _uploadFileUrl
+          }).then((result) {
+            print("profile updated with profile picture");
+          }).catchError((onError) {
+            print(onError);
+          });
+        } else {
+          await _dbRef.child('Users').child(user.uid.toString()).update({
+            'name': userInfo.name,
+            'phone': userInfo.phone,
+            'address': userInfo.address,
+            'zipcode': userInfo.zipcode,
+          }).then((result) {
+            print("profile updated without profile picture");
+          }).catchError((onError) {
+            print(onError);
+          });
+        }
+      }else
+        print("passed UserInfo object in updatedata method in firebase_database_helper file in null");
     }else
-      print("passed argument in updatedata method in firebase_database_helper file in null");
+      print("passed user object in updatedata method in firebase_database_helper file in null");
   }
 
   Future<User> getUserData(FirebaseUser _user) async {

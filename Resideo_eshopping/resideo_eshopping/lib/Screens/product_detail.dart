@@ -75,102 +75,119 @@ class _ProductDetailState extends State<ProductDetail> {
 
   @override
   Widget build(BuildContext context) {
-    buttonDisabled=_productController.enableDisableOrderNowButton(widget.product.quantity);
-    void navigateToCustomerAddress() async{
-     Navigator.push(context, MaterialPageRoute(builder: (context)=> OrderConfirmationPage(widget.product,widget.userInfo,widget.user,widget.online,widget.offline,widget.auth)));
-  }
-    return PlatformScaffold(
-      appBar: PlatformAppBar(
-        title: PlatformText("Resideo e-Shopping"),
-      ),
-      body: Container(
-        padding: EdgeInsets.all(15.0),
-        child: ListView(
-          children: <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                   Text(widget.product.title,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.blue),),
-                   Spacer(),
-                   StarDisplay(value: widget.product.rating,),
-                ],
-                ),
-                Text(widget.product.sDesc),
-                SizedBox(height: 20,),
-                _showSlides(),
-                SizedBox(height: 20,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                   Icon(FontAwesomeIcons.rupeeSign),
-                   Text(widget.product.price.toString(),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 30),),
-                   Spacer(),
-                   //getInventory(widget.product.quantity),
-                   Text(_productController.inventoryDetail(widget.product.quantity),style: TextStyle(color: _productController.inventoryDetailColor(widget.product.quantity),) ),
-                ],
-                ),
-                SizedBox(height: 20,),
-                MaterialButton(
-                  textColor: Colors.white,
-                  minWidth: double.infinity,
-                  shape: RoundedRectangleBorder(),
-                  color: Colors.blue,
-                  disabledColor: Colors.blueGrey,
-                  disabledTextColor: Colors.black,
-                  child: Text("Order Now",style: TextStyle(fontSize: 20),),
-                  onPressed: buttonDisabled? null:(){
-                    if(widget.user == null)
-                    {
-                      Navigator.pop(context);
-                      widget.online();
-                    }else
-                    if(widget.userInfo == null || widget.userInfo.address == null || widget.userInfo.phone == null)
-                    {
-                      showAlertDialog(context);
-                    }else
-                    navigateToCustomerAddress();
-                  },
-                ),
-                SizedBox(height: 20,),
-                Text("About This Item",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
-                SizedBox(height: 10,),
-                Text(widget.product.lDesc,style: TextStyle(fontSize: 15),),
-                SizedBox(height: 20,),
-                Text('Customer Reviews',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
-                SizedBox(height: 10,),
-                Text(widget.product.review,style: TextStyle(fontSize: 15),),
-
-                SizedBox(height: 20,), 
-                ButtonTheme(
-                  minWidth:400.0,
-                  height:40.0,
-                  child:RaisedButton(
-                      
-                      color: Colors.amber,
-                      // width: double.infinity,
-                      child: Text("FAQ"),
-                      onPressed: () {
-                        if (urlPDFPath != null) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                         PdfViewPage(path: urlPDFPath)));
-                                      // PdfViewPage(path: widget.pd.faq)));
-                        }
-                      },
-                    ),  
-                )        
-          ],
+    buttonDisabled =
+        _productController.enableDisableOrderNowButton(widget.product.quantity);
+    void navigateToCustomerAddress() async {
+      Navigator.push(context, MaterialPageRoute(builder: (context) =>
+          OrderConfirmationPage(
+              widget.product, widget.userInfo, widget.user, widget.online,
+              widget.offline, widget.auth)));
+    }
+    if (widget.product == null)
+      print(
+          "product object passed from the product list page in product detail page is empty");
+    else {
+      return PlatformScaffold(
+        appBar: PlatformAppBar(
+          title: PlatformText("Resideo e-Shopping"),
         ),
-          ],
-        )
-      ),
-    );
-    
+        body: Container(
+            padding: EdgeInsets.all(15.0),
+            child: ListView(
+              children: <Widget>[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        Text(widget.product.title, style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            color: Colors.blue),),
+                        Spacer(),
+                        StarDisplay(value: widget.product.rating,),
+                      ],
+                    ),
+                    Text(widget.product.sDesc),
+                    SizedBox(height: 20,),
+                    _showSlides(),
+                    SizedBox(height: 20,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        Icon(FontAwesomeIcons.rupeeSign),
+                        Text(widget.product.price.toString(), style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 30),),
+                        Spacer(),
+                        //getInventory(widget.product.quantity),
+                        Text(_productController.inventoryDetail(
+                            widget.product.quantity), style: TextStyle(
+                          color: _productController.inventoryDetailColor(
+                              widget.product.quantity),)),
+                      ],
+                    ),
+                    SizedBox(height: 20,),
+                    MaterialButton(
+                      textColor: Colors.white,
+                      minWidth: double.infinity,
+                      shape: RoundedRectangleBorder(),
+                      color: Colors.blue,
+                      disabledColor: Colors.blueGrey,
+                      disabledTextColor: Colors.black,
+                      child: Text("Order Now", style: TextStyle(fontSize: 20),),
+                      onPressed: buttonDisabled ? null : () {
+                        if (widget.user == null) {
+                          Navigator.pop(context);
+                          widget.online();
+                        } else if (widget.userInfo == null ||
+                            widget.userInfo.address == null ||
+                            widget.userInfo.phone == null) {
+                          showAlertDialog(context);
+                        } else
+                          navigateToCustomerAddress();
+                      },
+                    ),
+                    SizedBox(height: 20,),
+                    Text("About This Item", style: TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 20),),
+                    SizedBox(height: 10,),
+                    Text(widget.product.lDesc, style: TextStyle(fontSize: 15),),
+                    SizedBox(height: 20,),
+                    Text('Customer Reviews', style: TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 20),),
+                    SizedBox(height: 10,),
+                    Text(
+                      widget.product.review, style: TextStyle(fontSize: 15),),
+
+                    SizedBox(height: 20,),
+                    ButtonTheme(
+                      minWidth: 400.0,
+                      height: 40.0,
+                      child: RaisedButton(
+
+                        color: Colors.amber,
+                        // width: double.infinity,
+                        child: Text("FAQ"),
+                        onPressed: () {
+                          if (urlPDFPath != null) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        PdfViewPage(path: urlPDFPath)));
+                            // PdfViewPage(path: widget.pd.faq)));
+                          }
+                        },
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            )
+        ),
+      );
+    }
   }
 
   @override

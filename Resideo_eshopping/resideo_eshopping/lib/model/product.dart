@@ -33,7 +33,7 @@ class Product{
   @JsonKey(name: 'ProductVideo')
   String pVideoUrl;
   
-  Product(this.title,this.sDesc,this.imgUrl,this.price,this.quantity,this.lDesc,this.category,this.rating,this.review,this.thumbnailUrl,this.faqUrl,this.pVideoUrl);
+  Product(this.id,this.title,this.sDesc,this.imgUrl,this.price,this.quantity,this.lDesc,this.category,this.rating,this.review,this.thumbnailUrl,this.faqUrl,this.pVideoUrl);
   Product.withId(this.id,this.title,this.sDesc,this.imgUrl,this.price,this.quantity,this.lDesc,this.category,this.rating,this.review,this.thumbnailUrl,this.faqUrl,this.pVideoUrl);
 
    factory Product.fromJSON(Map<String,dynamic> jsonMap) => _$ProductFromJson(jsonMap);

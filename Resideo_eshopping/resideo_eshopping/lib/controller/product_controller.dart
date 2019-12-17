@@ -29,6 +29,8 @@ class ProductController {
         else {
           products = productlist;
         }
+      }).catchError((error){
+        print(error);
       });
     }
     return filterProducts(value);
@@ -36,17 +38,37 @@ class ProductController {
 
   //Method to fetch products from API
   Future<List<Product>> fetchProducts(http.Client client) async {
-    final response = await client.get(
-        'https://fluttercheck-5afbb.firebaseio.com/Products.json?auth=fzAIfjVy6umufLgQj9bd1KmgzzPd6Q6hDvj1r3u1');
+    var response;
+    try {
+       response = await client.get(
+          'https://fluttercheck-5afbb.firebaseio.com/Products.json?auth=fzAIfjVy6umufLgQj9bd1KmgzzPd6Q6hDvj1r3u1');
+    }catch(error)
+    {
+      print(error);
+    }
+    if(response.body == null)
+      print("Connection Issue with Api");
 
     return parseProducts(response.body);
   }
 
   //Method to decode the Products json and convert it into list of product object
   List<Product> parseProducts(String responseBody) {
-    final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
-
-    return parsed.map<Product>((json) => Product.fromJSON(json)).toList();
+    List<Product> _localProductList;
+    try {
+      final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
+       if(parsed != null) {
+         _localProductList =
+             parsed.map<Product>((json) => Product.fromJSON(json)).toList();
+         if(_localProductList == null)
+           print("Conversion from jsom map to product object have Issue");
+       }else
+         print("JasonDecode not working");
+    }catch(e)
+    {
+      print(e);
+    }
+    return _localProductList;
   }
 
   void init() {
@@ -56,8 +78,15 @@ class ProductController {
   //Method to update the product model with list of products and add products in local database
   Future updateProductModel() async {
     await fetchProducts(http.Client()).then((result) {
-      products = result;
-      helper.addAllProduct(products);
+      if(result != null) {
+        products = result;
+        helper.addAllProduct(products);
+      }else
+        {
+          print("Product are not fetched from the API");
+        }
+    }).catchError((error){
+      print(error);
     });
   }
 
@@ -93,7 +122,10 @@ class ProductController {
       if (result != null) {
         product.quantity = product.quantity - 1;
         _firebaseDatabaseUtil.updateProduct(product);
-      }
+      }else
+        print("Updating in local database is failed");
+    }).catchError((error){
+      print(error);
     });
   }
 
@@ -120,7 +152,7 @@ class ProductController {
       return inventoryDetailMsg;
     }
   }
-
+ //Method to set the color of inventory detail message on product detail screen
   dynamic inventoryDetailColor(int quantity){
 
     if(quantity < 5)

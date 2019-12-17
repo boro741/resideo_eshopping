@@ -7,12 +7,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 
 class FirebaseDatabaseUtil {
-  DatabaseReference _productDBRef;
-  DatabaseReference _userDBRef;
-
-  FirebaseDatabase database = new FirebaseDatabase();
-  DatabaseError error;
-  Product product;
+  DatabaseReference _dbRef;
+  FirebaseDatabase database;
   User user;
 
   static final FirebaseDatabaseUtil _instance =
@@ -25,145 +21,162 @@ class FirebaseDatabaseUtil {
   }
 
   void initState() {
-    _productDBRef = database.reference().child("Products");
-    _userDBRef = database.reference().child("Users");
-    database.reference().child("Products").once().then((DataSnapshot snapshot) {
-      print('Connected to second database and read ${snapshot.value}');
-    });
-
+    database= new FirebaseDatabase();
+    _dbRef = database.reference();
     database.setPersistenceEnabled(true);
     database.setPersistenceCacheSizeBytes(10000000);
   }
 
-  DatabaseError getError() {
-    return error;
-  }
-
-  DatabaseReference getProductDB() {
-    return _productDBRef;
-  }
-
-  void deleteProduct(Product product) async {
-    await _productDBRef.child(product.id.toString()).remove().then((_) {
-      print('Transaction  committed.');
-    });
-  }
-
   updateProduct(Product product) async {
-    int x = product.id;
-    await _productDBRef.child((x - 1).toString()).update({
-      "Inventory": product.quantity,
-    }).then((_) {
-      print('Transaction  committed.');
-    });
+    int x;
+    if(product != null) {
+      x = product.id;
+      await _dbRef.child('Products').child((x - 1).toString()).update({
+        "Inventory": product.quantity,
+      }).then((_) {
+        print('Transaction  committed.');
+      }).catchError((error){
+        print(error);
+      });
+    }  else
+      print("Product argument passed in update product is bull");
   }
 
-  Future<bool> deleteProfilePicture(FirebaseUser user) async{
-    bool _isImageDeleted=false;
-    StorageReference storageReference = FirebaseStorage.instance.ref().child(
-        "profile pic" + user.uid.toString());
-    await storageReference.delete().then((result) async{
-      await updateData(user, null, null, true).then((result){
-        _isImageDeleted=true;
+  Future<bool> deleteProfilePicture(FirebaseUser user) async {
+    bool _isImageDeleted = false;
+    if(user != null){
+    StorageReference storageReference = FirebaseStorage.instance
+        .ref()
+        .child("profile pic" + user.uid.toString());
+    await storageReference.delete().then((result) async {
+      await updateData(user, null, null, true).then((result) {
+        _isImageDeleted = true;
       });
-    }).catchError((error){
+    }).catchError((error) {
       print(error);
     });
+    }else
+      print("Firebase user passed in deleteProfilePicture is null");
     return _isImageDeleted;
   }
 
-  Future sendData(FirebaseUser user,User userInfo,String _uploadFileUrl) async
-  {
-    await _userDBRef.child(user.uid.toString()).set({
-      'name' : userInfo.name,
-      'phone' : userInfo.phone,
-      'address' : userInfo.address,
-      'zipcode' : userInfo.zipcode,
-      'imageUrl' : _uploadFileUrl
-    }).then((result){
-      print("profile updated");
-    }).catchError((onError){
-      print(onError);
-    });
-  }
-
-  Future updateData(FirebaseUser user,User userInfo,String _uploadFileUrl,bool _deleteProfilePicture) async
-  {
-    if(_deleteProfilePicture)
-      {
-        await _userDBRef.child(user.uid.toString()).update({
-          'imageUrl': _uploadFileUrl
-        }).then((result) {
-          print("ImageUrl deleted");
-        }).catchError((onError) {
-          print(onError);
-        });
-      }
-    else
-    if(_uploadFileUrl != null) {
-      await _userDBRef.child(user.uid.toString()).update({
+  Future sendData(
+      FirebaseUser user, User userInfo, String _uploadFileUrl) async {
+    if(user != null && userInfo != null) {
+      await _dbRef.child('Users').child(user.uid.toString()).set({
         'name': userInfo.name,
         'phone': userInfo.phone,
         'address': userInfo.address,
         'zipcode': userInfo.zipcode,
         'imageUrl': _uploadFileUrl
       }).then((result) {
-        print("profile updated");
+        print("profile created");
       }).catchError((onError) {
         print(onError);
       });
     }else
-      {
-        await _userDBRef.child(user.uid.toString()).update({
+      print("passed argument in senddata method in firebase_database_helper file in null");
+  }
+
+  Future updateData(FirebaseUser user, User userInfo, String _uploadFileUrl,
+      bool _deleteProfilePicture) async {
+    if(user != null && userInfo != null) {
+      if (_deleteProfilePicture) {
+        await _dbRef
+            .child('Users')
+            .child(user.uid.toString())
+            .update({'imageUrl': _uploadFileUrl}).then((result) {
+          print("ImageUrl deleted");
+        }).catchError((onError) {
+          print(onError);
+        });
+      } else if (_uploadFileUrl != null) {
+        await _dbRef.child('Users').child(user.uid.toString()).update({
+          'name': userInfo.name,
+          'phone': userInfo.phone,
+          'address': userInfo.address,
+          'zipcode': userInfo.zipcode,
+          'imageUrl': _uploadFileUrl
+        }).then((result) {
+          print("profile updated with profile picture");
+        }).catchError((onError) {
+          print(onError);
+        });
+      } else {
+        await _dbRef.child('Users').child(user.uid.toString()).update({
           'name': userInfo.name,
           'phone': userInfo.phone,
           'address': userInfo.address,
           'zipcode': userInfo.zipcode,
         }).then((result) {
-          print("profile updated");
+          print("profile updated without profile picture");
         }).catchError((onError) {
           print(onError);
         });
       }
+    }else
+      print("passed argument in updatedata method in firebase_database_helper file in null");
   }
 
-  Future<User> getUserData(FirebaseUser _user) async
-  {
-    try{
-    await _userDBRef.child(_user.uid.toString()).once().then((DataSnapshot snapshot){
-      user=User.fromSnapshot(snapshot);
-    });
-    }catch(e){
-     print(e);
+  Future<User> getUserData(FirebaseUser _user) async {
+    try {
+      if(_user != null) {
+        await _dbRef
+            .child('Users')
+            .child(_user.uid.toString())
+            .once()
+            .then((DataSnapshot snapshot) {
+          user = User.fromSnapshot(snapshot);
+        }).catchError((error){
+          print(error);
+        });
+      }else
+        print("User passed in getUserData is null");
+    } catch (e) {
+      print(e);
     }
     return user;
   }
- 
- Future<bool> updateUserProfile(FirebaseUser user,File image,User userInfo,bool isEdit) async {
-    bool _isCreateUpdateSuccessfull=false;
-   if (isEdit && image == null)
-     await updateData(user, userInfo, null,false).then((result) {
-       _isCreateUpdateSuccessfull=true;
-     });
-   else if (image == null)
-     await sendData(user, userInfo, null).then((result) {
-       _isCreateUpdateSuccessfull=true;
-     });
-   else {
-     StorageReference storageReference = FirebaseStorage.instance.ref().child(
-         "profile pic" + user.uid.toString());
-     StorageUploadTask uploadTask = storageReference.putFile(image);
-     await uploadTask.onComplete;
-     print('File Uploaded');
-     await storageReference.getDownloadURL().then((fileURL) async{
-       if (isEdit)
-         await updateData(user, userInfo, fileURL,false).then((result){_isCreateUpdateSuccessfull=true;});
-       else
-         await sendData(user, userInfo, fileURL).then((result){_isCreateUpdateSuccessfull=true;});
-     });
-   }
-   return _isCreateUpdateSuccessfull;
- }
-}
 
- 
+  Future<bool> updateUserProfile(
+      FirebaseUser user, File image, User userInfo, bool isEdit) async {
+
+    bool _isCreateUpdateSuccessfull = false;
+    StorageReference storageReference;
+
+    if (isEdit && image == null)
+      await updateData(user, userInfo, null, false).then((result) {
+        _isCreateUpdateSuccessfull = true;
+      });
+    else if (image == null)
+      await sendData(user, userInfo, null).then((result) {
+        _isCreateUpdateSuccessfull = true;
+      });
+    else {
+      try {
+        storageReference = FirebaseStorage.instance
+            .ref()
+            .child("profile pic" + user.uid.toString());
+        StorageUploadTask uploadTask = storageReference.putFile(image);
+        await uploadTask.onComplete;
+        print('File Uploaded');
+      }catch(error)
+    {
+      print(error);
+    }
+      await storageReference.getDownloadURL().then((fileURL) async {
+        if (isEdit)
+          await updateData(user, userInfo, fileURL, false).then((result) {
+            _isCreateUpdateSuccessfull = true;
+          });
+        else
+          await sendData(user, userInfo, fileURL).then((result) {
+            _isCreateUpdateSuccessfull = true;
+          });
+      }).catchError((error){
+        print(error);
+      });
+    }
+    return _isCreateUpdateSuccessfull;
+  }
+}

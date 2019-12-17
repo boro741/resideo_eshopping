@@ -10,19 +10,19 @@ class Dbhelper {
   int _dbversion = 1;
   String _dbname = "eshoppingdb.db";
   String _tblname = 'product';
-  String _colid = "id";
-  String _coltitle = "title";
-  String _colsDesc = "s_desc";
-  String _colimg = "img";
-  String _colprice = "price";
-  String _colquantity = "quantity";
-  String _collDesc = "l_desc";
-  String _colcategory = "category";
-  String _colrating = "rating";
-  String _colreview = "review";
-  String _colthumbnail = "thumbnail";
-  String _colfaq = "faq";
-  String _colpVideo = "pVideo";
+  String _colid = "ProductId";
+  String _coltitle = "ProductName";
+  String _colsDesc = "ShortDescription";
+  String _colimg = "Image";
+  String _colprice = "Price";
+  String _colquantity = "Inventory";
+  String _collDesc = "LongDescription";
+  String _colcategory = "Category";
+  String _colrating = "Rating";
+  String _colreview = "Review";
+  String _colthumbnail = "Thumbnail";
+  String _colfaq = "FAQ";
+  String _colpVideo = "ProductVideo";
 
   Dbhelper.private();
 
@@ -53,7 +53,7 @@ class Dbhelper {
   void _createdb(Database db, int newversion) async {
     try {
       return await db.execute(
-          'CREATE TABLE $_tblname($_colid INTEGER PRIMARY KEY,$_coltitle TEXT,$_colsDesc TEXT,$_colimg TEXT,$_colprice INTEGER,$_colquantity INTEGER,$_collDesc TEXT,$_colcategory TEXT,$_colrating INTEGER,$_colreview TEXT,$_colthumbnail TEXT,$_colfaq TEXT,$_colpVideo TEXT)');
+          'CREATE TABLE $_tblname($_colid INTEGER,$_coltitle TEXT,$_colsDesc TEXT,$_colimg TEXT,$_colprice INTEGER,$_colquantity INTEGER,$_collDesc TEXT,$_colcategory TEXT,$_colrating INTEGER,$_colreview TEXT,$_colthumbnail TEXT,$_colfaq TEXT,$_colpVideo TEXT)');
     } catch (e) {
       print("Exception Occured:$e");
     }

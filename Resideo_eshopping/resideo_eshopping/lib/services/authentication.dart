@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:resideo_eshopping/util/logger.dart' as logger;
 
 abstract class BaseAuth {
   Future<String> signIn(String email, String password);
@@ -13,6 +14,7 @@ abstract class BaseAuth {
 }
 
 class Auth implements BaseAuth {
+  static const String TAG ="Auth";
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   Future<String> signIn(String email, String password) async {

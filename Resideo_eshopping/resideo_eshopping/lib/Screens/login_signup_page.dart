@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:after_layout/after_layout.dart';
+import 'package:resideo_eshopping/util/logger.dart' as logger;
 
 
 class LoginSignUpPage extends StatefulWidget {
@@ -16,6 +18,8 @@ class LoginSignUpPage extends StatefulWidget {
 enum FormMode { LOGIN, SIGNUP }
 
 class _LoginSignUpPageState extends State<LoginSignUpPage> {
+
+  static const String TAG ="LoginSignUpPage";
   final _formKey = new GlobalKey<FormState>();
 
   String _email;
@@ -62,6 +66,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
       } catch (e) {
         print('Error: $e');
+        logger.error(TAG, " Error in sending the Data to  the Firbase " + _errorMessage);
         setState(() {
             _errorMessage = e.message;
         });
@@ -71,9 +76,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
 
   @override
-  void initState() {
+  void afterFirstLayout(BuildContext context) {
     _errorMessage = "";
-    super.initState();
   }
 
   void _changeFormToSignUp() {

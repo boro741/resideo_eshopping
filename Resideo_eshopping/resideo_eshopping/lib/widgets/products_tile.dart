@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
 import 'package:resideo_eshopping/model/User.dart';
+import 'package:resideo_eshopping/util/logger.dart' as logger;
 
 class ProductsTile extends StatelessWidget {
   Product _products;
@@ -26,7 +27,8 @@ class ProductsTile extends StatelessWidget {
           page: ProductDetail(pd, user, online, offline, auth, userInfo)));
     }
     if (_products == null)
-      print("Product object passed in product tile is null");
+      logger.info("ProductsTile", "Product object passed in product tile is null");
+//      print("Product object passed in product tile is null");
     else {
       return Column(
         children: <Widget>[

@@ -7,6 +7,8 @@ import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:resideo_eshopping/model/User.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
 import 'package:resideo_eshopping/controller/root_page.dart';
+import 'package:after_layout/after_layout.dart';
+import 'package:resideo_eshopping/util/logger.dart' as logger;
 
 class OrderConfirmationPage extends StatefulWidget {
   final Product product;
@@ -25,6 +27,7 @@ class OrderConfirmationPage extends StatefulWidget {
 
 class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
   ProductController _productController;
+  static const String TAG ="OrderConfirmationPage";
 
   void navigateToHomePage(BuildContext context) async {
     Navigator.of(context).pushAndRemoveUntil(
@@ -88,8 +91,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
+  void afterFirstLayout(BuildContext context) {
     _productController = ProductController();
     _productController.init();
   }
@@ -245,7 +247,8 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
       );
     }else
       {
-        print("object passed from the product detail page to order confirmation page is null");
+        logger.info(TAG, "object passed from the product detail page to order confirmation page is null");
+//        print("object passed from the product detail page to order confirmation page is null");
       }
   }
 }

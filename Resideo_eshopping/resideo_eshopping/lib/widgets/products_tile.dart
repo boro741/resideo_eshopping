@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:mobx/mobx.dart';
 import 'package:resideo_eshopping/Screens/product_detail.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -16,11 +17,13 @@ class ProductsTile extends StatelessWidget {
   Widget widget;
 
   @override 
-  Widget build(BuildContext context) { 
-  void navigateToProductdetail(Product pd,FirebaseUser user,VoidCallback online,VoidCallback offline,BaseAuth auth) async{
-  //Navigator.push(context, MaterialPageRoute(builder: (context)=> ProductDetail(pd)));
-  Navigator.push(context, ScaleRoute(page: ProductDetail(pd,user,online,offline,auth)));
-  }
+  Widget build(BuildContext context) {
+
+    @action
+    void navigateToProductdetail(Product pd,FirebaseUser user,VoidCallback online,VoidCallback offline,BaseAuth auth) async{
+    //Navigator.push(context, MaterialPageRoute(builder: (context)=> ProductDetail(pd)));
+    Navigator.push(context, ScaleRoute(page: ProductDetail(pd,user,online,offline,auth)));
+    }
     return Column(
       children: <Widget>[
         Card(

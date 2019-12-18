@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:mobx/mobx.dart';
 //import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/Screens/order_confirmation_page.dart';
@@ -67,6 +68,7 @@ class _ProductDetailState extends State<ProductDetail> {
 
   Future<void> _initializeVideoPlayerFuture;
 
+  @action
   getUserDetail(){
     if(widget.user != null){
      firebaseDatabaseUtil.getUserData(widget.user).then((result){
@@ -76,14 +78,19 @@ class _ProductDetailState extends State<ProductDetail> {
   }
   @override
   void initState() {
+
     _videoPlayerController = VideoPlayerController.network(widget.pd.pVideoUrl);
     _initializeVideoPlayerFuture = _videoPlayerController.initialize();
     _videoPlayerController.setLooping(true);
     _videoPlayerController.setVolume(1.0);
+
     super.initState();
+
     firebaseDatabaseUtil=FirebaseDatabaseUtil();
     firebaseDatabaseUtil.initState();
+
     getUserDetail();
+
     getFileFromUrl(widget.pd.faqUrl).then((f) {
       setState(() {
         urlPDFPath = f.path;
@@ -91,6 +98,8 @@ class _ProductDetailState extends State<ProductDetail> {
       });
     });
   }
+
+
   Future<File> getFileFromUrl(String url) async {
     try {
       var data = await http.get(url);
@@ -107,9 +116,12 @@ class _ProductDetailState extends State<ProductDetail> {
 
   @override
   Widget build(BuildContext context) {
+
+    @action
     void navigateToCustomerAddress(User userInfo) async{
      Navigator.push(context, MaterialPageRoute(builder: (context)=> AddUserDetails(widget.pd,userInfo,widget.user,widget.online,widget.offline,widget.auth)));
-  }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Resideo e-Shopping"),
@@ -133,46 +145,7 @@ class _ProductDetailState extends State<ProductDetail> {
                 Text(widget.pd.sDesc),
                 SizedBox(height: 20,),
                 _showSlides(),
-                //Image.network(pd.img),
-        
-        /*
-                FutureBuilder(
-                  future: _initializeVideoPlayerFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return AspectRatio(
-                        aspectRatio: _videoPlayerController.value.aspectRatio,
-                        child:
-                          CarouselSlider(
-                            height: 300.0,
-                            items: [
-                              Image.network(widget.pd.img, fit: BoxFit.fill,),
-                              VideoPlayer(_videoPlayerController),
-                            ],
-                          ), 
-                      );
-                    } else {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                  },
-                ),
-                FloatingActionButton(
-                  backgroundColor: Colors.transparent,
-                  onPressed: () {
-                    setState(() {
-                      if (_videoPlayerController.value.isPlaying) {
-                        _videoPlayerController.pause();
-                      } else {
-                        _videoPlayerController.play();
-                      }
-                    });
-                  },
-                  child: Icon(
-                    _videoPlayerController.value.isPlaying ? Icons.pause : Icons.play_arrow,
-                  ),
-                ), 
 
-                */
                 SizedBox(height: 20,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -247,7 +220,6 @@ class _ProductDetailState extends State<ProductDetail> {
   @override
   void dispose() {
     _videoPlayerController.dispose();
-
     super.dispose();
   }
 
@@ -364,9 +336,16 @@ class PdfViewPage extends StatefulWidget {
 }
 
 class _PdfViewPageState extends State<PdfViewPage> {
+
+  @observable
   int _totalPages = 0;
+
+  @observable
   int _currentPage = 0;
+
+  @observable
   bool pdfReady = false;
+
   PDFViewController _pdfViewController;
 
   @override

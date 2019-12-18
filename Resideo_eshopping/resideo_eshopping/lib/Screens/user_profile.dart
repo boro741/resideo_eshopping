@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mobx/mobx.dart';
 import 'dart:io';
 import 'package:resideo_eshopping/controller/image_picker_handler.dart';
 import 'package:resideo_eshopping/model/User.dart';
@@ -24,9 +25,16 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
   ImagePickerHandler imagePicker;
   FirebaseDatabaseUtil firebaseDatabaseUtil;
   String _imageUrl;
+
+  @observable
   String _buttonName="";
+
+  @observable
   String _alertMessage="";
+
+  @observable
   bool _isEdit=false;
+
   User user;
 
   var _nameController =TextEditingController();
@@ -35,6 +43,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
   var _zipcodeController =TextEditingController();
 
 
+  @action
   _fillUserDetail(){
     if(widget.userInfo != null)
       {
@@ -137,53 +146,53 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin,ImagePick
           child: Column(
             children: <Widget>[
               GestureDetector(
-        onTap: ()=> imagePicker.showDialog(context),
-        child:
-        (_imageUrl != null && _image == null)
-              ? new Center(
-                child: Column(
-                  children: <Widget>[
-                    SizedBox(height: 30,),
-                      new CircleAvatar(
-    
-                        radius: 80.0,
-                        backgroundColor: Colors.transparent,
-                        backgroundImage: NetworkImage(_imageUrl),
-                      ),
-                  ],
-                )
-              )
-              :(_image == null?
-              new Center(
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(height: 30,),
-                      new CircleAvatar(
+                  onTap: ()=> imagePicker.showDialog(context),
+                  child:
+                  (_imageUrl != null && _image == null)
+                        ? new Center(
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(height: 30,),
+                                new CircleAvatar(
 
-                        radius: 80.0,
-                        backgroundColor: Colors.transparent,
-                        backgroundImage: AssetImage("assets/images/user_profile.png"),
-                      ),
-                    ],
-                  )
-              )
-              :
-               new Center(
-               child: Column(
-               children: <Widget>[
-                 SizedBox(height: 30,),
-                //Image.file(_image,height: 10,width: 10),
-                 new CircleAvatar(
-                 radius: 80.0,
-                 backgroundColor: const Color(0xFF778899),
-                 backgroundImage: FileImage(_image),
-               ),
-              ],
-             )
-           )
-      ),
+                                  radius: 80.0,
+                                  backgroundColor: Colors.transparent,
+                                  backgroundImage: NetworkImage(_imageUrl),
+                                ),
+                            ],
+                          )
+                        )
+                        :(_image == null?
+                        new Center(
+                            child: Column(
+                              children: <Widget>[
+                                SizedBox(height: 30,),
+                                new CircleAvatar(
+
+                                  radius: 80.0,
+                                  backgroundColor: Colors.transparent,
+                                  backgroundImage: AssetImage("assets/images/user_profile.png"),
+                                ),
+                              ],
+                            )
+                        )
+                        :
+                         new Center(
+                         child: Column(
+                         children: <Widget>[
+                           SizedBox(height: 30,),
+                          //Image.file(_image,height: 10,width: 10),
+                           new CircleAvatar(
+                           radius: 80.0,
+                           backgroundColor: const Color(0xFF778899),
+                           backgroundImage: FileImage(_image),
+                         ),
+                        ],
+                       )
+                     )
+                ),
               ),
-       SizedBox(height: 30,),
+              SizedBox(height: 30,),
               Flexible(
                 child: ListView(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),

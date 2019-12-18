@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mobx/mobx.dart';
 //import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:resideo_eshopping/controller/product_controller.dart';
 import 'package:resideo_eshopping/model/product.dart';
@@ -26,12 +27,13 @@ class AddUserDetails extends StatefulWidget {
 
 class _AddUserDetailsState extends State<AddUserDetails> {
   final ProductController productController=ProductController();
-  
-void navigateToHomePage(BuildContext context) async{
-   Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
-    RootPage(auth: widget.auth,)), (Route<dynamic> route) => false);
-  
-  }
+
+  @action
+  void navigateToHomePage(BuildContext context) async{
+     Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) =>
+      RootPage(auth: widget.auth,)), (Route<dynamic> route) => false);
+
+    }
 
   orderPlaced(BuildContext context){
     showDialog(

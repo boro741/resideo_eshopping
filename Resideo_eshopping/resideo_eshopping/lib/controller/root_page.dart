@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:resideo_eshopping/Screens/login_signup_page.dart';
 import 'package:resideo_eshopping/Screens/product_list_page.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class RootPage extends StatefulWidget {

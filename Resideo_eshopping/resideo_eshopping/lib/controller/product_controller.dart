@@ -1,8 +1,5 @@
 
-
 /*
-
-import 'package:flutter/cupertino.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/util/dbhelper.dart';
 import 'package:resideo_eshopping/util/firebase_database_helper.dart';
@@ -169,6 +166,8 @@ class ProductController extends foundation.ChangeNotifier {
 }
 */
 
+import 'dart:ui';
+
 import 'package:mobx/mobx.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/util/dbhelper.dart';
@@ -284,6 +283,30 @@ abstract class ProductControllerBase with Store {
       return true;
     else
       return false;
+  }
+
+  //Method to display the stock detail based on quantity of product on product detail page
+  String inventoryDetail(int quantity) {
+    String inventoryDetailMsg;
+
+    if (quantity <= 0) {
+      inventoryDetailMsg = "Out of Stock";
+      return inventoryDetailMsg;
+    } else if (quantity < 5) {
+      inventoryDetailMsg = "Only $quantity left";
+      return inventoryDetailMsg;
+    } else {
+      inventoryDetailMsg = "In Stock";
+      return inventoryDetailMsg;
+    }
+  }
+ //Method to set the color of inventory detail message on product detail screen
+  dynamic inventoryDetailColor(int quantity){
+
+    if(quantity < 5)
+      return Color(0xFFF44336);
+    else
+      return Color(0xFF00C853);
   }
 
 }

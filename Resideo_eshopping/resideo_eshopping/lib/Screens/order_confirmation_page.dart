@@ -54,7 +54,6 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
 
   showAlertDialog(BuildContext context) {
     // set up the buttons
-
     Widget cancelButton = PlatformButton(
         child: PlatformText("No"),
         onPressed: () {
@@ -152,7 +151,6 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                             color: Colors.blue,
                           ),
                         ),
-
                       ),
                       Container(
                         margin: const EdgeInsets.all(20.0),

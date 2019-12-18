@@ -4,8 +4,10 @@ import 'package:resideo_eshopping/util/dbhelper.dart';
 import 'package:resideo_eshopping/util/firebase_database_helper.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:resideo_eshopping/util/logger.dart' as logger;
 
 class ProductController {
+  static const String TAG ="ProductController";
   static List<Product> products = <Product>[];
   List<Product> currentList = List<Product>();
   Dbhelper helper = Dbhelper();
@@ -30,7 +32,8 @@ class ProductController {
           products = productlist;
         }
       }).catchError((error){
-        print(error);
+        logger.error(TAG, " Error in getProductList: "+ value +" " +error);
+//        print(error);
       });
     }
     return filterProducts(value);
@@ -44,10 +47,12 @@ class ProductController {
           'https://fluttercheck-5afbb.firebaseio.com/Products.json?auth=fzAIfjVy6umufLgQj9bd1KmgzzPd6Q6hDvj1r3u1');
     }catch(error)
     {
-      print(error);
+//      print(error);
+      logger.error(TAG, " Error in while fetching the Products: in method fetchProducts :" +error);
     }
     if(response.body == null)
-      print("Connection Issue with Api");
+//      print("Connection Issue with Api");
+      logger.error(TAG, "Connection Issue with Api :" );
 
     return parseProducts(response.body);
   }
@@ -61,12 +66,14 @@ class ProductController {
          _localProductList =
              parsed.map<Product>((json) => Product.fromJSON(json)).toList();
          if(_localProductList == null)
-           print("Conversion from jsom map to product object have Issue");
+           logger.error(TAG, "Conversion from jsom map to product object have Issue :" );
+//           print("Conversion from jsom map to product object have Issue");
        }else
-         print("JasonDecode not working");
+//         print("JasonDecode not working");
+      logger.error(TAG, "JasonDecode not working:" );
     }catch(e)
     {
-      print(e);
+      logger.error(TAG, " " +e );
     }
     return _localProductList;
   }

@@ -5,8 +5,11 @@ import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/model/User.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
+import 'package:resideo_eshopping/util/logger.dart' as logger;
+import 'package:after_layout/after_layout.dart';
 
-class FirebaseDatabaseUtil {
+class FirebaseDatabaseUtil  {
+  static const String TAG ="FirebaseDatabaseUtil";
   DatabaseReference _dbRef;
   FirebaseDatabase database;
   User user;
@@ -34,12 +37,13 @@ class FirebaseDatabaseUtil {
       await _dbRef.child('Products').child((x - 1).toString()).update({
         "Inventory": product.quantity,
       }).then((_) {
-        print('Transaction  committed.');
+        logger.info(FirebaseDatabaseUtil.TAG, " Updating the inventory in the Firbase " );
       }).catchError((error){
-        print(error);
+        logger.error(TAG, "Error in the updating inventory " +error);
       });
     }  else
-      print("Product argument passed in update product is bull");
+//      print("Product argument passed in update product is bull");
+    logger.info(TAG, "Product argument passed in update product is bull");
   }
 
   Future<bool> deleteProfilePicture(FirebaseUser user) async {
@@ -53,10 +57,12 @@ class FirebaseDatabaseUtil {
         _isImageDeleted = true;
       });
     }).catchError((error) {
-      print(error);
+      logger.error(TAG, "Error in the deleting Profile Picture " +error);
+//      print(error);
     });
     }else
-      print("Firebase user passed in deleteProfilePicture is null");
+      logger.info(TAG, "Firebase user passed in deleteProfilePicture is null");
+//      print("Firebase user passed in deleteProfilePicture is null");
     return _isImageDeleted;
   }
 
@@ -70,12 +76,15 @@ class FirebaseDatabaseUtil {
         'zipcode': userInfo.zipcode,
         'imageUrl': _uploadFileUrl
       }).then((result) {
-        print("profile created");
+        logger.info(FirebaseDatabaseUtil.TAG, " Profile data send successfully to the Firebase " );
+//        print("profile created");
       }).catchError((onError) {
-        print(onError);
+        logger.error(FirebaseDatabaseUtil.TAG, " Error in sending the Data to  the Firbase " +onError);
+//        print(onError);
       });
     }else
-      print("passed argument in senddata method in firebase_database_helper file in null");
+      logger.error(FirebaseDatabaseUtil.TAG, " passed argument in senddata method in firebase_database_helper file in null " );
+//      print("passed argument in senddata method in firebase_database_helper file in null");
   }
 
   Future updateData(FirebaseUser user, User userInfo, String _uploadFileUrl,
@@ -86,9 +95,9 @@ class FirebaseDatabaseUtil {
             .child('Users')
             .child(user.uid.toString())
             .update({'imageUrl': _uploadFileUrl}).then((result) {
-          print("ImageUrl deleted");
+              logger.info(FirebaseDatabaseUtil.TAG, " ImageUrl deleted successfully  " );
         }).catchError((onError) {
-          print(onError);
+          logger.error(FirebaseDatabaseUtil.TAG, " Error in deleting the ImageUrl   " +onError);
         });
       } else if (userInfo != null) {
         if (_uploadFileUrl != null) {
@@ -99,9 +108,11 @@ class FirebaseDatabaseUtil {
             'zipcode': userInfo.zipcode,
             'imageUrl': _uploadFileUrl
           }).then((result) {
-            print("profile updated with profile picture");
+            logger.info(FirebaseDatabaseUtil.TAG, " Profile Updated successfully in updateData " );
+//            print("profile updated with profile picture");
           }).catchError((onError) {
-            print(onError);
+            logger.error(FirebaseDatabaseUtil.TAG, " Error in sending the data to the Firbase while updateData  " +onError);
+
           });
         } else {
           await _dbRef.child('Users').child(user.uid.toString()).update({
@@ -110,16 +121,19 @@ class FirebaseDatabaseUtil {
             'address': userInfo.address,
             'zipcode': userInfo.zipcode,
           }).then((result) {
-            print("profile updated without profile picture");
+            logger.info(FirebaseDatabaseUtil.TAG, "profile updated without profile picture" );
+//            print("profile updated without profile picture");
           }).catchError((onError) {
-            print(onError);
+            logger.error(FirebaseDatabaseUtil.TAG, " Error in sending the Data to the Firbase  " +onError);
           });
         }
       }else
-        print("passed UserInfo object in updatedata method in firebase_database_helper file in null");
+        logger.info(FirebaseDatabaseUtil.TAG, "passed UserInfo object in updatedata method in firebase_database_helper file in null" );
+//        print("passed UserInfo object in updatedata method in firebase_database_helper file in null");
     }else
-      print("passed user object in updatedata method in firebase_database_helper file in null");
-  }
+      logger.info(FirebaseDatabaseUtil.TAG, "passed user object in updatedata method in firebase_database_helper file in null");
+//      print("passed user object in updatedata method in firebase_database_helper file in null");
+ }
 
   Future<User> getUserData(FirebaseUser _user) async {
     try {
@@ -130,13 +144,15 @@ class FirebaseDatabaseUtil {
             .once()
             .then((DataSnapshot snapshot) {
           user = User.fromSnapshot(snapshot);
+          logger.info(FirebaseDatabaseUtil.TAG, " Getting User data from the Firebase  " +_user.toString());
         }).catchError((error){
-          print(error);
+          logger.error(FirebaseDatabaseUtil.TAG, " Error in getting the data to the Firbase  " +error);
         });
       }else
-        print("User passed in getUserData is null");
+        logger.error(FirebaseDatabaseUtil.TAG, "User passed in getUserData is null");
+//        print("User passed in getUserData is null");
     } catch (e) {
-      print(e);
+      logger.error(FirebaseDatabaseUtil.TAG, " Error in getting the data to the Firbase  " +e);
     }
     return user;
   }
@@ -162,10 +178,11 @@ class FirebaseDatabaseUtil {
             .child("profile pic" + user.uid.toString());
         StorageUploadTask uploadTask = storageReference.putFile(image);
         await uploadTask.onComplete;
-        print('File Uploaded');
+        logger.info(FirebaseDatabaseUtil.TAG, " File Uploaded Succesfully to Firebase Storage  " );
       }catch(error)
     {
-      print(error);
+      logger.error(FirebaseDatabaseUtil.TAG, " Error in updating the profile pic to the Firbase  " +error);
+//      print(error);
     }
       await storageReference.getDownloadURL().then((fileURL) async {
         if (isEdit)
@@ -177,7 +194,8 @@ class FirebaseDatabaseUtil {
             _isCreateUpdateSuccessfull = true;
           });
       }).catchError((error){
-        print(error);
+        logger.error(FirebaseDatabaseUtil.TAG, " Error in updating the profile pic to the Firbase  " +error);
+//        print(error);
       });
     }
     return _isCreateUpdateSuccessfull;

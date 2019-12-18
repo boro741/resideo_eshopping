@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:resideo_eshopping/controller/image_picker_handler.dart';
 import 'package:resideo_eshopping/model/User.dart';
 import 'package:resideo_eshopping/util/firebase_database_helper.dart';
+import 'package:after_layout/after_layout.dart';
 
 class SignUp extends StatefulWidget {
 
@@ -18,7 +19,7 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp>
-    with TickerProviderStateMixin, ImagePickerListener {
+    with TickerProviderStateMixin, ImagePickerListener,AfterLayoutMixin<SignUp> {
   final _formKeyValue = new GlobalKey<FormState>();
 
   File _image;
@@ -81,8 +82,7 @@ class _SignUpState extends State<SignUp>
   }
 
   @override
-  void initState() {
-    super.initState();
+  void afterFirstLayout(BuildContext context) {
     _controler = AnimationController(
         vsync: this, duration: const Duration(microseconds: 500));
     imagePicker = ImagePickerHandler(this, this._controler, widget.user);

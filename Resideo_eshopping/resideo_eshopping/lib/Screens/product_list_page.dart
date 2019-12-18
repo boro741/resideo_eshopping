@@ -199,9 +199,9 @@ else{
                       icon: FontAwesomeIcons.user,
                       text: 'My Account',
                       onTap: () {
-                        //setState(() {
+                        setState(() {
                           isProfile = true;
-                        //});
+                        });
                       }),
 
                   _loginSignupButton(),

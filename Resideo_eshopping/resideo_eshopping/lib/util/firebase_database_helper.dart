@@ -42,9 +42,9 @@ class FirebaseDatabaseUtil {
       print("Product argument passed in update product is bull");
   }
 
-  Future<bool> deleteProfilePicture(FirebaseUser user) async {
+  Future<bool> deleteProfilePicture(FirebaseUser user,User userInfo) async {
     bool _isImageDeleted = false;
-    if(user != null){
+    if(user != null && userInfo.imageUrl != null){
     StorageReference storageReference = FirebaseStorage.instance
         .ref()
         .child("profile pic" + user.uid.toString());
@@ -56,7 +56,9 @@ class FirebaseDatabaseUtil {
       print(error);
     });
     }else
-      print("Firebase user passed in deleteProfilePicture is null");
+     {
+       _isImageDeleted=true;
+     }
     return _isImageDeleted;
   }
 

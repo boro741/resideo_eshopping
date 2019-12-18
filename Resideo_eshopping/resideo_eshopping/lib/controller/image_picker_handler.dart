@@ -6,6 +6,8 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:async';
 import 'package:resideo_eshopping/Screens/image_picker_dialog.dart';
 import 'package:resideo_eshopping/util/firebase_database_helper.dart';
+import 'package:resideo_eshopping/model/User.dart';
+
 
 class ImagePickerHandler{
 
@@ -14,7 +16,9 @@ class ImagePickerHandler{
   ImagePickerDialog imagePicker;
   FirebaseUser _user;
   FirebaseDatabaseUtil _firebaseDatabaseUtil;
-  ImagePickerHandler(this._listener,this._controler,this._user);
+  User _userInfo;
+  bool _deletePhotoButtonEnable;
+  ImagePickerHandler(this._listener,this._controler,this._user,this._deletePhotoButtonEnable,this._userInfo);
   
    openCamera() async {
     imagePicker.dismissDialog();
@@ -37,7 +41,7 @@ class ImagePickerHandler{
 
   removePicture() async{
     imagePicker.dismissDialog();
-    await _firebaseDatabaseUtil.deleteProfilePicture(_user).then((result){
+    await _firebaseDatabaseUtil.deleteProfilePicture(_user,_userInfo).then((result){
       if(result)
       _listener.userImage(null);
     }).catchError((error){
@@ -69,7 +73,7 @@ class ImagePickerHandler{
 
   void init(){
    _firebaseDatabaseUtil = FirebaseDatabaseUtil();
-   imagePicker= ImagePickerDialog(this,this._controler);
+   imagePicker= ImagePickerDialog(this,this._controler,this._deletePhotoButtonEnable);
    imagePicker.initState();
   }
 

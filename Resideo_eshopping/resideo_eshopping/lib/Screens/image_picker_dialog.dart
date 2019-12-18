@@ -6,7 +6,8 @@ class ImagePickerDialog extends StatelessWidget {
   final ImagePickerHandler _listener;
   final AnimationController _controller;
   BuildContext context;
-  ImagePickerDialog(this._listener, this._controller);
+  final bool _deletePhotoButtonEnable;
+  ImagePickerDialog(this._listener, this._controller, this._deletePhotoButtonEnable);
   Animation<double> _drawerContentsOpacity;
   Animation<Offset> _drawerDetailsPosition;
 
@@ -61,6 +62,23 @@ class ImagePickerDialog extends StatelessWidget {
     startTime();
   }
 
+  dynamic _enableDisableDeletePhotoButton() {
+    if (_deletePhotoButtonEnable) {
+      return new Column(children: <Widget>[
+        GestureDetector(
+          onTap: () => _listener.removePicture(),
+          child: Image(image: AssetImage("assets/images/delete.png")),
+        ),
+        const SizedBox(
+          height: 5,
+        ),
+        Text("Remove Photo", style: TextStyle(color: Colors.white)),
+      ]);
+    } else {
+      return SizedBox(height: 0);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     this.context = context;
@@ -104,14 +122,7 @@ class ImagePickerDialog extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                new GestureDetector(
-                  onTap: () => _listener.removePicture(),
-                  child: Image(image: AssetImage("assets/images/delete.png")),
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                Text("Remove Photo", style: TextStyle(color: Colors.white)),
+                _enableDisableDeletePhotoButton(),
                 const SizedBox(
                   height: 20,
                 ),

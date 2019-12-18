@@ -5,12 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-//import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 //import 'package:resideo_eshopping/Screens/signup.dart';
 import 'package:resideo_eshopping/Screens/user_profile.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/controller/product_controller.dart';
-import 'package:resideo_eshopping/util/crud_operations.dart';
+import 'package:resideo_eshopping/util/firebase_database_helper.dart';
 import 'package:resideo_eshopping/widgets/products_tile.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
 import 'package:resideo_eshopping/model/User.dart';
@@ -86,14 +86,16 @@ class _ProductsListPageState extends State<ProductsListPage>
       firebaseDatabaseUtil.getUserData(widget.user).then((result) {
         userInfo = result;
         if (userInfo != null) {
-          //setState(() {
+          setState(() {
 
           _name = userInfo.name;
           _imageUrl = userInfo.imageUrl;
 
-          // });
-        }
-      });
+            });
+            }
+          }).catchError((error){
+            print(error);
+     });
     }
   }
 
@@ -101,10 +103,16 @@ class _ProductsListPageState extends State<ProductsListPage>
   @action
   _getProduct(String value){
   productController.getProductList(value).then((result){
-    setState((){
-      currentList=result;
-      _isProgressBarShown = false;
-    });
+    if(result != null){
+    setState((){currentList=result;
+  _isProgressBarShown = false;
+  });}
+    else
+      {
+        print("product list is empty");
+      }
+  }).catchError((error){
+    print(error);
   });
   }
 
@@ -118,109 +126,75 @@ class _ProductsListPageState extends State<ProductsListPage>
 
     _setProfile();
 
-    //return Observer(
-      //builder: (_) {
-        if (_isProgressBarShown) {
-          widget1 =
-          //Observer(
-          //builder: (_) =>
-          Center(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 16.0, right: 16.0),
-                child: CircularProgressIndicator(
-                  //          android: (_) => MaterialProgressIndicatorData(),
-                  //          ios: (_) => CupertinoProgressIndicatorData(),
+if(_isProgressBarShown){
+  widget1 = Center(
+    child: Padding(
+      padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+      child: PlatformCircularProgressIndicator(
+        android: (_) => MaterialProgressIndicatorData(),
+        ios: (_) => CupertinoProgressIndicatorData(),
+      ),
+    )
+  );
+}
+else{
+  widget1 = ListView.builder(
+    shrinkWrap: true,
+    padding: const EdgeInsets.all(0.0),
+    itemCount: currentList.length,
+    itemBuilder: (context, index) => ProductsTile(currentList[index],widget.user,widget.online,widget.offline,widget.auth,userInfo),
+  );
+}
+ if(isProfile)
+ {
+   return SignUp(widget.user,_closeUserProfile,userInfo);
+ }else{
+  return Scaffold(
+    key: key,
+    drawer: Drawer(
+    child: ListView(
+      padding: EdgeInsets.zero,
+      children: <Widget>[
+        Container(
+              child: (_imageUrl != "" && _imageUrl != null)?
+               UserAccountsDrawerHeader(
+                accountName: Text(_name),
+                accountEmail: Text(_email),
+                currentAccountPicture: CircleAvatar(
+                  backgroundImage: NetworkImage(_imageUrl),
+                  backgroundColor:
+                      Theme.of(context).platform == TargetPlatform.iOS
+                          ? Colors.blue
+                          : Colors.white,
                 ),
               )
-          //  ),
-          );
-        }
-        else {
-          widget1 = //Observer(
-          //builder: (_) =>
-          ListView.builder(
-            shrinkWrap: true,
-            padding: const EdgeInsets.all(0.0),
-
-            itemCount: currentList.length,
-            itemBuilder: (context, index) =>
-                ProductsTile(currentList[index], widget.user, widget.online,
-                    widget.offline, widget.auth),
-            //),
-          );
-        }
-
-
-        if (isProfile) {
-          return SignUp(widget.user, _closeUserProfile, userInfo);
-        } else {
-          return Scaffold(
-            key: key,
-            drawer: Drawer(
-              child: ListView(
-                padding: EdgeInsets.zero,
-                children: <Widget>[
-                  Observer(
-                  builder: (_) =>
-                  Container(
-                      child: (_imageUrl != "" && _imageUrl != null) ?
-                      UserAccountsDrawerHeader(
-                        accountName: Text(_name),
-                        accountEmail: Text(_email),
-                        currentAccountPicture: CircleAvatar(
-                          backgroundImage: NetworkImage(_imageUrl),
-                          backgroundColor:
-                          Theme
-                              .of(context)
-                              .platform == TargetPlatform.iOS
-                              ? Colors.blue
-                              : Colors.white,
-
-                        ),
-                      )
-                          :
-                      UserAccountsDrawerHeader(
-                        accountName: Text(_name),
-                        accountEmail: Text(_email),
-                        currentAccountPicture: CircleAvatar(
-                          //backgroundImage: NetworkImage(_imageUrl),
-                          backgroundColor:
-                          Theme
-                              .of(context)
-                              .platform == TargetPlatform.iOS
-                              ? Colors.blue
-                              : Colors.white,
-                          child: Text(
-                            "P",
-                            style: TextStyle(fontSize: 40.0),
-                          ),
-                        ),
-                      )
+              :
+               UserAccountsDrawerHeader(
+                accountName: Text(_name),
+                accountEmail: Text(_email),
+                currentAccountPicture: CircleAvatar(
+                  //backgroundImage: NetworkImage(_imageUrl),
+                  backgroundColor:
+                      Theme.of(context).platform == TargetPlatform.iOS
+                          ? Colors.blue
+                          : Colors.white,
+                  child: Text(
+                    "P",
+                    style: TextStyle(fontSize: 40.0),
                   ),
-                  ),
-
-                  Observer(
-                  builder: (_) =>
-                  ExpansionTile(
-                    title: Text("Filter"),
-                    children: <Widget>[
-                      _createDrawerItem(icon: FontAwesomeIcons.male,
-                          text: 'All',
-                          onTap: () => _getProduct('All')),
-                      _createDrawerItem(icon: FontAwesomeIcons.male,
-                          text: 'Men',
-                          onTap: () => _getProduct('Men')),
-                      _createDrawerItem(icon: FontAwesomeIcons.female,
-                          text: 'Women',
-                          onTap: () => _getProduct('Women')),
-                      _createDrawerItem(icon: FontAwesomeIcons.child,
-                          text: 'Kids',
-                          onTap: () => _getProduct('Kid')),
-                    ],
-                  ),
-                  ),
-                  Divider(),
-
+                ),
+              )
+            ),
+        ExpansionTile(
+          title: Text("Filter"),
+          children: <Widget>[
+            _createDrawerItem(icon: FontAwesomeIcons.male, text: 'All',onTap: () => _getProduct('All')),
+            _createDrawerItem(icon: FontAwesomeIcons.male, text: 'Men',onTap: () => _getProduct('Men')),
+            _createDrawerItem(icon: FontAwesomeIcons.female, text: 'Women', onTap: () => _getProduct('Women')),
+            _createDrawerItem(icon: FontAwesomeIcons.child, text: 'Kids', onTap: () => _getProduct('Kid')),
+          ],
+        ),
+        Divider(),
                   _createDrawerItem(
                       icon: FontAwesomeIcons.user,
                       text: 'My Account',

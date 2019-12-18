@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class LoginSignUpPage extends StatefulWidget {
@@ -23,8 +24,6 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
   // Initial form is login form
   FormMode _formMode = FormMode.LOGIN;
-  bool _isIos;
-  bool _isLoading;
 
   // Check if form is valid before perform login or signup
   bool _validateAndSave() {
@@ -40,27 +39,20 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   void _validateAndSubmit() async {
     setState(() {
       _errorMessage = "";
-      _isLoading = true;
     });
     if (_validateAndSave()) {
       String userId = "";
       try {
         if (_formMode == FormMode.LOGIN) {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
           userId = await widget.auth.signIn(_email, _password);
-          //SharedPreferences prefs = await SharedPreferences.getInstance();
-          //prefs.setString('email', _email);
-          //prefs.setBool(true);
-          //Navigator.pushReplacement(context,
-               //MaterialPageRoute(builder: (BuildContext ctx) => Blankpage()));
+          prefs.setString('uid', userId);
           print('Signed in: $userId');
         } else {
           userId = await widget.auth.signUp(_email, _password);
-          widget.auth.sendEmailVerification();
-          _showVerifyEmailSentDialog();
           print('Signed up user: $userId');
         }
         setState(() {
-          _isLoading = false;
         });
 
         if ( userId != null && userId.length > 0 && _formMode == FormMode.LOGIN) {
@@ -70,10 +62,6 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       } catch (e) {
         print('Error: $e');
         setState(() {
-          _isLoading = false;
-          if (_isIos) {
-            _errorMessage = e.details;
-          } else
             _errorMessage = e.message;
         });
       }
@@ -84,7 +72,6 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   @override
   void initState() {
     _errorMessage = "";
-    _isLoading = false;
     super.initState();
   }
 
@@ -106,7 +93,6 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
   @override
   Widget build(BuildContext context) {
-    _isIos = Theme.of(context).platform == TargetPlatform.iOS;
     return new Scaffold(
         appBar: new AppBar(
           title: new Text('Resideo e-Shopping'),
@@ -114,39 +100,10 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         body: Stack(
           children: <Widget>[
             _showBody(),
-            _showCircularProgress(),
           ],
         ));
   }
 
-  Widget _showCircularProgress(){
-    if (_isLoading) {
-      return Center(child: CircularProgressIndicator());
-    } return Container(height: 0.0, width: 0.0,);
-
-  }
-
-  void _showVerifyEmailSentDialog() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // return object of type Dialog
-        return AlertDialog(
-          title: new Text("Verify your account"),
-          content: new Text("Link to verify account has been sent to your email"),
-          actions: <Widget>[
-            new FlatButton(
-              child: new Text("Dismiss"),
-              onPressed: () {
-                _changeFormToLogin();
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   Widget _showBody(){
     return new Container(

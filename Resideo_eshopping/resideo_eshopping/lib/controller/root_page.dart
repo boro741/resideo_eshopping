@@ -1,11 +1,10 @@
-import 'dart:ffi';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:resideo_eshopping/Screens/login_signup_page.dart';
 import 'package:resideo_eshopping/Screens/product_list_page.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 class RootPage extends StatefulWidget {
   RootPage({this.auth});
@@ -15,13 +14,12 @@ class RootPage extends StatefulWidget {
 }
 
 enum AuthStatus {
-  NOT_DETERMINED,
   NOT_LOGGED_IN,
   LOGGED_IN,
 }
 
 class _RootPageState extends State<RootPage> {
-  AuthStatus authStatus = AuthStatus.NOT_DETERMINED;
+  AuthStatus authStatus = AuthStatus.NOT_LOGGED_IN;
   String _userId = "";
   bool _logInButtonPress=false;
   FirebaseUser _user;
@@ -29,16 +27,29 @@ class _RootPageState extends State<RootPage> {
   @override
   void initState()  {
     super.initState();
+    _function();
     widget.auth.getCurrentUser().then((user) {
       setState(() {
         if (user != null) {
           _user=user;
           _userId = user?.uid;
         }
-        authStatus =
-            user?.uid == null ? AuthStatus.NOT_LOGGED_IN : AuthStatus.LOGGED_IN;
+        //authStatus =
+          //  user?.uid == null ? AuthStatus.NOT_LOGGED_IN : AuthStatus.LOGGED_IN;
       });
+    }).catchError((error) {
+      print(error);
     });
+  }
+
+  Future _function() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if(prefs.getString('uid') == null) {
+      authStatus = AuthStatus.NOT_LOGGED_IN;
+    }
+    else {
+      authStatus = AuthStatus.LOGGED_IN;
+    }
   }
   
   void _onlogInButtonPress(){
@@ -52,17 +63,18 @@ class _RootPageState extends State<RootPage> {
       setState(() {
         _user=user;
         _userId = user.uid.toString();
+        authStatus = AuthStatus.LOGGED_IN;
       });
-    });
-    setState(() {
-      authStatus = AuthStatus.LOGGED_IN;
-     
+    }).catchError((error){
+      print(error);
     });
   }
 
-  void _onSignedOut() {
+  void _onSignedOut() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       authStatus = AuthStatus.NOT_LOGGED_IN;
+      prefs.clear();
       _logInButtonPress=false;
       _userId = "";
       _user=null;
@@ -81,9 +93,6 @@ class _RootPageState extends State<RootPage> {
   @override
   Widget build(BuildContext context) {
     switch (authStatus) {
-      case AuthStatus.NOT_DETERMINED:
-        return _buildWaitingScreen();
-        break;
       case AuthStatus.NOT_LOGGED_IN:
       {
         if(_logInButtonPress)

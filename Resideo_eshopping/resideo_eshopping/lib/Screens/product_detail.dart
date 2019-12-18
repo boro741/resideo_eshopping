@@ -3,53 +3,33 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobx/mobx.dart';
-//import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:resideo_eshopping/controller/product_controller.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/Screens/order_confirmation_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
-import 'package:resideo_eshopping/util/crud_operations.dart';
 import 'package:video_player/video_player.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_plugin_pdf_viewer/flutter_plugin_pdf_viewer.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:resideo_eshopping/model/User.dart';
+import 'package:resideo_eshopping/widgets/rating_start.dart';
 
-class StarDisplay extends StatefulWidget {
-  final int value;
-  const StarDisplay({Key key, this.value = 0})
-      : assert(value != null),
-        super(key: key);
 
-  @override
-  _StarDisplayState createState() => _StarDisplayState();
-}
-
-class _StarDisplayState extends State<StarDisplay> {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: List.generate(5, (index) {
-        return Icon(
-          index < widget.value ? Icons.star : Icons.star_border,
-        );
-      }),
-    );
-  }
-}
 
 class ProductDetail extends StatefulWidget
 {
  
-  final Product pd;
+  final Product product;
   final FirebaseUser user;
   final VoidCallback online;
   final VoidCallback offline;
   final BaseAuth auth;
-  ProductDetail(this.pd,this.user,this.online,this.offline,this.auth);
+  final User userInfo;
+  ProductDetail(this.product,this.user,this.online,this.offline,this.auth,this.userInfo);
 
   @override
   _ProductDetailState createState() => _ProductDetailState();
@@ -58,40 +38,21 @@ class ProductDetail extends StatefulWidget
 class _ProductDetailState extends State<ProductDetail> {
   Product product;
   String urlPDFPath ;
-  bool buttonDisabled=false;
+  bool buttonDisabled;
   PDFDocument document;
-  String inventoryDetail;
-  User userInfo;
-  FirebaseDatabaseUtil firebaseDatabaseUtil;
-
   VideoPlayerController _videoPlayerController;
-
+  ProductController _productController;
   Future<void> _initializeVideoPlayerFuture;
 
-  @action
-  getUserDetail(){
-    if(widget.user != null){
-     firebaseDatabaseUtil.getUserData(widget.user).then((result){
-            userInfo=result;
-          });
-    }
-  }
   @override
   void initState() {
-
-    _videoPlayerController = VideoPlayerController.network(widget.pd.pVideoUrl);
+    _videoPlayerController = VideoPlayerController.network(widget.product.pVideoUrl);
     _initializeVideoPlayerFuture = _videoPlayerController.initialize();
     _videoPlayerController.setLooping(true);
     _videoPlayerController.setVolume(1.0);
-
+    _productController=ProductController();
     super.initState();
-
-    firebaseDatabaseUtil=FirebaseDatabaseUtil();
-    firebaseDatabaseUtil.initState();
-
-    getUserDetail();
-
-    getFileFromUrl(widget.pd.faqUrl).then((f) {
+    getFileFromUrl(widget.product.faqUrl).then((f) {
       setState(() {
         urlPDFPath = f.path;
         print(urlPDFPath);
@@ -116,105 +77,119 @@ class _ProductDetailState extends State<ProductDetail> {
 
   @override
   Widget build(BuildContext context) {
-
-    @action
-    void navigateToCustomerAddress(User userInfo) async{
-     Navigator.push(context, MaterialPageRoute(builder: (context)=> AddUserDetails(widget.pd,userInfo,widget.user,widget.online,widget.offline,widget.auth)));
+    buttonDisabled =
+        _productController.enableDisableOrderNowButton(widget.product.quantity);
+    void navigateToCustomerAddress() async {
+      Navigator.push(context, MaterialPageRoute(builder: (context) =>
+          OrderConfirmationPage(
+              widget.product, widget.userInfo, widget.user, widget.online,
+              widget.offline, widget.auth)));
     }
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Resideo e-Shopping"),
-      ),
-      body: Container(
-        padding: EdgeInsets.all(15.0),
-        child: ListView(
-          children: <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                   Text(widget.pd.title,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.blue),),
-                   Spacer(),
-                   StarDisplay(value: widget.pd.rating,),
-             
-                ],
-                ),
-                Text(widget.pd.sDesc),
-                SizedBox(height: 20,),
-                _showSlides(),
-
-                SizedBox(height: 20,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                   Icon(FontAwesomeIcons.rupeeSign),
-                   Text(widget.pd.price.toString(),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 30),),
-                   Spacer(),
-                   getInventory(widget.pd.quantity),     
-                ],
-                ),
-                SizedBox(height: 20,),
-                MaterialButton(
-                  textColor: Colors.white,
-                  minWidth: double.infinity,
-                  shape: RoundedRectangleBorder(),
-                  color: Colors.blue,
-                  disabledColor: Colors.blueGrey,
-                  disabledTextColor: Colors.black,
-                  child: Text("Order Now",style: TextStyle(fontSize: 20),),
-                  onPressed: buttonDisabled? null:(){
-                    if(widget.user == null)
-                    {
-                      Navigator.pop(context);
-                      widget.online();
-                    }else
-                    if(userInfo == null || userInfo.address == null || userInfo.phone == null)
-                    {
-                      showAlertDialog(context);
-                    }else
-                    navigateToCustomerAddress(userInfo);
-                  },
-                ),
-                SizedBox(height: 20,),
-                Text("About This Item",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
-                SizedBox(height: 10,),
-                Text(widget.pd.lDesc,style: TextStyle(fontSize: 15),),
-                SizedBox(height: 20,),
-                Text('Customer Reviews',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
-                SizedBox(height: 10,),
-                Text(widget.pd.review,style: TextStyle(fontSize: 15),),
-
-                SizedBox(height: 20,), 
-                ButtonTheme(
-                  minWidth:400.0,
-                  height:40.0,
-                  child:RaisedButton(
-                      
-                      color: Colors.amber,
-                      // width: double.infinity,
-                      child: Text("FAQ"),
-                      onPressed: () {
-                        if (urlPDFPath != null) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                         PdfViewPage(path: urlPDFPath)));
-                                      // PdfViewPage(path: widget.pd.faq)));
-                        }
-                      },
-                    ),  
-                )        
-          ],
+    if (widget.product == null)
+      print(
+          "product object passed from the product list page in product detail page is empty");
+    else {
+      return PlatformScaffold(
+        appBar: PlatformAppBar(
+          title: PlatformText("Resideo e-Shopping"),
         ),
-          ],
-        )
-      ),
-    );
-    
+        body: Container(
+            padding: EdgeInsets.all(15.0),
+            child: ListView(
+              children: <Widget>[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        Text(widget.product.title, style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            color: Colors.blue),),
+                        Spacer(),
+                        StarDisplay(value: widget.product.rating,),
+                      ],
+                    ),
+                    Text(widget.product.sDesc),
+                    SizedBox(height: 20,),
+                    _showSlides(),
+                    SizedBox(height: 20,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        Icon(FontAwesomeIcons.rupeeSign),
+                        Text(widget.product.price.toString(), style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 30),),
+                        Spacer(),
+                        //getInventory(widget.product.quantity),
+                        Text(_productController.inventoryDetail(
+                            widget.product.quantity), style: TextStyle(
+                          color: _productController.inventoryDetailColor(
+                              widget.product.quantity),)),
+                      ],
+                    ),
+                    SizedBox(height: 20,),
+                    MaterialButton(
+                      textColor: Colors.white,
+                      minWidth: double.infinity,
+                      shape: RoundedRectangleBorder(),
+                      color: Colors.blue,
+                      disabledColor: Colors.blueGrey,
+                      disabledTextColor: Colors.black,
+                      child: Text("Order Now", style: TextStyle(fontSize: 20),),
+                      onPressed: buttonDisabled ? null : () {
+                        if (widget.user == null) {
+                          Navigator.pop(context);
+                          widget.online();
+                        } else if (widget.userInfo == null ||
+                            widget.userInfo.address == null ||
+                            widget.userInfo.phone == null) {
+                          showAlertDialog(context);
+                        } else
+                          navigateToCustomerAddress();
+                      },
+                    ),
+                    SizedBox(height: 20,),
+                    Text("About This Item", style: TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 20),),
+                    SizedBox(height: 10,),
+                    Text(widget.product.lDesc, style: TextStyle(fontSize: 15),),
+                    SizedBox(height: 20,),
+                    Text('Customer Reviews', style: TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 20),),
+                    SizedBox(height: 10,),
+                    Text(
+                      widget.product.review, style: TextStyle(fontSize: 15),),
+
+                    SizedBox(height: 20,),
+                    ButtonTheme(
+                      minWidth: 400.0,
+                      height: 40.0,
+                      child: RaisedButton(
+
+                        color: Colors.amber,
+                        // width: double.infinity,
+                        child: Text("FAQ"),
+                        onPressed: () {
+                          if (urlPDFPath != null) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        PdfViewPage(path: urlPDFPath)));
+                            // PdfViewPage(path: widget.pd.faq)));
+                          }
+                        },
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            )
+        ),
+      );
+    }
   }
 
   @override
@@ -232,6 +207,7 @@ class _ProductDetailState extends State<ProductDetail> {
       },
 //      androidFlat: (_) => MaterialFlatButtonData()
     );
+
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
       title: Text("Update User Profile"),
@@ -250,23 +226,7 @@ class _ProductDetailState extends State<ProductDetail> {
     );
   }
 
-  dynamic getInventory(int quantity){
 
-    if(quantity <=0){
-    buttonDisabled=true;
-    inventoryDetail="Out of Stock";
-    return  Text(inventoryDetail,style: TextStyle(color: Colors.red,) );
-    }
-    else
-    if (quantity<5){
-    inventoryDetail="Only $quantity left";
-    return  Text(inventoryDetail,style: TextStyle(color: Colors.red,) );
-    }
-    else{
-    inventoryDetail="In Stock";
-    return  Text(inventoryDetail,style: TextStyle(color: Colors.green,) );
-    }
-  }
 
   Widget _showVideo(){
     return Stack(
@@ -320,7 +280,7 @@ class _ProductDetailState extends State<ProductDetail> {
     return CarouselSlider(
       height: 300.0,
       items: [
-        Image.network(widget.pd.imgUrl, fit: BoxFit.fill,),
+        Image.network(widget.product.imgUrl, fit: BoxFit.fill,),
          _showVideo(),
       ],
     );

@@ -25,7 +25,7 @@ class OrderConfirmationPage extends StatefulWidget {
   _OrderConfirmationPageState createState() => _OrderConfirmationPageState();
 }
 
-class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
+class _OrderConfirmationPageState extends State<OrderConfirmationPage> with AfterLayoutMixin<OrderConfirmationPage> {
   ProductController _productController;
   static const String TAG ="OrderConfirmationPage";
 

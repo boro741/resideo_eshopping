@@ -6,7 +6,6 @@ import 'package:resideo_eshopping/model/User.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 import 'package:resideo_eshopping/util/logger.dart' as logger;
-import 'package:after_layout/after_layout.dart';
 
 class FirebaseDatabaseUtil  {
   static const String TAG ="FirebaseDatabaseUtil";

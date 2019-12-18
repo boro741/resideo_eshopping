@@ -38,6 +38,7 @@ class _SignUpState extends State<SignUp>
   var _addressController = TextEditingController();
   var _zipcodeController = TextEditingController();
 
+
   _fillUserDetail() {
     if (widget.userInfo != null) {
       _isEdit = true;

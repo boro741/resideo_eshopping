@@ -13,6 +13,7 @@ import 'package:resideo_eshopping/util/firebase_database_helper.dart';
 import 'package:resideo_eshopping/widgets/products_tile.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
 import 'package:resideo_eshopping/model/User.dart';
+import 'package:mobx/mobx.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:resideo_eshopping/util/logger.dart' as logger;
 
@@ -28,15 +29,25 @@ class ProductsListPage extends StatefulWidget {
 }
 
 class _ProductsListPageState extends State<ProductsListPage> 
+
     with SingleTickerProviderStateMixin ,AfterLayoutMixin<ProductsListPage>{
   ProductController productController=ProductController();
+
   FirebaseDatabaseUtil firebaseDatabaseUtil;
+
+  @observable
   String dropdownValue = 'Categories';
+
+  @observable
   List<Product> currentList = <Product>[];
+
+  @observable
   bool _isProgressBarShown = true;
+
   AnimationController controller;
   Animation<double> animation;
   User userInfo;
+
   String _name="";
   String _email="";
   String _imageUrl;
@@ -70,8 +81,8 @@ class _ProductsListPageState extends State<ProductsListPage>
             {
             setState(() {
 
-                      _name=userInfo.name;
-                      _imageUrl=userInfo.imageUrl;
+          _name = userInfo.name;
+          _imageUrl = userInfo.imageUrl;
 
             });
             }
@@ -82,6 +93,8 @@ class _ProductsListPageState extends State<ProductsListPage>
     }
   }
 
+
+  @action
   _getProduct(String value){
   productController.getProductList(value).then((result){
     if(result != null){
@@ -99,127 +112,139 @@ class _ProductsListPageState extends State<ProductsListPage>
 //    print(error);
   });
   }
-  
+
+
   @override
   Widget build(BuildContext context) {
+
     var key = GlobalKey<ScaffoldState>();
+
     Widget widget1;
+
     _setProfile();
-  if(_isProgressBarShown){
-    widget1 = Center(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 16.0, right: 16.0),
-        child: PlatformCircularProgressIndicator(
-          android: (_) => MaterialProgressIndicatorData(),
-          ios: (_) => CupertinoProgressIndicatorData(),
-        ),
-      )
-    );
-  }
-  else{
-    widget1 = ListView.builder(
-      shrinkWrap: true,
-      padding: const EdgeInsets.all(0.0),
 
-      itemCount: currentList.length,
-      itemBuilder: (context, index) => ProductsTile(currentList[index],widget.user,widget.online,widget.offline,widget.auth,userInfo),
-    );
-  }
-   if(isProfile)
-   {
-     return SignUp(widget.user,_closeUserProfile,userInfo);
-   }else{
-    return Scaffold(
-      key: key,
-      drawer: Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          Container(
-                child: (_imageUrl != null)?
-                 UserAccountsDrawerHeader(
-                  accountName: Text(_name),
-                  accountEmail: Text(_email),
-                  currentAccountPicture: CircleAvatar(
-                    backgroundImage: NetworkImage(_imageUrl),
-                    backgroundColor:
-                        Theme.of(context).platform == TargetPlatform.iOS
-                            ? Colors.blue
-                            : Colors.white,
-                 
-                  ),
-                )
-                :
-                 UserAccountsDrawerHeader(
-                  accountName: Text(_name),
-                  accountEmail: Text(_email),
-                  currentAccountPicture: CircleAvatar(
-                    backgroundColor:
-                        Theme.of(context).platform == TargetPlatform.iOS
-                            ? Colors.blue
-                            : Colors.white,
-                    child: Text(
-                      "P",
-                      style: TextStyle(fontSize: 40.0),
-                    ),
-                  ),
-                )
-              ),
-              
-          ExpansionTile(
-            title: Text("Filter"),
-            children: <Widget>[
-              _createDrawerItem(icon: FontAwesomeIcons.male, text: 'All',onTap: () => _getProduct('All')),
-              _createDrawerItem(icon: FontAwesomeIcons.male, text: 'Men',onTap: () => _getProduct('Men')),
-              _createDrawerItem(icon: FontAwesomeIcons.female, text: 'Women', onTap: () => _getProduct('Women')),
-              _createDrawerItem(icon: FontAwesomeIcons.child, text: 'Kids', onTap: () => _getProduct('Kid')),
-            ],
-          ),
-          Divider(),
-          _createDrawerItem(icon: FontAwesomeIcons.user, text: 'My Account',onTap: (){setState(() {isProfile=true;});}),
-          _loginSignupButton(),
-        ],
+if(_isProgressBarShown){
+  widget1 = Center(
+    child: Padding(
+      padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+      child: PlatformCircularProgressIndicator(
+        android: (_) => MaterialProgressIndicatorData(),
+        ios: (_) => CupertinoProgressIndicatorData(),
       ),
-    ),
-      appBar: AppBar(
-          title: PlatformText("Resideo eShopping"),
-          ),
-      body: widget1,
-    );
-   }
+    )
+  );
+}
+else{
+  widget1 = ListView.builder(
+    shrinkWrap: true,
+    padding: const EdgeInsets.all(0.0),
+    itemCount: currentList.length,
+    itemBuilder: (context, index) => ProductsTile(currentList[index],widget.user,widget.online,widget.offline,widget.auth,userInfo),
+  );
+}
+ if(isProfile)
+ {
+   return SignUp(widget.user,_closeUserProfile,userInfo);
+ }else{
+  return Scaffold(
+    key: key,
+    drawer: Drawer(
+    child: ListView(
+      padding: EdgeInsets.zero,
+      children: <Widget>[
+        Container(
+              child: (_imageUrl != "" && _imageUrl != null)?
+               UserAccountsDrawerHeader(
+                accountName: Text(_name),
+                accountEmail: Text(_email),
+                currentAccountPicture: CircleAvatar(
+                  backgroundImage: NetworkImage(_imageUrl),
+                  backgroundColor:
+                      Theme.of(context).platform == TargetPlatform.iOS
+                          ? Colors.blue
+                          : Colors.white,
+                ),
+              )
+              :
+               UserAccountsDrawerHeader(
+                accountName: Text(_name),
+                accountEmail: Text(_email),
+                currentAccountPicture: CircleAvatar(
+                  //backgroundImage: NetworkImage(_imageUrl),
+                  backgroundColor:
+                      Theme.of(context).platform == TargetPlatform.iOS
+                          ? Colors.blue
+                          : Colors.white,
+                  child: Text(
+                    "P",
+                    style: TextStyle(fontSize: 40.0),
+
+                  ),
+                ),
+              )
+            ),
+        ExpansionTile(
+          title: Text("Filter"),
+          children: <Widget>[
+            _createDrawerItem(icon: FontAwesomeIcons.male, text: 'All',onTap: () => _getProduct('All')),
+            _createDrawerItem(icon: FontAwesomeIcons.male, text: 'Men',onTap: () => _getProduct('Men')),
+            _createDrawerItem(icon: FontAwesomeIcons.female, text: 'Women', onTap: () => _getProduct('Women')),
+            _createDrawerItem(icon: FontAwesomeIcons.child, text: 'Kids', onTap: () => _getProduct('Kid')),
+          ],
+        ),
+        Divider(),
+                  _createDrawerItem(
+                      icon: FontAwesomeIcons.user,
+                      text: 'My Account',
+                      onTap: () {
+                        setState(() {
+                          isProfile = true;
+                        });
+                      }),
+
+                  _loginSignupButton(),
+                ],
+              ),
+            ),
+            appBar: AppBar(
+              title: Text("Resideo eShopping"),
+            ),
+            body: widget1,
+          );
+        }
+      //}
+      //);
   }
 
 
-  Widget _loginSignupButton(){
-       if(widget.user != null)
-          {
-            return PlatformButton(
-            onPressed: () async{
-             try {
-                   await widget.auth.signOut();
-                  widget.offline();
-                  } catch (e) {
-                   print(e);
-                  }
-            },
-            child: PlatformText('LOG OUT'),
-            color: Color.fromRGBO(255, 0, 0, 1.0),
+  Widget _loginSignupButton() {
+    if (widget.user != null) {
+      return PlatformButton(
+        onPressed: () async {
+          try {
+            await widget.auth.signOut();
+            widget.offline();
+          } catch (e) {
+            print(e);
+          }
+        },
+        child: Text('LOG OUT'),
+        color: Color.fromRGBO(255, 0, 0, 1.0),
             android: (_) => MaterialRaisedButtonData(),
             ios: (_) => CupertinoButtonData()
-          );
-          }
-          else
-          {
-          return PlatformButton(
-            onPressed: (){
-            widget.online();
-            },
-            child: PlatformText('LOG In'),
-            color: Color.fromRGBO(255, 0, 0, 1.0),
+      );
+    }
+    else {
+      return PlatformButton(
+        onPressed: () {
+          widget.online();
+        },
+        child: Text('LOG In'),
+        color: Color.fromRGBO(255, 0, 0, 1.0),
             android: (_) => MaterialRaisedButtonData(),
             ios: (_) => CupertinoButtonData()
-          );
-          }
+      );
+    }
   }
 
   Widget _createDrawerItem(
@@ -267,14 +292,14 @@ class _ProductsListPageState extends State<ProductsListPage>
     _getProduct("All");
   }
 
- 
+  @action
   void _showDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (context) =>
+          AlertDialog(
             title: Text("Internet connection is required!"),
           ),
     );
   }
-
 }

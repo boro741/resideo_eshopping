@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:mobx/mobx.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:resideo_eshopping/controller/product_controller.dart';
 import 'package:resideo_eshopping/model/product.dart';
@@ -60,6 +61,7 @@ class _ProductDetailState extends State<ProductDetail> {
       });
     });
   }
+
 
   Future<File> getFileFromUrl(String url) async {
     logger.info(TAG, "Getting PDF File from the Url: " + url);
@@ -153,7 +155,7 @@ class _ProductDetailState extends State<ProductDetail> {
                       },
                     ),
                     SizedBox(height: 20,),
-                    Text("About This Item", style: TextStyle(
+                    PlatformText("About This Item", style: TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 20),),
                     SizedBox(height: 10,),
                     Text(widget.product.lDesc, style: TextStyle(fontSize: 15),),
@@ -197,7 +199,6 @@ class _ProductDetailState extends State<ProductDetail> {
   @override
   void dispose() {
     _videoPlayerController.dispose();
-
     super.dispose();
   }
 
@@ -299,9 +300,16 @@ class PdfViewPage extends StatefulWidget {
 }
 
 class _PdfViewPageState extends State<PdfViewPage> {
+
+  @observable
   int _totalPages = 0;
+
+  @observable
   int _currentPage = 0;
+
+  @observable
   bool pdfReady = false;
+
   PDFViewController _pdfViewController;
 
   @override

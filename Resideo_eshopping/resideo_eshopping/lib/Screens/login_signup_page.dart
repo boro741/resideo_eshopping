@@ -109,14 +109,6 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> with AfterLayoutMixin
         ));
   }
 
-
-  Widget _showCircularProgress(){
-    if (_isLoading) {
-      return Center(child: CircularProgressIndicator());
-    } return Container(height: 0.0, width: 0.0,);
-
-  }
-
   Widget _showBody(){
     return new Container(
         padding: EdgeInsets.all(16.0),

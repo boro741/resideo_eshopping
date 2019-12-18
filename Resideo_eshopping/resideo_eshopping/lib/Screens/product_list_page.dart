@@ -36,7 +36,7 @@ class _ProductsListPageState extends State<ProductsListPage>
   User userInfo;
   String _name="";
   String _email="";
-  String _imageUrl="";
+  String _imageUrl;
   bool isProfile=false;
 
   void _closeUserProfile(){
@@ -51,7 +51,7 @@ class _ProductsListPageState extends State<ProductsListPage>
     {
       _name="";
       _email="";
-      _imageUrl="";
+      _imageUrl=null;
     }else
       {
         _email=widget.user.email.toString();
@@ -128,7 +128,7 @@ class _ProductsListPageState extends State<ProductsListPage>
         padding: EdgeInsets.zero,
         children: <Widget>[
           Container(
-                child: (_imageUrl != "" && _imageUrl != null)?
+                child: (_imageUrl != null)?
                  UserAccountsDrawerHeader(
                   accountName: Text(_name),
                   accountEmail: Text(_email),
@@ -146,7 +146,6 @@ class _ProductsListPageState extends State<ProductsListPage>
                   accountName: Text(_name),
                   accountEmail: Text(_email),
                   currentAccountPicture: CircleAvatar(
-                    //backgroundImage: NetworkImage(_imageUrl),
                     backgroundColor:
                         Theme.of(context).platform == TargetPlatform.iOS
                             ? Colors.blue

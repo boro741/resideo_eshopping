@@ -47,6 +47,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           userId = await widget.auth.signIn(_email, _password);
           prefs.setString('uid', userId);
+
           print('Signed in: $userId');
         } else {
           userId = await widget.auth.signUp(_email, _password);
@@ -104,6 +105,13 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         ));
   }
 
+
+  Widget _showCircularProgress(){
+    if (_isLoading) {
+      return Center(child: CircularProgressIndicator());
+    } return Container(height: 0.0, width: 0.0,);
+
+  }
 
   Widget _showBody(){
     return new Container(
@@ -169,8 +177,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
               Icons.mail,
               color: Colors.grey,
             )),
-            onSaved: (value) => _email = value.trim(),
             validator: FieldValidator.validateEmail,
+            onSaved: (value) => _email = value.trim(),
       ),
     );
   }

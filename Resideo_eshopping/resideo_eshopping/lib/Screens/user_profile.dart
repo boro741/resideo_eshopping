@@ -29,6 +29,7 @@ class _SignUpState extends State<SignUp>
   String _buttonName = "";
   String _alertMessage = "";
   bool _isEdit = false;
+  bool _deletePhotoButtonEnable=false;
   User user;
 
   var _nameController = TextEditingController();
@@ -46,6 +47,8 @@ class _SignUpState extends State<SignUp>
       _addressController.text = widget.userInfo.address;
       _zipcodeController.text = widget.userInfo.zipcode;
       _imageUrl = widget.userInfo.imageUrl;
+      if(_imageUrl != null)
+        _deletePhotoButtonEnable=true;
     } else {
       _buttonName = "Create Profile";
       _alertMessage = "Created";
@@ -80,13 +83,17 @@ class _SignUpState extends State<SignUp>
     );
   }
 
+  void _initializeImagePicker(){
+    imagePicker = ImagePickerHandler(this, this._controler, widget.user,_deletePhotoButtonEnable,widget.userInfo);
+    imagePicker.init();
+  }
+
   @override
   void initState() {
     super.initState();
     _controler = AnimationController(
         vsync: this, duration: const Duration(microseconds: 500));
-    imagePicker = ImagePickerHandler(this, this._controler, widget.user);
-    imagePicker.init();
+    _initializeImagePicker();
     firebaseDatabaseUtil = FirebaseDatabaseUtil();
     firebaseDatabaseUtil.initState();
     _fillUserDetail();
@@ -102,7 +109,11 @@ class _SignUpState extends State<SignUp>
   userImage(File _image) {
     setState(() {
       this._image = _image;
-      if (_image == null) _imageUrl = null;
+      if (_image == null) {
+        _imageUrl = null;
+        _deletePhotoButtonEnable=false;
+      }else
+        {_deletePhotoButtonEnable = true;}
     });
   }
 
@@ -131,7 +142,7 @@ class _SignUpState extends State<SignUp>
           autovalidate: true,
           child: Column(children: <Widget>[
             GestureDetector(
-              onTap: () => imagePicker.showDialog(context),
+              onTap: () {_initializeImagePicker();imagePicker.showDialog(context);},
               child: (_imageUrl != null && _image == null)
                   ? new Center(
                       child: Column(

@@ -17,6 +17,7 @@ import 'package:flutter_plugin_pdf_viewer/flutter_plugin_pdf_viewer.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:resideo_eshopping/model/User.dart';
 import 'package:resideo_eshopping/widgets/rating_start.dart';
+import 'package:resideo_eshopping/util/logger.dart' as logger;
 
 
 
@@ -36,6 +37,7 @@ class ProductDetail extends StatefulWidget
 }
 
 class _ProductDetailState extends State<ProductDetail> {
+  static const String TAG ="ProductDetail";
   Product product;
   String urlPDFPath ;
   bool buttonDisabled;
@@ -62,6 +64,7 @@ class _ProductDetailState extends State<ProductDetail> {
 
 
   Future<File> getFileFromUrl(String url) async {
+    logger.info(TAG, "Getting PDF File from the Url: " + url);
     try {
       var data = await http.get(url);
       var bytes = data.bodyBytes;
@@ -71,7 +74,8 @@ class _ProductDetailState extends State<ProductDetail> {
       File urlFile = await file.writeAsBytes(bytes);
       return urlFile;
     } catch (e) {
-      throw Exception("Error opening url file");
+      logger.error(TAG, "Error while getting the Pdf from URL :" + e);
+//       Exception("Error opening url file");
     }
   }
 

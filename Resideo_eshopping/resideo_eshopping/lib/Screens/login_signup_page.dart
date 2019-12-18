@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:after_layout/after_layout.dart';
+import 'package:resideo_eshopping/util/logger.dart' as logger;
 
 
 class LoginSignUpPage extends StatefulWidget {
@@ -15,7 +17,9 @@ class LoginSignUpPage extends StatefulWidget {
 
 enum FormMode { LOGIN, SIGNUP }
 
-class _LoginSignUpPageState extends State<LoginSignUpPage> {
+class _LoginSignUpPageState extends State<LoginSignUpPage> with AfterLayoutMixin<LoginSignUpPage> {
+
+  static const String TAG ="LoginSignUpPage";
   final _formKey = new GlobalKey<FormState>();
 
   String _email;
@@ -47,6 +51,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           userId = await widget.auth.signIn(_email, _password);
           prefs.setString('uid', userId);
+
           print('Signed in: $userId');
         } else {
           userId = await widget.auth.signUp(_email, _password);
@@ -61,6 +66,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
       } catch (e) {
         print('Error: $e');
+        logger.error(TAG, " Error in sending the Data to  the Firbase " + _errorMessage);
         setState(() {
             _errorMessage = e.message;
         });
@@ -70,9 +76,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
 
   @override
-  void initState() {
+  void afterFirstLayout(BuildContext context) {
     _errorMessage = "";
-    super.initState();
   }
 
   void _changeFormToSignUp() {
@@ -104,7 +109,6 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         ));
   }
 
-
   Widget _showBody(){
     return new Container(
         padding: EdgeInsets.all(16.0),
@@ -125,7 +129,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   }
 
   Widget _showErrorMessage() {
-    if (_errorMessage.length > 0 && _errorMessage != null) {
+    if (  _errorMessage != null && _errorMessage.length > 0) {
       return new Text(
         _errorMessage,
         style: TextStyle(
@@ -169,8 +173,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
               Icons.mail,
               color: Colors.grey,
             )),
-            onSaved: (value) => _email = value.trim(),
             validator: FieldValidator.validateEmail,
+            onSaved: (value) => _email = value.trim(),
       ),
     );
   }

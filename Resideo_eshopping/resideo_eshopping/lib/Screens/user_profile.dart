@@ -1,11 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:mobx/mobx.dart';
 import 'dart:io';
 import 'package:resideo_eshopping/controller/image_picker_handler.dart';
 import 'package:resideo_eshopping/model/User.dart';
 import 'package:resideo_eshopping/util/firebase_database_helper.dart';
+import 'package:after_layout/after_layout.dart';
 
 class SignUp extends StatefulWidget {
 
@@ -19,7 +19,7 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp>
-    with TickerProviderStateMixin, ImagePickerListener {
+    with TickerProviderStateMixin, ImagePickerListener,AfterLayoutMixin<SignUp> {
   final _formKeyValue = new GlobalKey<FormState>();
 
   File _image;
@@ -27,16 +27,10 @@ class _SignUpState extends State<SignUp>
   ImagePickerHandler imagePicker;
   FirebaseDatabaseUtil firebaseDatabaseUtil;
   String _imageUrl;
-
-  @observable
-  String _buttonName="";
-
-  @observable
-  String _alertMessage="";
-
-  @observable
-  bool _isEdit=false;
-
+  String _buttonName = "";
+  String _alertMessage = "";
+  bool _isEdit = false;
+  bool _deletePhotoButtonEnable=false;
   User user;
 
   var _nameController = TextEditingController();
@@ -45,19 +39,19 @@ class _SignUpState extends State<SignUp>
   var _zipcodeController = TextEditingController();
 
 
-  @action
-  _fillUserDetail(){
-    if(widget.userInfo != null)
-      {
-        _isEdit=true;
-        _buttonName="Update Profile";
-        _alertMessage="Updated";
-        _nameController.text=widget.userInfo.name;
-        _phoneController.text=widget.userInfo.phone;
-        _addressController.text=widget.userInfo.address;
-        _zipcodeController.text=widget.userInfo.zipcode;
-        _imageUrl=widget.userInfo.imageUrl;
-      }else {
+  _fillUserDetail() {
+    if (widget.userInfo != null) {
+      _isEdit = true;
+      _buttonName = "Update Profile";
+      _alertMessage = "Updated";
+      _nameController.text = widget.userInfo.name;
+      _phoneController.text = widget.userInfo.phone;
+      _addressController.text = widget.userInfo.address;
+      _zipcodeController.text = widget.userInfo.zipcode;
+      _imageUrl = widget.userInfo.imageUrl;
+      if(_imageUrl != null)
+        _deletePhotoButtonEnable=true;
+    } else {
       _buttonName = "Create Profile";
       _alertMessage = "Created";
     }
@@ -91,13 +85,16 @@ class _SignUpState extends State<SignUp>
     );
   }
 
+  void _initializeImagePicker(){
+    imagePicker = ImagePickerHandler(this, this._controler, widget.user,_deletePhotoButtonEnable,widget.userInfo);
+    imagePicker.init();
+  }
+
   @override
-  void initState() {
-    super.initState();
+  void afterFirstLayout(BuildContext context) {
     _controler = AnimationController(
         vsync: this, duration: const Duration(microseconds: 500));
-    imagePicker = ImagePickerHandler(this, this._controler, widget.user);
-    imagePicker.init();
+    _initializeImagePicker();
     firebaseDatabaseUtil = FirebaseDatabaseUtil();
     firebaseDatabaseUtil.initState();
     _fillUserDetail();
@@ -113,7 +110,11 @@ class _SignUpState extends State<SignUp>
   userImage(File _image) {
     setState(() {
       this._image = _image;
-      if (_image == null) _imageUrl = null;
+      if (_image == null) {
+        _imageUrl = null;
+        _deletePhotoButtonEnable=false;
+      }else
+        {_deletePhotoButtonEnable = true;}
     });
   }
 
@@ -142,7 +143,7 @@ class _SignUpState extends State<SignUp>
           autovalidate: true,
           child: Column(children: <Widget>[
             GestureDetector(
-              onTap: () => imagePicker.showDialog(context),
+              onTap: () {_initializeImagePicker();imagePicker.showDialog(context);},
               child: (_imageUrl != null && _image == null)
                   ? new Center(
                       child: Column(

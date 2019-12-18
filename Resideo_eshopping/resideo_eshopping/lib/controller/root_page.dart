@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:resideo_eshopping/Screens/login_signup_page.dart';
 import 'package:resideo_eshopping/Screens/product_list_page.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
+import 'package:after_layout/after_layout.dart';
+import 'package:resideo_eshopping/util/logger.dart' as logger;
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 class RootPage extends StatefulWidget {
   RootPage({this.auth});
@@ -19,15 +20,16 @@ enum AuthStatus {
   LOGGED_IN,
 }
 
-class _RootPageState extends State<RootPage> {
+class _RootPageState extends State<RootPage>with AfterLayoutMixin<RootPage> {
+  static const String TAG ="RootPage";
   AuthStatus authStatus = AuthStatus.NOT_LOGGED_IN;
   String _userId = "";
   bool _logInButtonPress=false;
   FirebaseUser _user;
 
   @override
-  void initState()  {
-    super.initState();
+  void afterFirstLayout(BuildContext context) {
+//    super.initState();
     _function();
     widget.auth.getCurrentUser().then((user) {
       setState(() {
@@ -39,7 +41,8 @@ class _RootPageState extends State<RootPage> {
           //  user?.uid == null ? AuthStatus.NOT_LOGGED_IN : AuthStatus.LOGGED_IN;
       });
     }).catchError((error) {
-      print(error);
+      logger.error(TAG, " Error while rendering the Layout : "+ error);
+//      print(error);
     });
   }
 
@@ -67,7 +70,8 @@ class _RootPageState extends State<RootPage> {
         authStatus = AuthStatus.LOGGED_IN;
       });
     }).catchError((error){
-      print(error);
+      logger.error(TAG, " Error while checking in Logged in or not  : "+ error);
+//      print(error);
     });
   }
 

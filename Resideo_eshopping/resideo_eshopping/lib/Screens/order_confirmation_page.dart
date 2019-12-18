@@ -70,9 +70,9 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
         androidFlat: (_) => MaterialFlatButtonData());
 
     // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: Text("Order Confrimation"),
-      content: Text("Do you want to place order?"),
+    PlatformAlertDialog alert = PlatformAlertDialog(
+      title: PlatformText("Order Confrimation"),
+      content: PlatformText("Do you want to place order?"),
       actions: <Widget>[
         cancelButton,
         continueButton,

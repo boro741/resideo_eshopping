@@ -151,7 +151,7 @@ class _ProductDetailState extends State<ProductDetail> {
                       },
                     ),
                     SizedBox(height: 20,),
-                    Text("About This Item", style: TextStyle(
+                    PlatformText("About This Item", style: TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 20),),
                     SizedBox(height: 10,),
                     Text(widget.product.lDesc, style: TextStyle(fontSize: 15),),
@@ -200,18 +200,18 @@ class _ProductDetailState extends State<ProductDetail> {
 
    showAlertDialog(BuildContext context) {
     // set up the buttons
-    Widget cancelButton = MaterialButton(
-      child: Text("ok"),
+    Widget cancelButton = PlatformButton(
+      child: PlatformText("ok"),
       onPressed: () {
         Navigator.pop(context);
       },
-//      androidFlat: (_) => MaterialFlatButtonData()
+      androidFlat: (_) => MaterialFlatButtonData()
     );
 
     // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: Text("Update User Profile"),
-      content: Text("Please update Address and phone No in your user Profile"),
+    PlatformAlertDialog alert = PlatformAlertDialog(
+      title: PlatformText("Update User Profile"),
+      content: PlatformText("Please update Address and phone No in your user Profile"),
       actions: <Widget>[
         cancelButton,
       ],

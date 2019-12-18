@@ -13,6 +13,8 @@ import 'package:resideo_eshopping/util/firebase_database_helper.dart';
 import 'package:resideo_eshopping/widgets/products_tile.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
 import 'package:resideo_eshopping/model/User.dart';
+import 'package:after_layout/after_layout.dart';
+import 'package:resideo_eshopping/util/logger.dart' as logger;
 
 class ProductsListPage extends StatefulWidget {
  ProductsListPage(this.user,this.online,this.offline,this.auth);
@@ -20,12 +22,13 @@ class ProductsListPage extends StatefulWidget {
  final VoidCallback online;
  final VoidCallback offline;
  final BaseAuth auth;
+ static const String TAG ="PoductsListPage";
   @override
   _ProductsListPageState createState() => _ProductsListPageState();
 }
 
 class _ProductsListPageState extends State<ProductsListPage> 
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin ,AfterLayoutMixin<ProductsListPage>{
   ProductController productController=ProductController();
   FirebaseDatabaseUtil firebaseDatabaseUtil;
   String dropdownValue = 'Categories';
@@ -60,6 +63,7 @@ class _ProductsListPageState extends State<ProductsListPage>
 
   _getUserDetail(){
     if(widget.user != null){
+      logger.info(ProductsListPage.TAG, " Getting the User details from API  :" );
      firebaseDatabaseUtil.getUserData(widget.user).then((result){
             userInfo=result;
             if(userInfo != null)
@@ -72,7 +76,8 @@ class _ProductsListPageState extends State<ProductsListPage>
             });
             }
           }).catchError((error){
-            print(error);
+            logger.error(ProductsListPage.TAG, " Error in the getting user details from API  :" +error);
+//            print(error);
      });
     }
   }
@@ -81,14 +86,17 @@ class _ProductsListPageState extends State<ProductsListPage>
   productController.getProductList(value).then((result){
     if(result != null){
     setState((){currentList=result;
+    logger.info(ProductsListPage.TAG, " Getting the Products details from API  :" + value);
   _isProgressBarShown = false;
   });}
     else
       {
-        print("product list is empty");
+        logger.info(ProductsListPage.TAG, " product list is empty  :" );
+//        print("product list is empty");
       }
   }).catchError((error){
-    print(error);
+    logger.error(ProductsListPage.TAG, " product list is empty  :" +error );
+//    print(error);
   });
   }
   
@@ -232,8 +240,8 @@ class _ProductsListPageState extends State<ProductsListPage>
   }
 
   @override
-  void initState() {
-    super.initState();
+  void afterFirstLayout(BuildContext context) {
+    // Calling the same function "after layout" to resolve the issue.
     firebaseDatabaseUtil=FirebaseDatabaseUtil();
     firebaseDatabaseUtil.initState();
     _getUserDetail();
@@ -241,15 +249,17 @@ class _ProductsListPageState extends State<ProductsListPage>
       try {
         InternetAddress.lookup('google.com').then((result) {
           if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-            print('connected');
+            logger.info(ProductsListPage.TAG, " Connected :" );
           } else {
             _showDialog(); // show dialog
           }
         }).catchError((error) {
+          logger.error(ProductsListPage.TAG, " Error while connecting  :" + error);
           _showDialog(); // show dialog
         });
       } on SocketException catch (_) {
         _showDialog();
+        logger.error(ProductsListPage.TAG, " Error while connecting  :" );
         print('not connected'); // show dialog
       }
     });

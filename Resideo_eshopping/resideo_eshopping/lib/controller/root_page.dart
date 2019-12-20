@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:resideo_eshopping/Screens/login_signup_page.dart';
@@ -28,7 +26,7 @@ class _RootPageState extends State<RootPage> {
   @override
   void initState()  {
     super.initState();
-    _function();
+    _check_user_loggedin_not();
     widget.auth.getCurrentUser().then((user) {
       setState(() {
         if (user != null) {
@@ -41,7 +39,7 @@ class _RootPageState extends State<RootPage> {
     });
   }
 
-  Future _function() async{
+  Future _check_user_loggedin_not() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if(prefs.getString('uid') == null) {
       authStatus = AuthStatus.NOT_LOGGED_IN;

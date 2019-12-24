@@ -32,6 +32,7 @@ class ProductDetail extends StatefulWidget
   final User userInfo;
   ProductDetail(this.product,this.user,this.online,this.offline,this.auth,this.userInfo);
 
+
   @override
   _ProductDetailState createState() => _ProductDetailState();
 }
@@ -87,7 +88,8 @@ class _ProductDetailState extends State<ProductDetail> {
       Navigator.push(context, MaterialPageRoute(builder: (context) =>
           OrderConfirmationPage(
               widget.product, widget.userInfo, widget.user, widget.online,
-              widget.offline, widget.auth)));
+              widget.offline, widget.auth)
+              ));
     }
     if (widget.product == null)
       print(

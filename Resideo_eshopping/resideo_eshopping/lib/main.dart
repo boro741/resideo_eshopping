@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:resideo_eshopping/controller/root_page.dart';
-import 'package:resideo_eshopping/services/authentication.dart';
+import 'package:resideo_eshopping/Screens/home_page.dart';
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -14,7 +13,8 @@ class MyApp extends StatelessWidget {
       ),
       //home: MyHomePage(title: 'Resideo e-Shopping'),
 
-      home: RootPage(auth: Auth()),
+      //home: RootPage(auth: Auth()),
+       home: HomePage(),
     );
   }
 }

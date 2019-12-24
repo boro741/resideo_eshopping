@@ -6,9 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:resideo_eshopping/Screens/login_page.dart';
 import 'package:resideo_eshopping/Screens/user_profile.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/controller/product_controller.dart';
+import 'package:resideo_eshopping/model/user_repository.dart';
 import 'package:resideo_eshopping/util/firebase_database_helper.dart';
 import 'package:resideo_eshopping/widgets/products_tile.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
@@ -23,6 +26,7 @@ class ProductsListPage extends StatefulWidget {
  final VoidCallback online;
  final VoidCallback offline;
  final BaseAuth auth;
+
  static const String TAG ="PoductsListPage";
   @override
   _ProductsListPageState createState() => _ProductsListPageState();
@@ -35,13 +39,8 @@ class _ProductsListPageState extends State<ProductsListPage>
 
   FirebaseDatabaseUtil firebaseDatabaseUtil;
 
-  @observable
   String dropdownValue = 'Categories';
-
-  @observable
   List<Product> currentList = <Product>[];
-
-  @observable
   bool _isProgressBarShown = true;
 
   AnimationController controller;
@@ -221,12 +220,13 @@ else{
     if (widget.user != null) {
       return PlatformButton(
         onPressed: () async {
-          try {
-            await widget.auth.signOut();
-            widget.offline();
-          } catch (e) {
-            print(e);
-          }
+//          try {
+//            await widget.auth.signOut();
+//            widget.offline();
+//          } catch (e) {
+//            print(e);
+//          }
+          Provider.of<UserRepository>(context).signOut();
         },
         child: Text('LOG OUT'),
         color: Color.fromRGBO(255, 0, 0, 1.0),
@@ -237,7 +237,8 @@ else{
     else {
       return PlatformButton(
         onPressed: () {
-          widget.online();
+          //widget.online();
+          Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
         },
         child: Text('LOG In'),
         color: Color.fromRGBO(255, 0, 0, 1.0),

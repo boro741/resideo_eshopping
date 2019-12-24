@@ -109,7 +109,7 @@ class _RootPageState extends State<RootPage>with AfterLayoutMixin<RootPage> {
         }else
         {
          return new ProductsListPage(_user,_onlogInButtonPress,_onSignedOut,widget.auth);
-          
+
         }    
       }   
       break;
@@ -123,3 +123,5 @@ class _RootPageState extends State<RootPage>with AfterLayoutMixin<RootPage> {
     }
   }
 }
+
+

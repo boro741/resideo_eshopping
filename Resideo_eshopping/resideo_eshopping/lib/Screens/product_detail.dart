@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mobx/mobx.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:resideo_eshopping/controller/app_localizations.dart';
 import 'package:resideo_eshopping/controller/product_controller.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/Screens/order_confirmation_page.dart';
@@ -21,7 +22,7 @@ import 'package:resideo_eshopping/util/logger.dart' as logger;
 
 
 
-class ProductDetail extends StatefulWidget
+class   ProductDetail extends StatefulWidget
 {
  
   final Product product;
@@ -141,7 +142,8 @@ class _ProductDetailState extends State<ProductDetail> {
                       color: Colors.blue,
                       disabledColor: Colors.blueGrey,
                       disabledTextColor: Colors.black,
-                      child: Text("Order Now", style: TextStyle(fontSize: 20),),
+                      child: Text(AppLocalizations.of(context).translate('first_string'),
+                        style: TextStyle(fontSize: 20),),
                       onPressed: buttonDisabled ? null : () {
                         if (widget.user == null) {
                           Navigator.pop(context);
@@ -174,7 +176,7 @@ class _ProductDetailState extends State<ProductDetail> {
 
                         color: Colors.amber,
                         // width: double.infinity,
-                        child: Text("FAQ"),
+                        child: Text(AppLocalizations.of(context).translate('second_string'), ),
                         onPressed: () {
                           if (urlPDFPath != null) {
                             Navigator.push(

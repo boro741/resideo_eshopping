@@ -17,7 +17,7 @@ class LoginSignUpPage extends StatefulWidget {
 
 enum FormMode { LOGIN, SIGNUP }
 
-class _LoginSignUpPageState extends State<LoginSignUpPage> with AfterLayoutMixin<LoginSignUpPage> {
+class _LoginSignUpPageState extends State<LoginSignUpPage>  {
 
   static const String TAG ="LoginSignUpPage";
   final _formKey = new GlobalKey<FormState>();
@@ -76,7 +76,9 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> with AfterLayoutMixin
 
 
   @override
-  void afterFirstLayout(BuildContext context) {
+//  void afterFirstLayout(BuildContext context)
+  void initState() {
+    super.initState();
     _errorMessage = "";
   }
 

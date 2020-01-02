@@ -49,12 +49,13 @@ class _ProductDetailState extends State<ProductDetail> {
 
   @override
   void initState() {
+    super.initState();
     _videoPlayerController = VideoPlayerController.network(widget.product.pVideoUrl);
     _initializeVideoPlayerFuture = _videoPlayerController.initialize();
     _videoPlayerController.setLooping(true);
     _videoPlayerController.setVolume(1.0);
     _productController=ProductController();
-    super.initState();
+   
     getFileFromUrl(widget.product.faqUrl).then((f) {
       setState(() {
         urlPDFPath = f.path;
@@ -142,7 +143,7 @@ class _ProductDetailState extends State<ProductDetail> {
                       color: Colors.blue,
                       disabledColor: Colors.blueGrey,
                       disabledTextColor: Colors.black,
-                      child: Text(AppLocalizations.of(context).translate('first_string'),
+                      child: Text(AppLocalizations.of(context).getString('first_string'),
                         style: TextStyle(fontSize: 20),),
                       onPressed: buttonDisabled ? null : () {
                         if (widget.user == null) {
@@ -176,7 +177,7 @@ class _ProductDetailState extends State<ProductDetail> {
 
                         color: Colors.amber,
                         // width: double.infinity,
-                        child: Text(AppLocalizations.of(context).translate('second_string'), ),
+                        child: Text(AppLocalizations.of(context).getString('second_string'), ),
                         onPressed: () {
                           if (urlPDFPath != null) {
                             Navigator.push(

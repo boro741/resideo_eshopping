@@ -5,17 +5,19 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:resideo_eshopping/model/user_repository.dart';
-import 'package:resideo_eshopping/routes.dart';
-import 'package:resideo_eshopping/services/shared_preferences/preferences.dart';
 import 'package:resideo_eshopping/widgets/progress_indicator.dart';
 import 'package:resideo_eshopping/widgets/strings.dart';
 import 'package:resideo_eshopping/widgets/text_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:resideo_eshopping/stores/login_page_store.dart';
+import 'package:resideo_eshopping/util/logger.dart' as logger;
 
 enum FormMode {LOGIN, SIGNUP}
 
 class LoginPage extends StatefulWidget{
+  LoginPage({ this.onSignedIn});
+  final VoidCallback onSignedIn;
+
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -26,6 +28,7 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
 
   FocusNode _passwordFocusNode;
 
+  static const String TAG ="LoginSignUpPage";
   final _formKey = GlobalKey<FormState>();
   final _key = GlobalKey<ScaffoldState>();
 
@@ -33,13 +36,13 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
 
   // Initial form is login form
   FormMode _formMode = FormMode.LOGIN;
+  String userId = "";
+
 
   @override
   void afterFirstLayout(BuildContext context){
     _passwordFocusNode = FocusNode();
 
-//    _email = TextEditingController(text: "");
-//    _password = TextEditingController(text: "");
     _email.addListener(() {
       //this will be called whenever user types in some value
       _store.setEmail(_email.text);
@@ -63,40 +66,17 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
 
   Material _buildBody() {
     return Material(
-      child: Stack(
+      child:
+      Stack(
         children: <Widget>[
-          OrientationBuilder(
-            builder: (context, orientation) {
-              //variable to hold widget
-              var child;
-
-              //check to see whether device is in landscape or portrait
-              //load widgets based on device orientation
-              orientation == Orientation.landscape
-                  ? child = Row(
-                children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: _buildLeftSide(),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: _buildRightSide(),
-                  ),
-                ],
-              )
-                  : child = Center(child: _buildRightSide());
-
-              return child;
-            },
-          ),
-          Observer(
-            builder: (context) {
-              return _store.success
-                  ? navigate(context)
-                  : showErrorMessage(context, _store.errorStore.errorMessage);
-            },
-          ),
+          _buildForm(),
+//          Observer(
+//            builder: (context) {
+//              return _store.success
+//                  ? navigate(context)
+//                  : showErrorMessage(context, _store.errorStore.errorMessage);
+//            },
+//          ),
           Observer(
             builder: (context) {
               return Visibility(
@@ -110,16 +90,8 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
     );
   }
 
-  Widget _buildLeftSide() {
-    return SizedBox.expand(
-      child: Image.asset(
-        'assets/images/img_login.jpg',
-        fit: BoxFit.cover,
-      ),
-    );
-  }
 
-  Widget _buildRightSide() {
+  Widget _buildForm() {
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
@@ -206,55 +178,57 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
                 color: Colors.blue,
 
                 onPressed: () async {
-//                  if (_store.canLogin) {
-//                    _store.login();
-//                  } else {
-//                    showErrorMessage(context, 'Please fill in all fields');
-//                  }
+                try{
                   if (_formKey.currentState.validate()) {
-                    if (!await user.signIn(
-                        _email.text, _password.text))
-                      _key.currentState.showSnackBar(SnackBar(
-                        content: Text("Something is wrong"),
-                      ));
+                    if(_formMode == FormMode.LOGIN){
+                      SharedPreferences prefs = await SharedPreferences.getInstance();
+                      userId = await user.signIn(_email.text, _password.text);
+                      prefs.setString('uid', userId);
+                      print('Signed in: $userId');
+
+                      //_key.currentState.showSnackBar(SnackBar(content: Text('You are Signed in')));
+                    }
+                    else{
+                      userId = await user.signUp(_email.text, _password.text);
+                      //_key.currentState.showSnackBar(SnackBar(content: Text('Successfully Signed up')));
+                    }
+
+                          if ( userId != null && userId.length > 0 && _formMode == FormMode.LOGIN) {
+                            widget.onSignedIn();
+                          }
+////
                   }
+                  }catch (e) {
+                  print('Error: $e');
+                  logger.error(TAG, " Error in sending the Data to  the Firbase ");
+
+                }
                 },
                 child: _formMode == FormMode.LOGIN
-                    ? new Text('Login',
-                    style: new TextStyle(fontSize: 20.0, color: Colors.white))
-                    : new Text('Create account',
-                    style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+                    ? Text('Login',
+                    style: TextStyle(fontSize: 20.0, color: Colors.white))
+                    : Text('Create account',
+                    style: TextStyle(fontSize: 20.0, color: Colors.white)),
               )),
         );
   }
 
   Widget _showSecondaryButton() {
-    return new FlatButton(
-      child: _formMode == FormMode.LOGIN
-          ? new Text('Create an account',
-          style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300))
-          : new Text('Have an account? Sign in',
-          style:
-          new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
-      onPressed: _formMode == FormMode.LOGIN
-          ? _changeFormToSignUp
-          : _changeFormToLogin,
-    );
+        return
+          FlatButton(
+          child:
+          _formMode == FormMode.LOGIN
+              ? Text('Create an account',
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300))
+              : Text('Have an account? Sign in',
+              style:
+              TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
+          onPressed: _formMode == FormMode.LOGIN
+              ? changeFormToSignUp
+              : changeFormToLogin,
+        );
   }
 
-  void _changeFormToSignUp() {
-    _formKey.currentState.reset();
-    setState(() {
-      _formMode = FormMode.SIGNUP;
-    });
-  }
-
-  void _changeFormToLogin() {
-    _formKey.currentState.reset();
-    setState(() {
-      _formMode = FormMode.LOGIN;
-    });
-  }
 
   showErrorMessage(BuildContext context, String message) {
     if(message != null) {
@@ -269,16 +243,11 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
     return Container();
   }
 
-  Widget navigate(BuildContext context){
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.setBool(Preferences.is_logged_in, true);
-    });
-
-    Future.delayed(Duration(milliseconds: 0), (){
-      Navigator.of(context).pushNamedAndRemoveUntil(Routes.home, (Route<dynamic> route) => false);
-    });
-    return Container();
-  }
+//  Widget navigate(BuildContext context){
+//    SharedPreferences.getInstance().then((prefs) {
+//      prefs.setBool(Preferences.is_logged_in, true);
+//    });
+//  }
 
   @override
   void dispose() {
@@ -286,5 +255,22 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
     _password.dispose();
     super.dispose();
   }
+
+  void changeFormToSignUp(){
+    _formKey.currentState.reset();
+    setState(() {
+      _formMode = FormMode.SIGNUP;
+    });
+
+  }
+
+  void changeFormToLogin(){
+    _formKey.currentState.reset();
+    setState(() {
+      _formMode = FormMode.LOGIN;
+    });
+
+  }
+
 }
 

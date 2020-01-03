@@ -91,9 +91,9 @@ class _SignUpState extends State<SignUp>
   }
 
   @override
-  // void afterFirstLayout(BuildContext context) {
-    void initState() {
-      super.initState();
+// void afterFirstLayout(BuildContext context) {
+     void initState() {
+     super.initState();
     _controler = AnimationController(
         vsync: this, duration: const Duration(microseconds: 500));
     _initializeImagePicker();

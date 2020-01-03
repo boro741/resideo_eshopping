@@ -60,8 +60,9 @@ class _RootPageState extends State<RootPage> {
 //      print(error);
       });
       print(prefs.getString('uid'));
-      _userStatus =true; 
+      
     }
+    _userStatus =true; 
   }
 
   void _onlogInButtonPress() {
@@ -87,7 +88,7 @@ class _RootPageState extends State<RootPage> {
   void _onSignedOut() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      authStatus = AuthStatus.NOT_LOGGED_IN;
+      authStatus = AuthStatus.LOGGED_IN;
       prefs.clear();
       _logInButtonPress = false;
       _userId = "";

@@ -33,7 +33,7 @@ class FirebaseDatabaseUtil  {
     int x;
     if(product != null) {
       x = product.id;
-      await _dbRef.child('Products').child((x - 1).toString()).update({
+      await _dbRef.child('Products').child((x).toString()).update({
         "Inventory": product.quantity,
       }).then((_) {
         logger.info(FirebaseDatabaseUtil.TAG, " Updating the inventory in the Firbase " );

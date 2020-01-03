@@ -7,7 +7,6 @@ import 'dart:async';
 import 'package:resideo_eshopping/Screens/image_picker_dialog.dart';
 import 'package:resideo_eshopping/util/firebase_database_helper.dart';
 import 'package:resideo_eshopping/model/User.dart';
-import 'package:after_layout/after_layout.dart';
 import 'package:resideo_eshopping/util/logger.dart' as logger;
 
 

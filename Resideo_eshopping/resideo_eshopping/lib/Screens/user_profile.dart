@@ -19,7 +19,7 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp>
-    with TickerProviderStateMixin, ImagePickerListener,AfterLayoutMixin<SignUp> {
+    with TickerProviderStateMixin, ImagePickerListener {
   final _formKeyValue = new GlobalKey<FormState>();
 
   File _image;
@@ -91,13 +91,17 @@ class _SignUpState extends State<SignUp>
   }
 
   @override
-  void afterFirstLayout(BuildContext context) {
+// void afterFirstLayout(BuildContext context) {
+     void initState() {
+     super.initState();
     _controler = AnimationController(
         vsync: this, duration: const Duration(microseconds: 500));
     _initializeImagePicker();
     firebaseDatabaseUtil = FirebaseDatabaseUtil();
     firebaseDatabaseUtil.initState();
     _fillUserDetail();
+    
+    
   }
 
   @override

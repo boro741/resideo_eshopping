@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:mobx/mobx.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:resideo_eshopping/controller/app_localizations.dart';
 import 'package:resideo_eshopping/controller/product_controller.dart';
@@ -15,10 +14,10 @@ import 'package:video_player/video_player.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_plugin_pdf_viewer/flutter_plugin_pdf_viewer.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:resideo_eshopping/model/User.dart';
 import 'package:resideo_eshopping/widgets/rating_start.dart';
 import 'package:resideo_eshopping/util/logger.dart' as logger;
+import 'package:resideo_eshopping/widgets/pdf_viewer.dart';
 
 
 
@@ -37,7 +36,7 @@ class   ProductDetail extends StatefulWidget
   _ProductDetailState createState() => _ProductDetailState();
 }
 
-class _ProductDetailState extends State<ProductDetail> {
+class _ProductDetailState extends State<ProductDetail>  {
   static const String TAG ="ProductDetail";
   Product product;
   String urlPDFPath ;
@@ -49,12 +48,13 @@ class _ProductDetailState extends State<ProductDetail> {
 
   @override
   void initState() {
+    super.initState();
     _videoPlayerController = VideoPlayerController.network(widget.product.pVideoUrl);
     _initializeVideoPlayerFuture = _videoPlayerController.initialize();
     _videoPlayerController.setLooping(true);
     _videoPlayerController.setVolume(1.0);
     _productController=ProductController();
-    super.initState();
+   
     getFileFromUrl(widget.product.faqUrl).then((f) {
       setState(() {
         urlPDFPath = f.path;
@@ -142,7 +142,7 @@ class _ProductDetailState extends State<ProductDetail> {
                       color: Colors.blue,
                       disabledColor: Colors.blueGrey,
                       disabledTextColor: Colors.black,
-                      child: Text(AppLocalizations.of(context).translate('first_string'),
+                      child: Text(AppLocalizations.of(context).getString("Order_NOW"),
                         style: TextStyle(fontSize: 20),),
                       onPressed: buttonDisabled ? null : () {
                         if (widget.user == null) {
@@ -176,7 +176,7 @@ class _ProductDetailState extends State<ProductDetail> {
 
                         color: Colors.amber,
                         // width: double.infinity,
-                        child: Text(AppLocalizations.of(context).translate('second_string'), ),
+                        child: Text(AppLocalizations.of(context).getString("Frequently_ASKED"), ),
                         onPressed: () {
                           if (urlPDFPath != null) {
                             Navigator.push(
@@ -293,91 +293,3 @@ class _ProductDetailState extends State<ProductDetail> {
 }
 }
 
-class PdfViewPage extends StatefulWidget {
-  final String path;
-
-  const PdfViewPage({Key key, this.path}) : super(key: key);
-  @override
-  _PdfViewPageState createState() => _PdfViewPageState();
-}
-
-class _PdfViewPageState extends State<PdfViewPage> {
-
-  @observable
-  int _totalPages = 0;
-
-  @observable
-  int _currentPage = 0;
-
-  @observable
-  bool pdfReady = false;
-
-  PDFViewController _pdfViewController;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("FAQ"),
-      ),
-      body: Stack(
-        children: <Widget>[
-          PDFView(
-            filePath: widget.path,
-            autoSpacing: true,
-            enableSwipe: true,
-            pageSnap: true,
-            swipeHorizontal: true,
-            nightMode: false,
-            onError: (e) {
-              print(e);
-            },
-            onRender: (_pages) {
-              setState(() {
-                _totalPages = _pages;
-                pdfReady = true;
-              });
-            },
-            onViewCreated: (PDFViewController vc) {
-              _pdfViewController = vc;
-            },
-            onPageChanged: (int page, int total) {
-              setState(() {});
-            },
-            onPageError: (page, e) {},
-          ),
-          !pdfReady
-              ? Center(
-                  child: CircularProgressIndicator(),
-                )
-              : Offstage()
-        ],
-      ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          _currentPage > 0
-              ? FloatingActionButton.extended(
-                  backgroundColor: Colors.red,
-                  label: Text("Go to ${_currentPage - 1}"),
-                  onPressed: () {
-                    _currentPage -= 1;
-                    _pdfViewController.setPage(_currentPage);
-                  },
-                )
-              : Offstage(),
-          _currentPage+1 < _totalPages
-              ? FloatingActionButton.extended(
-                  backgroundColor: Colors.green,
-                  label: Text("Go to ${_currentPage + 1}"),
-                  onPressed: () {
-                    _currentPage += 1;
-                    _pdfViewController.setPage(_currentPage);
-                  },
-                )
-              : Offstage(),
-        ],
-      ),
-    );
-  }
-}

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class ProgressIndicatorWidget extends StatelessWidget {
   const ProgressIndicatorWidget({
@@ -20,7 +21,10 @@ class ProgressIndicatorWidget extends StatelessWidget {
             child: Card(
               child: Padding(
                 padding: const EdgeInsets.all(25.0),
-                child: CircularProgressIndicator(),
+                child: PlatformCircularProgressIndicator(
+                  android: (_) => MaterialProgressIndicatorData(),
+                  ios: (_) => CupertinoProgressIndicatorData(),
+                ),
               ),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0)),
@@ -28,7 +32,7 @@ class ProgressIndicatorWidget extends StatelessWidget {
           ),
         ),
         decoration: BoxDecoration(
-            color: Color.fromARGB(100, 105, 105, 105)),
+            color: Color.fromARGB(0, 105, 105, 105)),
       ),
     );
   }

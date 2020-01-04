@@ -1,3 +1,4 @@
+/*
 import 'package:flutter/material.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -253,3 +254,6 @@ class FieldValidator{
     return null;
   }
 }
+
+
+ */

@@ -1,4 +1,5 @@
 import 'package:after_layout/after_layout.dart';
+import 'package:flushbar/flushbar.dart';
 import 'package:flushbar/flushbar_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -177,20 +178,32 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
                       print('Signed in: $userId');
 
                       if(userId != null){
-                        _key.currentState.showSnackBar(SnackBar(content: Text('You are Signed in!')));
+                        Flushbar(
+                          message: "You are Signed in!",
+                          duration: Duration(seconds: 3),
+                        )..show(context);
                       }
                       else{
-                        _key.currentState.showSnackBar(SnackBar(content: Text('Not signed in! Please ensure correct details')));
+                        Flushbar(
+                          message: "Not signed in! Please ensure correct details",
+                          duration: Duration(seconds: 3),
+                        )..show(context);
                       }
 
                     }
                     else{
                       userId = await user.signUp(_email.text, _password.text);
                       if(userId != null){
-                        _key.currentState.showSnackBar(SnackBar(content: Text('Created account Successfully')));
+                        Flushbar(
+                          message: "Created account Successfully",
+                          duration: Duration(seconds: 3),
+                        )..show(context);
                       }
                       else{
-                        _key.currentState.showSnackBar(SnackBar(content: Text('Account is not created!')));
+                        Flushbar(
+                          message: "Account is not created! Please add valid details.",
+                          duration: Duration(seconds: 3),
+                        )..show(context);
                       }
                     }
 

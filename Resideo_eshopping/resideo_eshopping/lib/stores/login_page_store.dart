@@ -1,4 +1,6 @@
+import 'package:flutter/widgets.dart';
 import 'package:mobx/mobx.dart';
+import 'package:resideo_eshopping/Screens/login_page.dart';
 import 'package:resideo_eshopping/stores/error_store.dart';
 import 'package:validators/validators.dart';
 
@@ -12,6 +14,8 @@ abstract class _LoginPageStore with Store {
 
   // store for handling error messages
   final ErrorStore errorStore = ErrorStore();
+
+  final _formKey = GlobalKey<FormState>();
 
   _LoginPageStore() {
     _setupValidations();
@@ -37,6 +41,9 @@ abstract class _LoginPageStore with Store {
 
   @observable
   bool loading = false;
+
+  @observable
+  FormMode _formMode = FormMode.LOGIN;
 
   @computed
   bool get canLogin =>
@@ -72,6 +79,7 @@ abstract class _LoginPageStore with Store {
     }
   }
 
+
   @action
   Future login() async {
     loading = true;
@@ -90,6 +98,7 @@ abstract class _LoginPageStore with Store {
       print(e);
     });
   }
+
 
   void dispose() {
     for (final d in _disposers) {

@@ -1,4 +1,4 @@
-
+/*
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:resideo_eshopping/Screens/login_signup_page.dart';
@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class RootPage extends StatefulWidget {
   RootPage({this.auth});
   final BaseAuth auth;
+
   @override
   State<StatefulWidget> createState() => new _RootPageState();
 }
@@ -20,7 +21,7 @@ enum AuthStatus {
   LOGGED_IN,
 }
 
-class _RootPageState extends State<RootPage>with AfterLayoutMixin<RootPage> {
+class _RootPageState extends State<RootPage>with ChangeNotifier, AfterLayoutMixin<RootPage> {
   static const String TAG ="RootPage";
   AuthStatus authStatus = AuthStatus.NOT_LOGGED_IN;
   String _userId = "";
@@ -30,15 +31,15 @@ class _RootPageState extends State<RootPage>with AfterLayoutMixin<RootPage> {
   @override
   void afterFirstLayout(BuildContext context) {
 //    super.initState();
-    _function();
+    _onAuthStateChanged();
     widget.auth.getCurrentUser().then((user) {
       setState(() {
         if (user != null) {
           _user=user;
           _userId = user?.uid;
         }
-        //authStatus =
-          //  user?.uid == null ? AuthStatus.NOT_LOGGED_IN : AuthStatus.LOGGED_IN;
+//        authStatus =
+//            user?.uid == null ? AuthStatus.NOT_LOGGED_IN : AuthStatus.LOGGED_IN;
       });
     }).catchError((error) {
       logger.error(TAG, " Error while rendering the Layout : "+ error);
@@ -46,7 +47,7 @@ class _RootPageState extends State<RootPage>with AfterLayoutMixin<RootPage> {
     });
   }
 
-  Future _function() async{
+  Future _onAuthStateChanged() async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if(prefs.getString('uid') == null) {
       authStatus = AuthStatus.NOT_LOGGED_IN;
@@ -55,7 +56,7 @@ class _RootPageState extends State<RootPage>with AfterLayoutMixin<RootPage> {
       authStatus = AuthStatus.LOGGED_IN;
     }
   }
-  
+
   void _onlogInButtonPress(){
     setState(() {
       _logInButtonPress=true;
@@ -94,7 +95,7 @@ class _RootPageState extends State<RootPage>with AfterLayoutMixin<RootPage> {
       ),
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     switch (authStatus) {
@@ -105,13 +106,13 @@ class _RootPageState extends State<RootPage>with AfterLayoutMixin<RootPage> {
           return new LoginSignUpPage(
           auth: widget.auth,
           onSignedIn: _onLoggedIn);
-        
+
         }else
         {
          return new ProductsListPage(_user,_onlogInButtonPress,_onSignedOut,widget.auth);
 
-        }    
-      }   
+        }
+      }
       break;
       case AuthStatus.LOGGED_IN:
         if (_userId != null && _userId.length > 0) {
@@ -123,5 +124,11 @@ class _RootPageState extends State<RootPage>with AfterLayoutMixin<RootPage> {
     }
   }
 }
+
+ */
+
+
+
+
 
 

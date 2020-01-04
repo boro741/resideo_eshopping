@@ -34,7 +34,6 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
 
   final _store = LoginPageStore();
 
-  // Initial form is login form
   FormMode _formMode = FormMode.LOGIN;
   String userId = "";
 
@@ -44,11 +43,9 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
     _passwordFocusNode = FocusNode();
 
     _email.addListener(() {
-      //this will be called whenever user types in some value
       _store.setEmail(_email.text);
     });
     _password.addListener(() {
-      //this will be called whenever user types in some value
       _store.setPassword(_password.text);
     });
   }
@@ -70,13 +67,6 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
       Stack(
         children: <Widget>[
           _buildForm(),
-//          Observer(
-//            builder: (context) {
-//              return _store.success
-//                  ? navigate(context)
-//                  : showErrorMessage(context, _store.errorStore.errorMessage);
-//            },
-//          ),
           Observer(
             builder: (context) {
               return Visibility(
@@ -138,7 +128,7 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
           icon: Icons.person,
           iconColor: Colors.black54,
           textController: _email,
-          inputAction: TextInputAction.next,
+          //inputAction: TextInputAction.next,
           onFieldSubmitted: (value) {
             FocusScope.of(context).requestFocus(_passwordFocusNode);
           },
@@ -186,17 +176,29 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
                       prefs.setString('uid', userId);
                       print('Signed in: $userId');
 
-                      //_key.currentState.showSnackBar(SnackBar(content: Text('You are Signed in')));
+                      if(userId != null){
+                        _key.currentState.showSnackBar(SnackBar(content: Text('You are Signed in!')));
+                      }
+                      else{
+                        _key.currentState.showSnackBar(SnackBar(content: Text('Not signed in! Please ensure correct details')));
+                      }
+
                     }
                     else{
                       userId = await user.signUp(_email.text, _password.text);
-                      //_key.currentState.showSnackBar(SnackBar(content: Text('Successfully Signed up')));
+                      if(userId != null){
+                        _key.currentState.showSnackBar(SnackBar(content: Text('Created account Successfully')));
+                      }
+                      else{
+                        _key.currentState.showSnackBar(SnackBar(content: Text('Account is not created!')));
+                      }
                     }
 
                           if ( userId != null && userId.length > 0 && _formMode == FormMode.LOGIN) {
+
                             widget.onSignedIn();
+                            Navigator.of(context).pop();
                           }
-////
                   }
                   }catch (e) {
                   print('Error: $e');
@@ -216,17 +218,15 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
   Widget _showSecondaryButton() {
         return
           FlatButton(
-          child:
-          _formMode == FormMode.LOGIN
-              ? Text('Create an account',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300))
-              : Text('Have an account? Sign in',
-              style:
-              TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
-          onPressed: _formMode == FormMode.LOGIN
-              ? changeFormToSignUp
-              : changeFormToLogin,
-        );
+              child:
+              _formMode == FormMode.LOGIN
+                  ? Text('Create an account',
+                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300))
+                  : Text('Have an account? Sign in',
+                  style:
+                  TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
+              onPressed: _formMode == FormMode.LOGIN ? _changeFormToSignUp : _changeFormToLogin
+          );
   }
 
 
@@ -243,11 +243,6 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
     return Container();
   }
 
-//  Widget navigate(BuildContext context){
-//    SharedPreferences.getInstance().then((prefs) {
-//      prefs.setBool(Preferences.is_logged_in, true);
-//    });
-//  }
 
   @override
   void dispose() {
@@ -256,17 +251,19 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
     super.dispose();
   }
 
-  void changeFormToSignUp(){
-    _formKey.currentState.reset();
+  void _changeFormToSignUp(){
     setState(() {
+      _email.clear();
+      _password.clear();
       _formMode = FormMode.SIGNUP;
     });
 
   }
 
-  void changeFormToLogin(){
-    _formKey.currentState.reset();
+  void _changeFormToLogin(){
     setState(() {
+      _email.clear();
+      _password.clear();
       _formMode = FormMode.LOGIN;
     });
 

@@ -271,6 +271,7 @@ class _ProductDetailState extends State<ProductDetail> {
                             child: Icon(
                               _videoPlayerController.value.isPlaying ? Icons.pause : Icons.play_arrow,
                               size: 120.0,
+                              color: Colors.transparent,
                             ),
                           )
                       ),

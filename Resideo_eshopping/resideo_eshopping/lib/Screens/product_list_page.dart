@@ -55,8 +55,8 @@ class _ProductsListPageState extends State<ProductsListPage>
 
   void _closeUserProfile(){
    setState(() {
-     isProfile=false;
      _getUserDetail();
+     isProfile=false;
    });
   }
   
@@ -103,27 +103,27 @@ class _ProductsListPageState extends State<ProductsListPage>
 
   _getProduct(String value){
     logger.info(ProductsListPage.TAG, " _getProduct method for getting products:" );
-  productController.getProductList(value).then((result){
+
+    productController.getProductList(value).then((result){
     if(result != null){
-    setState((){currentList=result;
-    logger.info(ProductsListPage.TAG, " Getting the Products details from API  :" + value);
-  _isProgressBarShown = false;
-  });}
+      setState((){
+        currentList=result;
+        logger.info(ProductsListPage.TAG, " Getting the Products details from API  :" + value);
+        _isProgressBarShown = false;
+      });
+    }
     else
       {
         logger.info(ProductsListPage.TAG, " product list is empty  :" );
-//        print("product list is empty");
       }
     }).catchError((error) {
       logger.error(ProductsListPage.TAG, " product list is empty  :" + error);
-//    print(error);
     });
   }
 
 
   @override
   Widget build(BuildContext context) {
-    //var key = GlobalKey<ScaffoldState>();
 
     Widget widget1;
 
@@ -220,7 +220,6 @@ class _ProductsListPageState extends State<ProductsListPage>
                                 icon: FontAwesomeIcons.user,
                                 text: 'My Account',
                                 onTap: () {
-                                  //_productListPageStore.viewMyAccount();
                                   setState(() {
                                     isProfile = true;
                                   });
@@ -295,7 +294,6 @@ class _ProductsListPageState extends State<ProductsListPage>
   @override
   // void afterFirstLayout(BuildContext context) {
   void initState() {
-    // Calling the same function "after layout" to resolve the issue.
     super.initState();
 
     Timer.run(() {

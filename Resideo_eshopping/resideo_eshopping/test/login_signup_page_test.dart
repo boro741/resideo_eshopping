@@ -4,18 +4,18 @@ import 'package:resideo_eshopping/Screens/login_signup_page.dart';
 void main() {
   test('Empty Email Test', () {
     var result = FieldValidator.validateEmail('');
-      expect(result, 'Enter Email');
+      expect('Enter Email',result);
   });
 test('Invalid Email Test', () {
     var result = FieldValidator.validateEmail('Ajay');
-      expect(result, 'Enter valid email');
+      expect('Enter valid email',result);
   });
 test('Valid Email Test', () {
     var result = FieldValidator.validateEmail('Ajay@gmail.com');
-      expect(result, null);
-  });  
+      expect(null,result);
+  });
 test('Empty Password Test', () {
     var result = FieldValidator.validatePassword('');
-      expect(result, 'Enter Password');
+      expect('Enter Password',result);
   });
 }

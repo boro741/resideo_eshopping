@@ -129,7 +129,7 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
           icon: Icons.person,
           iconColor: Colors.black54,
           textController: _email,
-          //inputAction: TextInputAction.next,
+          inputAction: TextInputAction.next,
           onFieldSubmitted: (value) {
             FocusScope.of(context).requestFocus(_passwordFocusNode);
           },
@@ -149,7 +149,7 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
           icon: Icons.lock,
           iconColor: Colors.black54,
           textController: _password,
-          focusNode: _passwordFocusNode,
+          //focusNode: _passwordFocusNode,
           errorText: _store.formErrorStore.password,
         );
       },
@@ -180,19 +180,24 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
                       userId = await user.signIn(_email.text, _password.text);
                       prefs.setString('uid', userId);
                       print('Signed in: $userId');
+                      setState(() {
 
-                      if(userId != null){
-                        Flushbar(
-                          message: "You are Signed in!",
-                          duration: Duration(seconds: 3),
-                        )..show(context);
-                      }
-                      else{
-                        Flushbar(
-                          message: "Not signed in! Please ensure correct details",
-                          duration: Duration(seconds: 3),
-                        )..show(context);
-                      }
+                        if(userId != null){
+                          Navigator.of(context).pop();
+                          Flushbar(
+                            message: "You are Signed in!",
+                            duration: Duration(seconds: 3),
+                          )..show(context);
+                        }
+                        else{
+                          Flushbar(
+                            message: "Not signed in! Please enter correct details",
+                            duration: Duration(seconds: 3),
+                          )..show(context);
+                        }
+                      });
+
+
 
                     }
                     else{
@@ -214,7 +219,7 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
                           if ( userId != null && userId.length > 0 && _formMode == FormMode.LOGIN) {
 
                             widget.onSignedIn();
-                            Navigator.of(context).pop();
+
                           }
                   }
 

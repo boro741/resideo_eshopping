@@ -6,13 +6,10 @@ enum Status { Uninitialized, Authenticated, Authenticating, Unauthenticated }
 class UserRepository with ChangeNotifier {
   UserRepository(this._auth);
 
-  //final BaseAuth auth;
   FirebaseAuth _auth;
   FirebaseUser _user;
   String _userId;
   Status _status = Status.Uninitialized;
-
-  bool logInButtonPress = false;
 
   UserRepository.instance() : _auth = FirebaseAuth.instance {
     _auth.onAuthStateChanged.listen(_onAuthStateChanged);
@@ -49,8 +46,10 @@ class UserRepository with ChangeNotifier {
   Future<String> signUp(String email, String password) async {
     await _auth.createUserWithEmailAndPassword(
         email: email, password: password).then((result){
-      if(_userId != null)
-        _userId=result.user.uid;
+      if(result != null) {
+        _userId = result.user.uid;
+        print('$userId');
+      }
       else
         _userId=null;
     }).catchError((error){

@@ -170,6 +170,10 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
 
                 onPressed: () async {
                 try{
+
+                  if(_store.canLogin) _store.login();
+                  //else showErrorMessage(context, 'Please fill in all fields');
+
                   if (_formKey.currentState.validate()) {
                     if(_formMode == FormMode.LOGIN){
                       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -213,6 +217,7 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
                             Navigator.of(context).pop();
                           }
                   }
+
                   }catch (e) {
                   print('Error: $e');
                   logger.error(TAG, " Error in sending the Data to  the Firbase ");

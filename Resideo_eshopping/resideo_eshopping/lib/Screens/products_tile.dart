@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:resideo_eshopping/Screens/product_detail.dart';
@@ -76,6 +77,11 @@ class ProductsTile extends StatelessWidget {
         ],
       );
     }
+  }
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<User>('userInfo', userInfo));
   }
 }
 

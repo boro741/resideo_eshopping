@@ -88,7 +88,9 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> with Afte
   }
 
   @override
-  void afterFirstLayout(BuildContext context) {
+void afterFirstLayout(BuildContext context) {
+    // void initState() {
+    // super.initState();
     _productController = ProductController();
     _productController.init();
   }

@@ -94,10 +94,11 @@ class ProductController{
         helper.addAllProduct(products);
       }else
         {
-          print("Product are not fetched from the API");
+          logger.error(TAG, "Product are not fetched from the API" );
+//          print("Product are not fetched from the API");
         }
     }).catchError((error){
-      print(error);
+      logger.error(TAG, "Error in updating" +error );
     });
   }
 
@@ -133,9 +134,10 @@ class ProductController{
         product.quantity = product.quantity - 1;
         _firebaseDatabaseUtil.updateProduct(product);
       }else
-        print("Updating in local database is failed");
+        logger.error(TAG, "Updating in local database is failed" );
+//        print("Updating in local database is failed");
     }).catchError((error){
-      print(error);
+      logger.error(TAG, " Error in updating the Inventory : " + error);
     });
   }
 

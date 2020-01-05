@@ -26,7 +26,7 @@ class FirebaseDatabaseUtil  {
     database= new FirebaseDatabase();
     _dbRef = database.reference();
     database.setPersistenceEnabled(true);
-    database.setPersistenceCacheSizeBytes(10000000);
+    database.setPersistenceCacheSizeBytes(1000);
   }
 
   updateProduct(Product product) async {

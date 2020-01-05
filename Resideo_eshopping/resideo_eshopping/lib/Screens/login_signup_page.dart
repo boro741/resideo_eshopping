@@ -77,7 +77,9 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> with AfterLayoutMixin
 
 
   @override
-  void afterFirstLayout(BuildContext context) {
+void afterFirstLayout(BuildContext context){
+  // void initState() {
+  //   super.initState();
     _errorMessage = "";
   }
 

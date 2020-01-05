@@ -7,10 +7,11 @@ import 'dart:async';
 import 'package:resideo_eshopping/Screens/image_picker_dialog.dart';
 import 'package:resideo_eshopping/util/firebase_database_helper.dart';
 import 'package:resideo_eshopping/model/User.dart';
+import 'package:resideo_eshopping/util/logger.dart' as logger;
 
 
 class ImagePickerHandler{
-
+  static const String TAG ="ImagePickerHandler";
   AnimationController _controler;
   ImagePickerListener _listener;
   ImagePickerDialog imagePicker;
@@ -25,7 +26,8 @@ class ImagePickerHandler{
     await ImagePicker.pickImage(source: ImageSource.camera).then((image){
       cropImage(image);
     }).catchError((error){
-      print(error);
+      logger.error(TAG, " Error in opening the camera : " + error);
+//      print(error);
     });
 
   }
@@ -35,7 +37,8 @@ class ImagePickerHandler{
     await ImagePicker.pickImage(source: ImageSource.gallery).then((image){
       cropImage(image);
     }).catchError((error){
-      print(error);
+      logger.error(TAG, " Error in opening the gallery : " + error);
+//      print(error);
     });
   }
 
@@ -45,7 +48,8 @@ class ImagePickerHandler{
       if(result)
       _listener.userImage(null);
     }).catchError((error){
-      print(error);
+      logger.error(TAG, " Error in removing the image : " + error);
+//      print(error);
     });
   }
 
@@ -66,7 +70,7 @@ class ImagePickerHandler{
     ).then((croppedFile){
       _listener.userImage(croppedFile);
     }).then((error){
-      print(error);
+      logger.error(TAG, " Error in croping the image : " + error);
     });
 
   }

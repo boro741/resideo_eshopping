@@ -4,8 +4,9 @@ import 'package:resideo_eshopping/Screens/home_page.dart';
 import 'package:resideo_eshopping/model/user_repository.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:resideo_eshopping/controller/app_localizations.dart';
-void main() => runApp(MyApp());
-
+void main() {
+  runApp(MyApp());
+}
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

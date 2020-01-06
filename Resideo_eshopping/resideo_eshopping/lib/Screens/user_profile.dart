@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:resideo_eshopping/Screens/home_page.dart';
 import 'dart:io';
 import 'package:resideo_eshopping/controller/image_picker_handler.dart';
 import 'package:resideo_eshopping/model/User.dart';
@@ -29,12 +31,14 @@ class _SignUpState extends State<SignUp>
   String _buttonName = "";
   String _alertMessage = "";
   bool _isEdit = false;
+  bool _deletePhotoButtonEnable=false;
   User user;
 
   var _nameController = TextEditingController();
   var _phoneController = TextEditingController();
   var _addressController = TextEditingController();
   var _zipcodeController = TextEditingController();
+
 
   _fillUserDetail() {
     if (widget.userInfo != null) {
@@ -46,6 +50,8 @@ class _SignUpState extends State<SignUp>
       _addressController.text = widget.userInfo.address;
       _zipcodeController.text = widget.userInfo.zipcode;
       _imageUrl = widget.userInfo.imageUrl;
+      if(_imageUrl != null)
+        _deletePhotoButtonEnable=true;
     } else {
       _buttonName = "Create Profile";
       _alertMessage = "Created";
@@ -80,16 +86,23 @@ class _SignUpState extends State<SignUp>
     );
   }
 
+  void _initializeImagePicker(){
+    imagePicker = ImagePickerHandler(this, this._controler, widget.user,_deletePhotoButtonEnable,widget.userInfo);
+    imagePicker.init();
+  }
+
   @override
-  void initState() {
-    super.initState();
+// void afterFirstLayout(BuildContext context) {
+     void initState() {
+     super.initState();
     _controler = AnimationController(
         vsync: this, duration: const Duration(microseconds: 500));
-    imagePicker = ImagePickerHandler(this, this._controler, widget.user);
-    imagePicker.init();
+    _initializeImagePicker();
     firebaseDatabaseUtil = FirebaseDatabaseUtil();
     firebaseDatabaseUtil.initState();
     _fillUserDetail();
+    
+    
   }
 
   @override
@@ -102,7 +115,11 @@ class _SignUpState extends State<SignUp>
   userImage(File _image) {
     setState(() {
       this._image = _image;
-      if (_image == null) _imageUrl = null;
+      if (_image == null) {
+        _imageUrl = null;
+        _deletePhotoButtonEnable=false;
+      }else
+        {_deletePhotoButtonEnable = true;}
     });
   }
 
@@ -120,7 +137,13 @@ class _SignUpState extends State<SignUp>
         actions: <Widget>[
           new IconButton(
             icon: new Icon(Icons.close),
-            onPressed: () => widget.profile(),
+            onPressed: (){
+              //widget.profile();
+              Navigator.push(context, MaterialPageRoute(builder: (context){
+                return HomePage();
+              }));
+    },
+
           ),
         ],
         leading: new Container(),
@@ -131,7 +154,7 @@ class _SignUpState extends State<SignUp>
           autovalidate: true,
           child: Column(children: <Widget>[
             GestureDetector(
-              onTap: () => imagePicker.showDialog(context),
+              onTap: () {_initializeImagePicker();imagePicker.showDialog(context);},
               child: (_imageUrl != null && _image == null)
                   ? new Center(
                       child: Column(

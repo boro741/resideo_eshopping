@@ -1,12 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:resideo_eshopping/Screens/home_page.dart';
 import 'package:resideo_eshopping/controller/product_controller.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:resideo_eshopping/model/User.dart';
-import 'package:resideo_eshopping/services/authentication.dart';
-import 'package:resideo_eshopping/controller/root_page.dart';
+import 'package:after_layout/after_layout.dart';
+import 'package:resideo_eshopping/util/logger.dart' as logger;
 
 class OrderConfirmationPage extends StatefulWidget {
   final Product product;
@@ -14,24 +15,23 @@ class OrderConfirmationPage extends StatefulWidget {
   final FirebaseUser user;
   final VoidCallback online;
   final VoidCallback offline;
-  final BaseAuth auth;
 
   OrderConfirmationPage(this.product, this.userInfo, this.user, this.online,
-      this.offline, this.auth);
+      this.offline);
 
   @override
   _OrderConfirmationPageState createState() => _OrderConfirmationPageState();
 }
 
-class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
+class _OrderConfirmationPageState extends State<OrderConfirmationPage> with AfterLayoutMixin<OrderConfirmationPage> {
   ProductController _productController;
+  static const String TAG ="OrderConfirmationPage";
 
   void navigateToHomePage(BuildContext context) async {
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
-            builder: (context) => RootPage(
-                  auth: widget.auth,
-                )),
+              builder: (context) => HomePage()
+                ),
         (Route<dynamic> route) => false);
   }
 
@@ -88,159 +88,165 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
+void afterFirstLayout(BuildContext context) {
+    // void initState() {
+    // super.initState();
     _productController = ProductController();
     _productController.init();
   }
 
   @override
   Widget build(BuildContext context) {
-    return PlatformScaffold(
-      appBar: PlatformAppBar(
-        title: Container(
-          alignment: Alignment.center,
-          child: PlatformText("Resideo e-Shopping",
-              style: TextStyle(
+    if (widget.product != null && widget.userInfo != null) {
+      return PlatformScaffold(
+        appBar: PlatformAppBar(
+          title: Container(
+            alignment: Alignment.center,
+            child: PlatformText("Resideo e-Shopping",
+                style: TextStyle(
                   //color: Colors.white,
-                  )),
+                )),
+          ),
         ),
-      ),
-      body: Column(
-        children: <Widget>[
-          Flexible(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 15.0),
-              children: <Widget>[
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      margin: const EdgeInsets.all(20.0),
-                      child: Text(
-                        'Product: ',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.blue,
+        body: Column(
+          children: <Widget>[
+            Flexible(
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                children: <Widget>[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        margin: const EdgeInsets.all(20.0),
+                        child: Text(
+                          'Product: ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.blue,
+                          ),
                         ),
                       ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.all(20.0),
-                      child: PlatformText(
-                        widget.product.title,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20),
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      margin: const EdgeInsets.all(20.0),
-                      child: Text(
-                        'Estimated Price: ',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.blue,
+                      Container(
+                        margin: const EdgeInsets.all(20.0),
+                        child: PlatformText(
+                          widget.product.title,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
                         ),
                       ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.all(20.0),
-                      child: PlatformText(
-                        'Rs. ' + widget.product.price.toString(),
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20),
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      margin: const EdgeInsets.all(20.0),
-                      child: Text(
-                        'Deliver To: ',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.blue,
+                    ],
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        margin: const EdgeInsets.all(20.0),
+                        child: Text(
+                          'Estimated Price: ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.blue,
+                          ),
                         ),
                       ),
-                    ),
-                    Container(
+                      Container(
+                        margin: const EdgeInsets.all(20.0),
+                        child: PlatformText(
+                          'Rs. ' + widget.product.price.toString(),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        margin: const EdgeInsets.all(20.0),
+                        child: Text(
+                          'Deliver To: ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ),
+                      Container(
                         //margin: const EdgeInsets.all(20.0),
 
-                        child: Flexible(
-                      child: PlatformText(
-                        widget.userInfo.address.toString(),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 5,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20),
-                      ),
-                    )),
-                  ],
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      margin: const EdgeInsets.all(20.0),
-                      child: Text(
-                        'Phone No: ',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.blue,
+                          child: Flexible(
+                            child: PlatformText(
+                              widget.userInfo.address.toString(),
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 5,
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 20),
+                            ),
+                          )),
+                    ],
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        margin: const EdgeInsets.all(20.0),
+                        child: Text(
+                          'Phone No: ',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.blue,
+                          ),
                         ),
                       ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.all(20.0),
-                      child: PlatformText(
-                        widget.userInfo.phone.toString(),
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20),
+                      Container(
+                        margin: const EdgeInsets.all(20.0),
+                        child: PlatformText(
+                          widget.userInfo.phone.toString(),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: RaisedButton(
+                      color: Colors.blue,
+                      textColor: Colors.white,
+                      child: Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              Text("Proceed", style: TextStyle(fontSize: 24.0)),
+                            ],
+                          )),
+                      onPressed: () {
+                        showAlertDialog(context);
+                      },
+                      shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(30.0))),
                 ),
               ],
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: RaisedButton(
-                    color: Colors.blue,
-                    textColor: Colors.white,
-                    child: Padding(
-                        padding: EdgeInsets.all(10.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: <Widget>[
-                            Text("Proceed", style: TextStyle(fontSize: 24.0)),
-                          ],
-                        )),
-                    onPressed: () {
-                      showAlertDialog(context);
-                    },
-                    shape: new RoundedRectangleBorder(
-                        borderRadius: new BorderRadius.circular(30.0))),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    }else
+      {
+        logger.info(TAG, "object passed from the product detail page to order confirmation page is null");
+      }
   }
 }

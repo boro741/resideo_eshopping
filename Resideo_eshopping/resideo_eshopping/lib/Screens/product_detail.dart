@@ -3,20 +3,21 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:resideo_eshopping/controller/app_localizations.dart';
 import 'package:resideo_eshopping/controller/product_controller.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/Screens/order_confirmation_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:resideo_eshopping/services/authentication.dart';
 import 'package:video_player/video_player.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_plugin_pdf_viewer/flutter_plugin_pdf_viewer.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:resideo_eshopping/model/User.dart';
 import 'package:resideo_eshopping/widgets/rating_start.dart';
+import 'package:resideo_eshopping/util/logger.dart' as logger;
+import 'package:resideo_eshopping/widgets/pdf_viewer.dart';
 
+import 'package:http/http.dart' as http;
 
 
 class ProductDetail extends StatefulWidget
@@ -26,15 +27,16 @@ class ProductDetail extends StatefulWidget
   final FirebaseUser user;
   final VoidCallback online;
   final VoidCallback offline;
-  final BaseAuth auth;
   final User userInfo;
-  ProductDetail(this.product,this.user,this.online,this.offline,this.auth,this.userInfo);
+  ProductDetail(this.product,this.user,this.online,this.offline, this.userInfo);
+
 
   @override
   _ProductDetailState createState() => _ProductDetailState();
 }
 
 class _ProductDetailState extends State<ProductDetail> {
+  static const String TAG ="ProductDetail";
   Product product;
   String urlPDFPath ;
   bool buttonDisabled;
@@ -45,12 +47,13 @@ class _ProductDetailState extends State<ProductDetail> {
 
   @override
   void initState() {
+    super.initState();
     _videoPlayerController = VideoPlayerController.network(widget.product.pVideoUrl);
     _initializeVideoPlayerFuture = _videoPlayerController.initialize();
     _videoPlayerController.setLooping(true);
     _videoPlayerController.setVolume(1.0);
     _productController=ProductController();
-    super.initState();
+
     getFileFromUrl(widget.product.faqUrl).then((f) {
       setState(() {
         urlPDFPath = f.path;
@@ -60,6 +63,7 @@ class _ProductDetailState extends State<ProductDetail> {
   }
 
   Future<File> getFileFromUrl(String url) async {
+    logger.info(TAG, "Getting PDF File from the Url: " + url);
     try {
       var data = await http.get(url);
       var bytes = data.bodyBytes;
@@ -69,114 +73,132 @@ class _ProductDetailState extends State<ProductDetail> {
       File urlFile = await file.writeAsBytes(bytes);
       return urlFile;
     } catch (e) {
-      throw Exception("Error opening url file");
+      logger.error(TAG, "Error while getting the Pdf from URL :" + e);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    buttonDisabled=_productController.enableDisableOrderNowButton(widget.product.quantity);
-    void navigateToCustomerAddress() async{
-     Navigator.push(context, MaterialPageRoute(builder: (context)=> OrderConfirmationPage(widget.product,widget.userInfo,widget.user,widget.online,widget.offline,widget.auth)));
-  }
-    return PlatformScaffold(
-      appBar: PlatformAppBar(
-        title: PlatformText("Resideo e-Shopping"),
-      ),
-      body: Container(
-        padding: EdgeInsets.all(15.0),
-        child: ListView(
-          children: <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                   Text(widget.product.title,style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15,color: Colors.blue),),
-                   Spacer(),
-                   StarDisplay(value: widget.product.rating,),
-                ],
-                ),
-                Text(widget.product.sDesc),
-                SizedBox(height: 20,),
-                _showSlides(),
-                SizedBox(height: 20,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                   Icon(FontAwesomeIcons.rupeeSign),
-                   Text(widget.product.price.toString(),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 30),),
-                   Spacer(),
-                   //getInventory(widget.product.quantity),
-                   Text(_productController.inventoryDetail(widget.product.quantity),style: TextStyle(color: _productController.inventoryDetailColor(widget.product.quantity),) ),
-                ],
-                ),
-                SizedBox(height: 20,),
-                MaterialButton(
-                  textColor: Colors.white,
-                  minWidth: double.infinity,
-                  shape: RoundedRectangleBorder(),
-                  color: Colors.blue,
-                  disabledColor: Colors.blueGrey,
-                  disabledTextColor: Colors.black,
-                  child: Text("Order Now",style: TextStyle(fontSize: 20),),
-                  onPressed: buttonDisabled? null:(){
-                    if(widget.user == null)
-                    {
-                      Navigator.pop(context);
-                      widget.online();
-                    }else
-                    if(widget.userInfo == null || widget.userInfo.address == null || widget.userInfo.phone == null)
-                    {
-                      showAlertDialog(context);
-                    }else
-                    navigateToCustomerAddress();
-                  },
-                ),
-                SizedBox(height: 20,),
-                Text("About This Item",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
-                SizedBox(height: 10,),
-                Text(widget.product.lDesc,style: TextStyle(fontSize: 15),),
-                SizedBox(height: 20,),
-                Text('Customer Reviews',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
-                SizedBox(height: 10,),
-                Text(widget.product.review,style: TextStyle(fontSize: 15),),
+    buttonDisabled =
+        _productController.enableDisableOrderNowButton(widget.product.quantity);
+    void navigateToCustomerAddress() async {
+      Navigator.push(context, MaterialPageRoute(builder: (context) =>
+          OrderConfirmationPage(
+              widget.product, widget.userInfo, widget.user, widget.online,
+              widget.offline)
+              ));
+    }
 
-                SizedBox(height: 20,), 
-                ButtonTheme(
-                  minWidth:400.0,
-                  height:40.0,
-                  child:RaisedButton(
-                      
-                      color: Colors.amber,
-                      // width: double.infinity,
-                      child: Text("FAQ"),
-                      onPressed: () {
-                        if (urlPDFPath != null) {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                         PdfViewPage(path: urlPDFPath)));
-                                      // PdfViewPage(path: widget.pd.faq)));
-                        }
-                      },
-                    ),  
-                )        
-          ],
+    if (widget.product == null)
+      print(
+          "product object passed from the product list page in product detail page is empty");
+    else {
+      return PlatformScaffold(
+        appBar: PlatformAppBar(
+          title: PlatformText("Resideo e-Shopping"),
         ),
-          ],
-        )
-      ),
-    );
-    
+        body: Container(
+            padding: EdgeInsets.all(15.0),
+            child: ListView(
+              children: <Widget>[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        Text(widget.product.title, style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            color: Colors.blue),),
+                        Spacer(),
+                        StarDisplay(value: widget.product.rating,),
+                      ],
+                    ),
+                    Text(widget.product.sDesc),
+                    SizedBox(height: 20,),
+                    _showSlides(),
+                    SizedBox(height: 20,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        Icon(FontAwesomeIcons.rupeeSign),
+                        Text(widget.product.price.toString(), style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 30),),
+                        Spacer(),
+                        //getInventory(widget.product.quantity),
+                        Text(_productController.inventoryDetail(
+                            widget.product.quantity), style: TextStyle(
+                          color: _productController.inventoryDetailColor(
+                              widget.product.quantity),)),
+                      ],
+                    ),
+                    SizedBox(height: 20,),
+                    MaterialButton(
+                      textColor: Colors.white,
+                      minWidth: double.infinity,
+                      shape: RoundedRectangleBorder(),
+                      color: Colors.blue,
+                      disabledColor: Colors.blueGrey,
+                      disabledTextColor: Colors.black,
+                      child: Text(AppLocalizations.of(context).getString("Order_NOW"),
+                        style: TextStyle(fontSize: 20),),
+                      onPressed: buttonDisabled ? null : () {
+                        if (widget.user == null) {
+                          Navigator.pop(context);
+                          widget.online();
+                        } else if (widget.userInfo == null ||
+                            widget.userInfo.address == null ||
+                            widget.userInfo.phone == null) {
+                          showAlertDialog(context);
+                        } else
+                          navigateToCustomerAddress();
+                      },
+                    ),
+                    SizedBox(height: 20,),
+                    PlatformText("About This Item", style: TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 20),),
+                    SizedBox(height: 10,),
+                    Text(widget.product.lDesc, style: TextStyle(fontSize: 15),),
+                    SizedBox(height: 20,),
+                    Text('Customer Reviews', style: TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 20),),
+                    SizedBox(height: 10,),
+                    Text(
+                      widget.product.review, style: TextStyle(fontSize: 15),),
+
+                    SizedBox(height: 20,),
+                    ButtonTheme(
+                      minWidth: 400.0,
+                      height: 40.0,
+                      child: RaisedButton(
+
+                        color: Colors.amber,
+                        // width: double.infinity,
+                        child: Text(AppLocalizations.of(context).getString("Frequently_ASKED"), ),
+                        onPressed: () {
+                          if (urlPDFPath != null) {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        PdfViewPage(path: urlPDFPath)));
+                          }
+                        },
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            )
+        ),
+      );
+    }
   }
 
   @override
   void dispose() {
     _videoPlayerController.dispose();
-
     super.dispose();
   }
 
@@ -230,28 +252,29 @@ class _ProductDetailState extends State<ProductDetail> {
         ),
         Center(
               child:
-              ButtonTheme(
-                  height: 10.0,
-                  minWidth: 20.0,
-                  child: RaisedButton(
-                    padding: EdgeInsets.all(6.0),
-                    color: Colors.transparent,
-                    textColor: Colors.white,
-                    onPressed: () {
-                      setState(() {
-                        if (_videoPlayerController.value.isPlaying) {
-                          _videoPlayerController.pause();
-                        } else {
-                          _videoPlayerController.play();
-                        }
-                      });
-                    },
-                    child: Icon(
-                      _videoPlayerController.value.isPlaying ? Icons.pause : Icons.play_arrow,
-                      size: 120.0,
-                    ),
-                  )
-              )
+                      ButtonTheme(
+                          height: 10.0,
+                          minWidth: 20.0,
+                          child: RaisedButton(
+                            padding: EdgeInsets.all(6.0),
+                            color: Colors.transparent,
+                            textColor: Colors.white,
+                            onPressed: () {
+                              setState(() {
+                                if (_videoPlayerController.value.isPlaying) {
+                                  _videoPlayerController.pause();
+                                } else {
+                                  _videoPlayerController.play();
+                                }
+                              });
+                            },
+                            child: Icon(
+                              _videoPlayerController.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                              size: 120.0,
+                              color: Colors.transparent,
+                            ),
+                          )
+                      ),
           )
         ],
       );
@@ -269,84 +292,3 @@ class _ProductDetailState extends State<ProductDetail> {
 }
 }
 
-class PdfViewPage extends StatefulWidget {
-  final String path;
-
-  const PdfViewPage({Key key, this.path}) : super(key: key);
-  @override
-  _PdfViewPageState createState() => _PdfViewPageState();
-}
-
-class _PdfViewPageState extends State<PdfViewPage> {
-  int _totalPages = 0;
-  int _currentPage = 0;
-  bool pdfReady = false;
-  PDFViewController _pdfViewController;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("FAQ"),
-      ),
-      body: Stack(
-        children: <Widget>[
-          PDFView(
-            filePath: widget.path,
-            autoSpacing: true,
-            enableSwipe: true,
-            pageSnap: true,
-            swipeHorizontal: true,
-            nightMode: false,
-            onError: (e) {
-              print(e);
-            },
-            onRender: (_pages) {
-              setState(() {
-                _totalPages = _pages;
-                pdfReady = true;
-              });
-            },
-            onViewCreated: (PDFViewController vc) {
-              _pdfViewController = vc;
-            },
-            onPageChanged: (int page, int total) {
-              setState(() {});
-            },
-            onPageError: (page, e) {},
-          ),
-          !pdfReady
-              ? Center(
-                  child: CircularProgressIndicator(),
-                )
-              : Offstage()
-        ],
-      ),
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          _currentPage > 0
-              ? FloatingActionButton.extended(
-                  backgroundColor: Colors.red,
-                  label: Text("Go to ${_currentPage - 1}"),
-                  onPressed: () {
-                    _currentPage -= 1;
-                    _pdfViewController.setPage(_currentPage);
-                  },
-                )
-              : Offstage(),
-          _currentPage+1 < _totalPages
-              ? FloatingActionButton.extended(
-                  backgroundColor: Colors.green,
-                  label: Text("Go to ${_currentPage + 1}"),
-                  onPressed: () {
-                    _currentPage += 1;
-                    _pdfViewController.setPage(_currentPage);
-                  },
-                )
-              : Offstage(),
-        ],
-      ),
-    );
-  }
-}

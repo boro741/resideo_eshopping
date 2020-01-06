@@ -1,6 +1,9 @@
+/*
 import 'package:flutter/material.dart';
 import 'package:resideo_eshopping/services/authentication.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:after_layout/after_layout.dart';
+import 'package:resideo_eshopping/util/logger.dart' as logger;
 
 
 class LoginSignUpPage extends StatefulWidget {
@@ -15,14 +18,14 @@ class LoginSignUpPage extends StatefulWidget {
 
 enum FormMode { LOGIN, SIGNUP }
 
-class _LoginSignUpPageState extends State<LoginSignUpPage> {
+class _LoginSignUpPageState extends State<LoginSignUpPage> with AfterLayoutMixin<LoginSignUpPage> {
+
+  static const String TAG ="LoginSignUpPage";
   final _formKey = new GlobalKey<FormState>();
 
   String _email;
   String _password;
   String _errorMessage;
-  bool _isloading = false;
-  String msg ;
 
   // Initial form is login form
   FormMode _formMode = FormMode.LOGIN;
@@ -43,22 +46,19 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       _errorMessage = "";
     });
     if (_validateAndSave()) {
-      _isloading = true;
-      msg = '';
       String userId = "";
       try {
         if (_formMode == FormMode.LOGIN) {
           SharedPreferences prefs = await SharedPreferences.getInstance();
           userId = await widget.auth.signIn(_email, _password);
           prefs.setString('uid', userId);
+
           print('Signed in: $userId');
         } else {
           userId = await widget.auth.signUp(_email, _password);
           print('Signed up user: $userId');
-          msg = 'Account Created';
         }
         setState(() {
-          _isloading = false;
         });
 
         if ( userId != null && userId.length > 0 && _formMode == FormMode.LOGIN) {
@@ -67,10 +67,9 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
       } catch (e) {
         print('Error: $e');
+        logger.error(TAG, " Error in sending the Data to  the Firbase " + _errorMessage);
         setState(() {
-            _isloading = false;
             _errorMessage = e.message;
-            _formKey.currentState.reset();
         });
       }
     }
@@ -78,10 +77,10 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
 
   @override
-  void initState() {
+void afterFirstLayout(BuildContext context){
+  // void initState() {
+  //   super.initState();
     _errorMessage = "";
-    _isloading = false;
-    super.initState();
   }
 
   void _changeFormToSignUp() {
@@ -100,7 +99,6 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -110,11 +108,9 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         body: Stack(
           children: <Widget>[
             _showBody(),
-            _buildWaitingScreen(),
           ],
         ));
   }
-
 
   Widget _showBody(){
     return new Container(
@@ -135,24 +131,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         ));
   }
 
-  Widget _buildWaitingScreen() {
-    if(_isloading) {
-      return Scaffold(
-        body: Container(
-          alignment: Alignment.center,
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-    return Container(
-      height: 0.0,
-      width: 0.0,
-    );
-   }
-
-
   Widget _showErrorMessage() {
-    if (_errorMessage.length > 0 && _errorMessage != null) {
+    if (  _errorMessage != null && _errorMessage.length > 0) {
       return new Text(
         _errorMessage,
         style: TextStyle(
@@ -161,17 +141,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
             height: 1.0,
             fontWeight: FontWeight.w300),
       );
-    } else if(msg!=null && msg.length>0) {
-       return new Text(
-        msg,
-        style: TextStyle(
-            fontSize: 13.0,
-            color: Colors.blue,
-            height: 1.0,
-            fontWeight: FontWeight.w300),
-      );
-    }
-     else {
+    } else {
       return new Container(
         height: 0.0,
       );
@@ -206,9 +176,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
               Icons.mail,
               color: Colors.grey,
             )),
-            onSaved: (value) => _email = value.trim(),
             validator: FieldValidator.validateEmail,
-
+            onSaved: (value) => _email = value.trim(),
       ),
     );
   }
@@ -217,7 +186,6 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
       child: new TextFormField(
-        autovalidate: true,
         maxLines: 1,
         obscureText: true,
         autofocus: false,
@@ -227,8 +195,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
               Icons.lock,
               color: Colors.grey,
             )),
+        validator: (value) => value.isEmpty ? 'Password can\'t be empty' : null,
         onSaved: (value) => _password = value.trim(),
-        validator: FieldValidator.validatePassword,
       ),
     );
   }
@@ -263,7 +231,6 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
                     style: new TextStyle(fontSize: 20.0, color: Colors.white))
                 : new Text('Create account',
                     style: new TextStyle(fontSize: 20.0, color: Colors.white)),
-
             onPressed: _validateAndSubmit,
           ),
         ));
@@ -274,7 +241,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 class FieldValidator{
   static String validateEmail(String value)
   {
-    if(value.isEmpty) { return 'Enter Email'; }
+    if(value.isEmpty) return 'Enter Email';
     Pattern pattern = r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regex = new RegExp(pattern);
     if(!regex.hasMatch(value)){
@@ -289,3 +256,6 @@ class FieldValidator{
     return null;
   }
 }
+
+
+ */

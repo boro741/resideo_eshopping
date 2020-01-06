@@ -6,22 +6,28 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:async';
 import 'package:resideo_eshopping/Screens/image_picker_dialog.dart';
 import 'package:resideo_eshopping/util/firebase_database_helper.dart';
+import 'package:resideo_eshopping/model/User.dart';
+import 'package:resideo_eshopping/util/logger.dart' as logger;
+
 
 class ImagePickerHandler{
-
+  static const String TAG ="ImagePickerHandler";
   AnimationController _controler;
   ImagePickerListener _listener;
   ImagePickerDialog imagePicker;
   FirebaseUser _user;
   FirebaseDatabaseUtil _firebaseDatabaseUtil;
-  ImagePickerHandler(this._listener,this._controler,this._user);
+  User _userInfo;
+  bool _deletePhotoButtonEnable;
+  ImagePickerHandler(this._listener,this._controler,this._user,this._deletePhotoButtonEnable,this._userInfo);
   
    openCamera() async {
     imagePicker.dismissDialog();
     await ImagePicker.pickImage(source: ImageSource.camera).then((image){
       cropImage(image);
     }).catchError((error){
-      print(error);
+      logger.error(TAG, " Error in opening the camera : " + error);
+//      print(error);
     });
 
   }
@@ -31,17 +37,19 @@ class ImagePickerHandler{
     await ImagePicker.pickImage(source: ImageSource.gallery).then((image){
       cropImage(image);
     }).catchError((error){
-      print(error);
+      logger.error(TAG, " Error in opening the gallery : " + error);
+//      print(error);
     });
   }
 
   removePicture() async{
     imagePicker.dismissDialog();
-    await _firebaseDatabaseUtil.deleteProfilePicture(_user).then((result){
+    await _firebaseDatabaseUtil.deleteProfilePicture(_user,_userInfo).then((result){
       if(result)
       _listener.userImage(null);
     }).catchError((error){
-      print(error);
+      logger.error(TAG, " Error in removing the image : " + error);
+//      print(error);
     });
   }
 
@@ -62,14 +70,14 @@ class ImagePickerHandler{
     ).then((croppedFile){
       _listener.userImage(croppedFile);
     }).then((error){
-      print(error);
+      logger.error(TAG, " Error in croping the image : " + error);
     });
 
   }
 
   void init(){
    _firebaseDatabaseUtil = FirebaseDatabaseUtil();
-   imagePicker= ImagePickerDialog(this,this._controler);
+   imagePicker= ImagePickerDialog(this,this._controler,this._deletePhotoButtonEnable);
    imagePicker.initState();
   }
 

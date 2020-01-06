@@ -1,3 +1,4 @@
+/*
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:resideo_eshopping/Screens/login_signup_page.dart';
@@ -42,7 +43,7 @@ class _RootPageState extends State<RootPage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     print(prefs.getString('uid'));
     if (prefs.getString('uid') == null) {
-      authStatus = AuthStatus.NOT_LOGGED_IN; 
+      authStatus = AuthStatus.NOT_LOGGED_IN;
     } else {
       authStatus = AuthStatus.LOGGED_IN;
       await widget.auth.getCurrentUser().then((user) {
@@ -60,9 +61,9 @@ class _RootPageState extends State<RootPage> {
 //      print(error);
       });
       print(prefs.getString('uid'));
-      
+
     }
-    _userStatus =true; 
+    _userStatus =true;
   }
 
   void _onlogInButtonPress() {
@@ -139,11 +140,11 @@ class _RootPageState extends State<RootPage> {
       case AuthStatus.NOT_LOGGED_IN:
         {
           if (!_userStatus )
-          {    
+          {
            return _buildWaitingScreen();
-          
+
           }
-          
+
           if (_logInButtonPress) {
             return new LoginSignUpPage(
                 auth: widget.auth, onSignedIn: _onLoggedIn);
@@ -158,7 +159,7 @@ class _RootPageState extends State<RootPage> {
               widget.auth,
             );
           }
-        
+
         }
         break;
       case AuthStatus.LOGGED_IN:
@@ -177,3 +178,5 @@ class _RootPageState extends State<RootPage> {
     }
   }
 }
+
+ */

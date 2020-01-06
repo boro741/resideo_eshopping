@@ -3,40 +3,39 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:resideo_eshopping/controller/app_localizations.dart';
 import 'package:resideo_eshopping/controller/product_controller.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/Screens/order_confirmation_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:resideo_eshopping/services/authentication.dart';
 import 'package:video_player/video_player.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter_plugin_pdf_viewer/flutter_plugin_pdf_viewer.dart';
 import 'package:resideo_eshopping/model/User.dart';
 import 'package:resideo_eshopping/widgets/rating_start.dart';
 import 'package:resideo_eshopping/util/logger.dart' as logger;
 import 'package:resideo_eshopping/widgets/pdf_viewer.dart';
 
+import 'package:http/http.dart' as http;
 
 
-class   ProductDetail extends StatefulWidget
+class ProductDetail extends StatefulWidget
 {
  
   final Product product;
   final FirebaseUser user;
   final VoidCallback online;
   final VoidCallback offline;
-  final BaseAuth auth;
   final User userInfo;
-  ProductDetail(this.product,this.user,this.online,this.offline,this.auth,this.userInfo);
+  ProductDetail(this.product,this.user,this.online,this.offline, this.userInfo);
+
 
   @override
   _ProductDetailState createState() => _ProductDetailState();
 }
 
-class _ProductDetailState extends State<ProductDetail>  {
+class _ProductDetailState extends State<ProductDetail> {
   static const String TAG ="ProductDetail";
   Product product;
   String urlPDFPath ;
@@ -54,7 +53,7 @@ class _ProductDetailState extends State<ProductDetail>  {
     _videoPlayerController.setLooping(true);
     _videoPlayerController.setVolume(1.0);
     _productController=ProductController();
-   
+
     getFileFromUrl(widget.product.faqUrl).then((f) {
       setState(() {
         urlPDFPath = f.path;
@@ -62,7 +61,6 @@ class _ProductDetailState extends State<ProductDetail>  {
       });
     });
   }
-
 
   Future<File> getFileFromUrl(String url) async {
     logger.info(TAG, "Getting PDF File from the Url: " + url);
@@ -76,7 +74,6 @@ class _ProductDetailState extends State<ProductDetail>  {
       return urlFile;
     } catch (e) {
       logger.error(TAG, "Error while getting the Pdf from URL :" + e);
-//       Exception("Error opening url file");
     }
   }
 
@@ -88,8 +85,10 @@ class _ProductDetailState extends State<ProductDetail>  {
       Navigator.push(context, MaterialPageRoute(builder: (context) =>
           OrderConfirmationPage(
               widget.product, widget.userInfo, widget.user, widget.online,
-              widget.offline, widget.auth)));
+              widget.offline)
+              ));
     }
+
     if (widget.product == null)
       print(
           "product object passed from the product list page in product detail page is empty");
@@ -184,7 +183,6 @@ class _ProductDetailState extends State<ProductDetail>  {
                                 MaterialPageRoute(
                                     builder: (context) =>
                                         PdfViewPage(path: urlPDFPath)));
-                            // PdfViewPage(path: widget.pd.faq)));
                           }
                         },
                       ),
@@ -254,28 +252,29 @@ class _ProductDetailState extends State<ProductDetail>  {
         ),
         Center(
               child:
-              ButtonTheme(
-                  height: 10.0,
-                  minWidth: 20.0,
-                  child: RaisedButton(
-                    padding: EdgeInsets.all(6.0),
-                    color: Colors.transparent,
-                    textColor: Colors.white,
-                    onPressed: () {
-                      setState(() {
-                        if (_videoPlayerController.value.isPlaying) {
-                          _videoPlayerController.pause();
-                        } else {
-                          _videoPlayerController.play();
-                        }
-                      });
-                    },
-                    child: Icon(
-                      _videoPlayerController.value.isPlaying ? Icons.pause : Icons.play_arrow,
-                      size: 120.0,
-                    ),
-                  )
-              )
+                      ButtonTheme(
+                          height: 10.0,
+                          minWidth: 20.0,
+                          child: RaisedButton(
+                            padding: EdgeInsets.all(6.0),
+                            color: Colors.transparent,
+                            textColor: Colors.white,
+                            onPressed: () {
+                              setState(() {
+                                if (_videoPlayerController.value.isPlaying) {
+                                  _videoPlayerController.pause();
+                                } else {
+                                  _videoPlayerController.play();
+                                }
+                              });
+                            },
+                            child: Icon(
+                              _videoPlayerController.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                              size: 120.0,
+                              color: Colors.transparent,
+                            ),
+                          )
+                      ),
           )
         ],
       );

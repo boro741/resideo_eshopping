@@ -1,11 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:resideo_eshopping/Screens/home_page.dart';
 import 'dart:io';
 import 'package:resideo_eshopping/controller/image_picker_handler.dart';
 import 'package:resideo_eshopping/model/User.dart';
 import 'package:resideo_eshopping/util/firebase_database_helper.dart';
-import 'package:after_layout/after_layout.dart';
 
 class SignUp extends StatefulWidget {
 
@@ -136,7 +137,13 @@ class _SignUpState extends State<SignUp>
         actions: <Widget>[
           new IconButton(
             icon: new Icon(Icons.close),
-            onPressed: () => widget.profile(),
+            onPressed: (){
+              //widget.profile();
+              Navigator.push(context, MaterialPageRoute(builder: (context){
+                return HomePage();
+              }));
+    },
+
           ),
         ],
         leading: new Container(),

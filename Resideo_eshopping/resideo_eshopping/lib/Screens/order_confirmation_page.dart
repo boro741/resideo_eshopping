@@ -1,12 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:resideo_eshopping/Screens/home_page.dart';
 import 'package:resideo_eshopping/controller/product_controller.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:giffy_dialog/giffy_dialog.dart';
 import 'package:resideo_eshopping/model/User.dart';
-import 'package:resideo_eshopping/services/authentication.dart';
-import 'package:resideo_eshopping/controller/root_page.dart';
 import 'package:after_layout/after_layout.dart';
 import 'package:resideo_eshopping/util/logger.dart' as logger;
 
@@ -16,10 +15,9 @@ class OrderConfirmationPage extends StatefulWidget {
   final FirebaseUser user;
   final VoidCallback online;
   final VoidCallback offline;
-  final BaseAuth auth;
 
   OrderConfirmationPage(this.product, this.userInfo, this.user, this.online,
-      this.offline, this.auth);
+      this.offline);
 
   @override
   _OrderConfirmationPageState createState() => _OrderConfirmationPageState();
@@ -32,9 +30,8 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> with Afte
   void navigateToHomePage(BuildContext context) async {
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
-            builder: (context) => RootPage(
-                  auth: widget.auth,
-                )),
+              builder: (context) => HomePage()
+                ),
         (Route<dynamic> route) => false);
   }
 
@@ -250,7 +247,6 @@ void afterFirstLayout(BuildContext context) {
     }else
       {
         logger.info(TAG, "object passed from the product detail page to order confirmation page is null");
-//        print("object passed from the product detail page to order confirmation page is null");
       }
   }
 }

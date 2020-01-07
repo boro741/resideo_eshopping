@@ -28,7 +28,6 @@ class ProductsTile extends StatelessWidget {
     }
     if (_products == null)
       logger.info("ProductsTile", "Product object passed in product tile is null");
-//      print("Product object passed in product tile is null");
     else {
       return Column(
         children: <Widget>[

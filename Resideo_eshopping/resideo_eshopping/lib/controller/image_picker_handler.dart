@@ -27,7 +27,6 @@ class ImagePickerHandler{
       cropImage(image);
     }).catchError((error){
       logger.error(TAG, " Error in opening the camera : " + error);
-//      print(error);
     });
 
   }
@@ -38,7 +37,6 @@ class ImagePickerHandler{
       cropImage(image);
     }).catchError((error){
       logger.error(TAG, " Error in opening the gallery : " + error);
-//      print(error);
     });
   }
 
@@ -49,7 +47,6 @@ class ImagePickerHandler{
       _listener.userImage(null);
     }).catchError((error){
       logger.error(TAG, " Error in removing the image : " + error);
-//      print(error);
     });
   }
 

@@ -41,7 +41,6 @@ class FirebaseDatabaseUtil  {
         logger.error(TAG, "Error in the updating inventory " +error);
       });
     }  else
-//      print("Product argument passed in update product is bull");
     logger.info(TAG, "Product argument passed in update product is bull");
   }
 
@@ -57,7 +56,6 @@ class FirebaseDatabaseUtil  {
       });
     }).catchError((error) {
       logger.error(TAG, "Error in the deleting Profile Picture " +error);
-//      print(error);
     });
     }else
       logger.info(TAG, "Firebase user passed in deleteProfilePicture is null");
@@ -75,14 +73,11 @@ class FirebaseDatabaseUtil  {
         'imageUrl': _uploadFileUrl
       }).then((result) {
         logger.info(FirebaseDatabaseUtil.TAG, " Profile data send successfully to the Firebase " );
-//        print("profile created");
       }).catchError((onError) {
         logger.error(FirebaseDatabaseUtil.TAG, " Error in sending the Data to  the Firbase " +onError);
-//        print(onError);
       });
     }else
       logger.error(FirebaseDatabaseUtil.TAG, " passed argument in senddata method in firebase_database_helper file in null " );
-//      print("passed argument in senddata method in firebase_database_helper file in null");
   }
 
   Future updateData(FirebaseUser user, User userInfo, String _uploadFileUrl,
@@ -107,7 +102,6 @@ class FirebaseDatabaseUtil  {
             'imageUrl': _uploadFileUrl
           }).then((result) {
             logger.info(FirebaseDatabaseUtil.TAG, " Profile Updated successfully in updateData " );
-//            print("profile updated with profile picture");
           }).catchError((onError) {
             logger.error(FirebaseDatabaseUtil.TAG, " Error in sending the data to the Firbase while updateData  " +onError);
 
@@ -120,17 +114,14 @@ class FirebaseDatabaseUtil  {
             'zipcode': userInfo.zipcode,
           }).then((result) {
             logger.info(FirebaseDatabaseUtil.TAG, "profile updated without profile picture" );
-//            print("profile updated without profile picture");
           }).catchError((onError) {
             logger.error(FirebaseDatabaseUtil.TAG, " Error in sending the Data to the Firbase  " +onError);
           });
         }
       }else
         logger.info(FirebaseDatabaseUtil.TAG, "passed UserInfo object in updatedata method in firebase_database_helper file in null" );
-//        print("passed UserInfo object in updatedata method in firebase_database_helper file in null");
     }else
       logger.info(FirebaseDatabaseUtil.TAG, "passed user object in updatedata method in firebase_database_helper file in null");
-//      print("passed user object in updatedata method in firebase_database_helper file in null");
  }
 
   Future<User> getUserData(FirebaseUser _user) async {
@@ -148,7 +139,6 @@ class FirebaseDatabaseUtil  {
         });
       }else
         logger.error(FirebaseDatabaseUtil.TAG, "User passed in getUserData is null");
-//        print("User passed in getUserData is null");
     } catch (e) {
       logger.error(FirebaseDatabaseUtil.TAG, " Error in getting the data to the Firbase  " +e);
     }
@@ -180,7 +170,6 @@ class FirebaseDatabaseUtil  {
       }catch(error)
     {
       logger.error(FirebaseDatabaseUtil.TAG, " Error in updating the profile pic to the Firbase  " +error);
-//      print(error);
     }
       await storageReference.getDownloadURL().then((fileURL) async {
         if (isEdit)
@@ -193,7 +182,6 @@ class FirebaseDatabaseUtil  {
           });
       }).catchError((error){
         logger.error(FirebaseDatabaseUtil.TAG, " Error in updating the profile pic to the Firbase  " +error);
-//        print(error);
       });
     }
     return _isCreateUpdateSuccessfull;

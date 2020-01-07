@@ -28,17 +28,14 @@ class UserRepository with ChangeNotifier {
       await _auth.signInWithEmailAndPassword(email: email, password: password).then((result){
         if(result != null) {
           _userId = result.user.uid;
-          print('$userId');
         }
         else
           _userId=null;
       });
 
-      //return true;
     } catch (e) {
       _status = Status.Unauthenticated;
       notifyListeners();
-      //return false;
     }
     return _userId;
   }
@@ -48,7 +45,6 @@ class UserRepository with ChangeNotifier {
         email: email, password: password).then((result){
       if(result != null) {
         _userId = result.user.uid;
-        print('$userId');
       }
       else
         _userId=null;

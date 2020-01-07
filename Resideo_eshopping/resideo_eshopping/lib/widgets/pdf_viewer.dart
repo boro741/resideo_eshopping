@@ -39,7 +39,6 @@ class _PdfViewPageState extends State<PdfViewPage> {
             swipeHorizontal: true,
             nightMode: false,
             onError: (e) {
-              print(e);
             },
             onRender: (_pages) {
               setState(() {

@@ -21,22 +21,18 @@ class UserRepository with ChangeNotifier {
   String get userId => _userId;
 
   Future<String> signIn(String email, String password) async {
-
-    try {
-      _status = Status.Authenticating;
-      notifyListeners();
       await _auth.signInWithEmailAndPassword(email: email, password: password).then((result){
         if(result != null) {
           _userId = result.user.uid;
+          _status = Status.Authenticating;
+          notifyListeners();
         }
-        else
+        else{
           _userId=null;
+          _status = Status.Unauthenticated;
+          notifyListeners();
+        }
       });
-
-    } catch (e) {
-      _status = Status.Unauthenticated;
-      notifyListeners();
-    }
     return _userId;
   }
 

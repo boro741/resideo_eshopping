@@ -62,7 +62,6 @@ class _ProductDetailState extends State<ProductDetail> {
 
   Future<File> getFileFromUrl(String url) async {
     logger.info(TAG, "Getting PDF File from the Url: " + url);
-    try {
       var data = await http.get(url);
       var bytes = data.bodyBytes;
       var dir = await getApplicationDocumentsDirectory();
@@ -70,9 +69,7 @@ class _ProductDetailState extends State<ProductDetail> {
 
       File urlFile = await file.writeAsBytes(bytes);
       return urlFile;
-    } catch (e) {
-      logger.error(TAG, "Error while getting the Pdf from URL :" + e);
-    }
+      //logger.error(TAG, "Error while getting the Pdf from URL :" + e);
   }
 
   @override

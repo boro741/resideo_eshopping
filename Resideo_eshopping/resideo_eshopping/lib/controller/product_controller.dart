@@ -25,7 +25,7 @@ class ProductController{
     if (products.length == 0) {
       List<Product> productlist = List<Product>();
 
-      await helper.getProductListDb().then((result) async {
+      await helper.getProductListDb().timeout(Duration(seconds: 5)).then((result) async {
         int count = result.length;
         for (int i = 0; i < count; i++) {
           productlist.add(Product.fromJSON(result[i]));
@@ -35,7 +35,8 @@ class ProductController{
         else {
           products = productlist;
         }
-      }).catchError((error){
+      })
+          .catchError((error){
         logger.error(TAG, " Error in getProductList: "+ value +" " +error);
       });
     }
@@ -45,13 +46,10 @@ class ProductController{
   //Method to fetch products from API
   Future<List<Product>> fetchProducts(http.Client client) async {
     var response;
-    try {
        response = await client.get(
-          'https://fluttercheck-5afbb.firebaseio.com/Products.json?auth=fzAIfjVy6umufLgQj9bd1KmgzzPd6Q6hDvj1r3u1');
-    }catch(error)
-    {
-      logger.error(TAG, " Error in while fetching the Products: in method fetchProducts :" +error);
-    }
+          'https://fluttercheck-5afbb.firebaseio.com/Products.json?auth=fzAIfjVy6umufLgQj9bd1KmgzzPd6Q6hDvj1r3u1').timeout(Duration(seconds: 5),
+           onTimeout: () => _onTimeout());
+
     if(response.body == null)
       logger.error(TAG, "Connection Issue with Api :" );
 
@@ -61,7 +59,6 @@ class ProductController{
   //Method to decode the Products json and convert it into list of product object
   List<Product> parseProducts(String responseBody) {
     List<Product> _localProductList;
-    try {
       final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
        if(parsed != null) {
          _localProductList =
@@ -70,10 +67,6 @@ class ProductController{
            logger.error(TAG, "Conversion from jsom map to product object have Issue :" );
        }else
       logger.error(TAG, "JasonDecode not working:" );
-    }catch(e)
-    {
-      logger.error(TAG, " " +e );
-    }
     return _localProductList;
   }
 
@@ -83,7 +76,7 @@ class ProductController{
 
   //Method to update the product model with list of products
   Future updateProductModel() async {
-    await fetchProducts(http.Client()).then((result) {
+    await fetchProducts(http.Client()).timeout(Duration(seconds: 5)).then((result) {
       if(result != null) {
         products = result;
         helper.addAllProduct(products);
@@ -165,4 +158,6 @@ class ProductController{
     else
       return Color(0xFF00C853);
   }
+
+  _onTimeout() => logger.error(TAG, "Taking a longer time than usual");
 }

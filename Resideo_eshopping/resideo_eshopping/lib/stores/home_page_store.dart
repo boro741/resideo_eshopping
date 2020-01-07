@@ -42,15 +42,15 @@ abstract class _HomePageStore with ChangeNotifier, Store{
     userId = "";
   }
 
-  Future<FirebaseUser> getCurrentUser() async {
-    FirebaseUser user;
-    await _auth.currentUser().then((result){
-      user=result;
-    }).catchError((error){
-      print(error);
-    });
-    return user;
-  }
+//  Future<FirebaseUser> getCurrentUser() async {
+//    FirebaseUser user;
+//    await _auth.currentUser().then((result){
+//      user=result;
+//    }).catchError((error){
+//      print(error);
+//    });
+//    return user;
+//  }
 
 
 }

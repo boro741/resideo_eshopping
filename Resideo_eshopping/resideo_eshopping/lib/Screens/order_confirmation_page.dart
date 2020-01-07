@@ -89,8 +89,6 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> with Afte
 
   @override
 void afterFirstLayout(BuildContext context) {
-    // void initState() {
-    // super.initState();
     _productController = ProductController();
     _productController.init();
   }
@@ -104,7 +102,6 @@ void afterFirstLayout(BuildContext context) {
             alignment: Alignment.center,
             child: PlatformText("Resideo e-Shopping",
                 style: TextStyle(
-                  //color: Colors.white,
                 )),
           ),
         ),
@@ -177,8 +174,6 @@ void afterFirstLayout(BuildContext context) {
                         ),
                       ),
                       Container(
-                        //margin: const EdgeInsets.all(20.0),
-
                           child: Flexible(
                             child: PlatformText(
                               widget.userInfo.address.toString(),

@@ -92,7 +92,6 @@ abstract class _LoginPageStore with Store {
       errorStore.errorMessage = e.toString().contains("ERROR_USER_NOT_FOUND")
           ? "Username and password doesn't match"
           : "Something went wrong, please check your internet connection and try again";
-      print(e);
     });
   }
 

@@ -57,7 +57,6 @@ class _ProductDetailState extends State<ProductDetail> {
     getFileFromUrl(widget.product.faqUrl).then((f) {
       setState(() {
         urlPDFPath = f.path;
-        print(urlPDFPath);
       });
     });
   }
@@ -90,8 +89,7 @@ class _ProductDetailState extends State<ProductDetail> {
     }
 
     if (widget.product == null)
-      print(
-          "product object passed from the product list page in product detail page is empty");
+      logger.info(TAG, "product object passed from the product list page in product detail page is empty");
     else {
       return PlatformScaffold(
         appBar: PlatformAppBar(
@@ -174,7 +172,6 @@ class _ProductDetailState extends State<ProductDetail> {
                       child: RaisedButton(
 
                         color: Colors.amber,
-                        // width: double.infinity,
                         child: Text(AppLocalizations.of(context).getString("Frequently_ASKED"), ),
                         onPressed: () {
                           if (urlPDFPath != null) {

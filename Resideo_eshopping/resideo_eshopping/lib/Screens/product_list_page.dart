@@ -322,10 +322,7 @@ class _ProductsListPageState extends State<ProductsListPage>
   void didUpdateWidget(ProductsListPage oldWidget) {
     super.didUpdateWidget(oldWidget);
       _getUserDetail();
-    print('didUpdateWidget');
   }
-
-
 
   void _showDialog() {
     showDialog(

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:carousel_pro/carousel_pro.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -9,14 +10,12 @@ import 'package:resideo_eshopping/controller/product_controller.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/Screens/order_confirmation_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter_plugin_pdf_viewer/flutter_plugin_pdf_viewer.dart';
 import 'package:resideo_eshopping/model/User.dart';
 import 'package:resideo_eshopping/widgets/rating_start.dart';
 import 'package:resideo_eshopping/util/logger.dart' as logger;
 import 'package:resideo_eshopping/widgets/pdf_viewer.dart';
-
 import 'package:http/http.dart' as http;
 
 
@@ -250,12 +249,12 @@ class _ProductDetailState extends State<ProductDetail> {
         Center(
               child:
                       ButtonTheme(
-                          height: 10.0,
-                          minWidth: 20.0,
+                          height: 0.0,
+                          minWidth: 0.0,
                           child: RaisedButton(
                             padding: EdgeInsets.all(6.0),
                             color: Colors.transparent,
-                            textColor: Colors.white,
+                            //textColor: Colors.white,
                             onPressed: () {
                               setState(() {
                                 if (_videoPlayerController.value.isPlaying) {
@@ -267,7 +266,7 @@ class _ProductDetailState extends State<ProductDetail> {
                             },
                             child: Icon(
                               _videoPlayerController.value.isPlaying ? Icons.pause : Icons.play_arrow,
-                              size: 120.0,
+                              size: 0.0,
                               color: Colors.transparent,
                             ),
                           )
@@ -279,13 +278,29 @@ class _ProductDetailState extends State<ProductDetail> {
   }
 
   Widget _showSlides(){
-    return CarouselSlider(
-      height: 300.0,
-      items: [
-        Image.network(widget.product.imgUrl, fit: BoxFit.fill,),
-         _showVideo(),
-      ],
+    return SizedBox(
+        height: 400.0,
+        width: 800.0,
+        child: Carousel(
+          images: [
+            Image.network(widget.product.imgUrl, fit: BoxFit.fill,),
+            _showVideo(),
+          ],
+          autoplay: false,
+          dotSize: 4.0,
+          dotSpacing: 15.0,
+          dotColor: Colors.blue,
+          indicatorBgPadding: 5.0,
+          dotBgColor: Colors.lightBlueAccent.withOpacity(0.2),
+          borderRadius: false,
+          moveIndicatorFromBottom: 180.0,
+          noRadiusForIndicator: true,
+          overlayShadow: true,
+          overlayShadowColors: Colors.white,
+          overlayShadowSize: 0.7,
+        )
     );
-}
+  }
+
 }
 

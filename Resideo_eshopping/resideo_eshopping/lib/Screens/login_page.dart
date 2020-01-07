@@ -38,7 +38,6 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
   FormMode _formMode = FormMode.LOGIN;
   String userId = "";
 
-
   @override
   void afterFirstLayout(BuildContext context){
     _passwordFocusNode = FocusNode();
@@ -149,7 +148,6 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
           icon: Icons.lock,
           iconColor: Colors.black54,
           textController: _password,
-          //focusNode: _passwordFocusNode,
           errorText: _store.formErrorStore.password,
         );
       },
@@ -180,10 +178,14 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
                       userId = await user.signIn(_email.text, _password.text);
                       prefs.setString('uid', userId);
                       print('Signed in: $userId');
+
+                      if (!mounted) return;
+
                       setState(() {
 
                         if(userId != null){
                           Navigator.of(context).pop();
+
                           Flushbar(
                             message: "You are Signed in!",
                             duration: Duration(seconds: 3),
@@ -217,7 +219,6 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
                     }
 
                           if ( userId != null && userId.length > 0 && _formMode == FormMode.LOGIN) {
-
                             widget.onSignedIn();
 
                           }

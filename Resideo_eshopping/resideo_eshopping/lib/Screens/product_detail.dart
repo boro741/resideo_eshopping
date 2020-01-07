@@ -10,6 +10,7 @@ import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/Screens/order_confirmation_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:resideo_eshopping/stores/home_page_store.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter_plugin_pdf_viewer/flutter_plugin_pdf_viewer.dart';
 import 'package:resideo_eshopping/model/User.dart';
@@ -19,40 +20,40 @@ import 'package:resideo_eshopping/widgets/pdf_viewer.dart';
 
 import 'package:http/http.dart' as http;
 
+import 'login_page.dart';
 
-class ProductDetail extends StatefulWidget
-{
- 
+class ProductDetail extends StatefulWidget {
   final Product product;
   final FirebaseUser user;
   final VoidCallback online;
   final VoidCallback offline;
   final User userInfo;
-  ProductDetail(this.product,this.user,this.online,this.offline, this.userInfo);
-
+  ProductDetail(
+      this.product, this.user, this.online, this.offline, this.userInfo);
 
   @override
   _ProductDetailState createState() => _ProductDetailState();
 }
 
 class _ProductDetailState extends State<ProductDetail> {
-  static const String TAG ="ProductDetail";
+  static const String TAG = "ProductDetail";
   Product product;
-  String urlPDFPath ;
+  String urlPDFPath;
   bool buttonDisabled;
   PDFDocument document;
   VideoPlayerController _videoPlayerController;
   ProductController _productController;
   Future<void> _initializeVideoPlayerFuture;
-
+  final _homeStore = HomePageStore();
   @override
   void initState() {
     super.initState();
-    _videoPlayerController = VideoPlayerController.network(widget.product.pVideoUrl);
+    _videoPlayerController =
+        VideoPlayerController.network(widget.product.pVideoUrl);
     _initializeVideoPlayerFuture = _videoPlayerController.initialize();
     _videoPlayerController.setLooping(true);
     _videoPlayerController.setVolume(1.0);
-    _productController=ProductController();
+    _productController = ProductController();
 
     getFileFromUrl(widget.product.faqUrl).then((f) {
       setState(() {
@@ -82,11 +83,15 @@ class _ProductDetailState extends State<ProductDetail> {
     buttonDisabled =
         _productController.enableDisableOrderNowButton(widget.product.quantity);
     void navigateToCustomerAddress() async {
-      Navigator.push(context, MaterialPageRoute(builder: (context) =>
-          OrderConfirmationPage(
-              widget.product, widget.userInfo, widget.user, widget.online,
-              widget.offline)
-              ));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => OrderConfirmationPage(
+                  widget.product,
+                  widget.userInfo,
+                  widget.user,
+                  widget.online,
+                  widget.offline)));
     }
 
     if (widget.product == null)
@@ -107,33 +112,50 @@ class _ProductDetailState extends State<ProductDetail> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
-                        Text(widget.product.title, style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                            color: Colors.blue),),
+                        Text(
+                          widget.product.title,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                              color: Colors.blue),
+                        ),
                         Spacer(),
-                        StarDisplay(value: widget.product.rating,),
+                        StarDisplay(
+                          value: widget.product.rating,
+                        ),
                       ],
                     ),
                     Text(widget.product.sDesc),
-                    SizedBox(height: 20,),
+                    SizedBox(
+                      height: 20,
+                    ),
                     _showSlides(),
-                    SizedBox(height: 20,),
+                    SizedBox(
+                      height: 20,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
                         Icon(FontAwesomeIcons.rupeeSign),
-                        Text(widget.product.price.toString(), style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 30),),
+                        Text(
+                          widget.product.price.toString(),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 30),
+                        ),
                         Spacer(),
                         //getInventory(widget.product.quantity),
-                        Text(_productController.inventoryDetail(
-                            widget.product.quantity), style: TextStyle(
-                          color: _productController.inventoryDetailColor(
-                              widget.product.quantity),)),
+                        Text(
+                            _productController
+                                .inventoryDetail(widget.product.quantity),
+                            style: TextStyle(
+                              color: _productController.inventoryDetailColor(
+                                  widget.product.quantity),
+                            )),
                       ],
                     ),
-                    SizedBox(height: 20,),
+                    SizedBox(
+                      height: 20,
+                    ),
                     MaterialButton(
                       textColor: Colors.white,
                       minWidth: double.infinity,
@@ -141,41 +163,74 @@ class _ProductDetailState extends State<ProductDetail> {
                       color: Colors.blue,
                       disabledColor: Colors.blueGrey,
                       disabledTextColor: Colors.black,
-                      child: Text(AppLocalizations.of(context).getString("Order_NOW"),
-                        style: TextStyle(fontSize: 20),),
-                      onPressed: buttonDisabled ? null : () {
-                        if (widget.user == null) {
-                          Navigator.pop(context);
-                          widget.online();
-                        } else if (widget.userInfo == null ||
-                            widget.userInfo.address == null ||
-                            widget.userInfo.phone == null) {
-                          showAlertDialog(context);
-                        } else
-                          navigateToCustomerAddress();
-                      },
+                      child: Text(
+                        AppLocalizations.of(context).getString("Order_NOW"),
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      onPressed: buttonDisabled
+                          ? null
+                          : () {
+                              if (widget.user == null) {
+                                
+                                Navigator.pop(context);
+                                widget.online();
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return LoginPage(
+                                    onSignedIn: _homeStore.onLoggedIn,
+                                  );
+                                }));
+                              } else if (widget.userInfo == null ||
+                                  widget.userInfo.address == null ||
+                                  widget.userInfo.phone == null) {
+                                showAlertDialog(context);
+                              } else
+                                navigateToCustomerAddress();
+                            },
                     ),
-                    SizedBox(height: 20,),
-                    PlatformText("About This Item", style: TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 20),),
-                    SizedBox(height: 10,),
-                    Text(widget.product.lDesc, style: TextStyle(fontSize: 15),),
-                    SizedBox(height: 20,),
-                    Text('Customer Reviews', style: TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 20),),
-                    SizedBox(height: 10,),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    PlatformText(
+                      "About This Item",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
                     Text(
-                      widget.product.review, style: TextStyle(fontSize: 15),),
-
-                    SizedBox(height: 20,),
+                      widget.product.lDesc,
+                      style: TextStyle(fontSize: 15),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Text(
+                      'Customer Reviews',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      widget.product.review,
+                      style: TextStyle(fontSize: 15),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
                     ButtonTheme(
                       minWidth: 400.0,
                       height: 40.0,
                       child: RaisedButton(
-
                         color: Colors.amber,
                         // width: double.infinity,
-                        child: Text(AppLocalizations.of(context).getString("Frequently_ASKED"), ),
+                        child: Text(
+                          AppLocalizations.of(context)
+                              .getString("Frequently_ASKED"),
+                        ),
                         onPressed: () {
                           if (urlPDFPath != null) {
                             Navigator.push(
@@ -190,8 +245,7 @@ class _ProductDetailState extends State<ProductDetail> {
                   ],
                 ),
               ],
-            )
-        ),
+            )),
       );
     }
   }
@@ -202,20 +256,20 @@ class _ProductDetailState extends State<ProductDetail> {
     super.dispose();
   }
 
-   showAlertDialog(BuildContext context) {
+  showAlertDialog(BuildContext context) {
     // set up the buttons
     Widget cancelButton = PlatformButton(
-      child: PlatformText("ok"),
-      onPressed: () {
-        Navigator.pop(context);
-      },
-      androidFlat: (_) => MaterialFlatButtonData()
-    );
+        child: PlatformText("ok"),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        androidFlat: (_) => MaterialFlatButtonData());
 
     // set up the AlertDialog
     PlatformAlertDialog alert = PlatformAlertDialog(
       title: PlatformText("Update User Profile"),
-      content: PlatformText("Please update Address and phone No in your user Profile"),
+      content: PlatformText(
+          "Please update Address and phone No in your user Profile"),
       actions: <Widget>[
         cancelButton,
       ],
@@ -230,65 +284,64 @@ class _ProductDetailState extends State<ProductDetail> {
     );
   }
 
-
-
-  Widget _showVideo(){
+  Widget _showVideo() {
     return Stack(
       children: <Widget>[
         Center(
           child: FutureBuilder(
-          future: _initializeVideoPlayerFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      return AspectRatio(
-                        aspectRatio: _videoPlayerController.value.aspectRatio,
-                        child: VideoPlayer(_videoPlayerController),
-                      );
-                    } else {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                  },
+            future: _initializeVideoPlayerFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return AspectRatio(
+                  aspectRatio: _videoPlayerController.value.aspectRatio,
+                  child: VideoPlayer(_videoPlayerController),
+                );
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
+            },
           ),
         ),
         Center(
-              child:
-                      ButtonTheme(
-                          height: 10.0,
-                          minWidth: 20.0,
-                          child: RaisedButton(
-                            padding: EdgeInsets.all(6.0),
-                            color: Colors.transparent,
-                            textColor: Colors.white,
-                            onPressed: () {
-                              setState(() {
-                                if (_videoPlayerController.value.isPlaying) {
-                                  _videoPlayerController.pause();
-                                } else {
-                                  _videoPlayerController.play();
-                                }
-                              });
-                            },
-                            child: Icon(
-                              _videoPlayerController.value.isPlaying ? Icons.pause : Icons.play_arrow,
-                              size: 120.0,
-                              color: Colors.transparent,
-                            ),
-                          )
-                      ),
-          )
-        ],
-      );
-
+          child: ButtonTheme(
+              height: 10.0,
+              minWidth: 20.0,
+              child: RaisedButton(
+                padding: EdgeInsets.all(6.0),
+                color: Colors.transparent,
+                textColor: Colors.white,
+                onPressed: () {
+                  setState(() {
+                    if (_videoPlayerController.value.isPlaying) {
+                      _videoPlayerController.pause();
+                    } else {
+                      _videoPlayerController.play();
+                    }
+                  });
+                },
+                child: Icon(
+                  _videoPlayerController.value.isPlaying
+                      ? Icons.pause
+                      : Icons.play_arrow,
+                  size: 120.0,
+                  color: Colors.transparent,
+                ),
+              )),
+        )
+      ],
+    );
   }
 
-  Widget _showSlides(){
+  Widget _showSlides() {
     return CarouselSlider(
       height: 300.0,
       items: [
-        Image.network(widget.product.imgUrl, fit: BoxFit.fill,),
-         _showVideo(),
+        Image.network(
+          widget.product.imgUrl,
+          fit: BoxFit.fill,
+        ),
+        _showVideo(),
       ],
     );
+  }
 }
-}
-

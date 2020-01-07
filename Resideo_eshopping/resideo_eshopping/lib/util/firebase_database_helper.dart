@@ -23,10 +23,12 @@ class FirebaseDatabaseUtil  {
   }
 
   void initState() {
+    
     database= new FirebaseDatabase();
     _dbRef = database.reference();
-    database.setPersistenceEnabled(true);
-    database.setPersistenceCacheSizeBytes(1000);
+    // database.setPersistenceEnabled(true);
+    // int intValue = int.parse('1000');
+    // database.setPersistenceCacheSizeBytes(intValue);
   }
 
   updateProduct(Product product) async {

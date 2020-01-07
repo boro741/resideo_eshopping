@@ -308,7 +308,6 @@ class _ProductsListPageState extends State<ProductsListPage>
       } on SocketException catch (_) {
         _showDialog();
         logger.error(ProductsListPage.TAG, " Error while connecting  :");
-        print('not connected'); // show dialog
       }
     });
     firebaseDatabaseUtil = FirebaseDatabaseUtil();

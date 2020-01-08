@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: [ChangeNotifierProvider(builder: (context) => UserRepository.instance(),), ],
+      providers: [ChangeNotifierProvider(builder: (context) => UserRepository.instance(),) ],
       child: MaterialApp(
       title: 'Resideo e-Shopping',
       theme: ThemeData(

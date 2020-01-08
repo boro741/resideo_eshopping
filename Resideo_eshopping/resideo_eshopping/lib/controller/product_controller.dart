@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'package:resideo_eshopping/util/logger.dart' as logger;
+import 'package:catcher/catcher_plugin.dart';
 
 import 'package:resideo_eshopping/util/firebase_database_helper.dart';
 
@@ -84,7 +85,8 @@ class ProductController{
         {
           logger.error(TAG, "Product are not fetched from the API" );
         }
-    }).catchError((error){
+    }).catchError((error,stackTrace){
+      Catcher.reportCheckedError(error, stackTrace);
       logger.error(TAG, "Error in updating" +error );
     });
   }
@@ -122,7 +124,8 @@ class ProductController{
         _firebaseDatabaseUtil.updateProduct(product);
       }else
         logger.error(TAG, "Updating in local database is failed" );
-    }).catchError((error){
+    }).catchError((error,stackTrace){
+      Catcher.reportCheckedError(error, stackTrace);
       logger.error(TAG, " Error in updating the Inventory : " + error);
     });
   }

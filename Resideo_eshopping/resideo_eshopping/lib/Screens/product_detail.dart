@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:carousel_pro/carousel_pro.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -9,7 +10,6 @@ import 'package:resideo_eshopping/controller/product_controller.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/Screens/order_confirmation_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:resideo_eshopping/stores/home_page_store.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter_plugin_pdf_viewer/flutter_plugin_pdf_viewer.dart';
@@ -17,7 +17,6 @@ import 'package:resideo_eshopping/model/User.dart';
 import 'package:resideo_eshopping/widgets/rating_start.dart';
 import 'package:resideo_eshopping/util/logger.dart' as logger;
 import 'package:resideo_eshopping/widgets/pdf_viewer.dart';
-
 import 'package:http/http.dart' as http;
 
 import 'login_page.dart';
@@ -64,7 +63,6 @@ class _ProductDetailState extends State<ProductDetail> {
 
   Future<File> getFileFromUrl(String url) async {
     logger.info(TAG, "Getting PDF File from the Url: " + url);
-    try {
       var data = await http.get(url);
       var bytes = data.bodyBytes;
       var dir = await getApplicationDocumentsDirectory();
@@ -72,9 +70,7 @@ class _ProductDetailState extends State<ProductDetail> {
 
       File urlFile = await file.writeAsBytes(bytes);
       return urlFile;
-    } catch (e) {
-      logger.error(TAG, "Error while getting the Pdf from URL :" + e);
-    }
+      //logger.error(TAG, "Error while getting the Pdf from URL :" + e);
   }
 
   @override
@@ -169,7 +165,7 @@ class _ProductDetailState extends State<ProductDetail> {
                           ? null
                           : () {
                               if (widget.user == null) {
-                                
+
                                 Navigator.pop(context);
                                 widget.online();
                                 Navigator.push(context,
@@ -303,45 +299,60 @@ class _ProductDetailState extends State<ProductDetail> {
           ),
         ),
         Center(
-          child: ButtonTheme(
-              height: 10.0,
-              minWidth: 20.0,
-              child: RaisedButton(
-                padding: EdgeInsets.all(6.0),
-                color: Colors.transparent,
-                textColor: Colors.white,
-                onPressed: () {
-                  setState(() {
-                    if (_videoPlayerController.value.isPlaying) {
-                      _videoPlayerController.pause();
-                    } else {
-                      _videoPlayerController.play();
-                    }
-                  });
-                },
-                child: Icon(
-                  _videoPlayerController.value.isPlaying
-                      ? Icons.pause
-                      : Icons.play_arrow,
-                  size: 120.0,
-                  color: Colors.transparent,
-                ),
-              )),
+              child:
+                      ButtonTheme(
+                          height: 0.0,
+                          minWidth: 0.0,
+                          child: RaisedButton(
+                            padding: EdgeInsets.all(6.0),
+                            color: Colors.transparent,
+                            //textColor: Colors.white,
+                            onPressed: () {
+                              setState(() {
+                                if (_videoPlayerController.value.isPlaying) {
+                                  _videoPlayerController.pause();
+                                } else {
+                                  _videoPlayerController.play();
+                                }
+                              });
+                            },
+                            child: Icon(
+                              _videoPlayerController.value.isPlaying ? Icons.pause : Icons.play_arrow,
+                              size: 0.0,
+                              color: Colors.transparent,
+                            ),
+                          )
+                      ),
+          )
+        ],
+      );
+
+  }
+
+  Widget _showSlides(){
+    return SizedBox(
+        height: 400.0,
+        width: 800.0,
+        child: Carousel(
+          images: [
+            Image.network(widget.product.imgUrl, fit: BoxFit.fill,),
+            _showVideo(),
+          ],
+          autoplay: false,
+          dotSize: 4.0,
+          dotSpacing: 15.0,
+          dotColor: Colors.blue,
+          indicatorBgPadding: 5.0,
+          dotBgColor: Colors.lightBlueAccent.withOpacity(0.2),
+          borderRadius: false,
+          moveIndicatorFromBottom: 180.0,
+          noRadiusForIndicator: true,
+          overlayShadow: true,
+          overlayShadowColors: Colors.white,
+          overlayShadowSize: 0.7,
         )
-      ],
     );
   }
 
-  Widget _showSlides() {
-    return CarouselSlider(
-      height: 300.0,
-      items: [
-        Image.network(
-          widget.product.imgUrl,
-          fit: BoxFit.fill,
-        ),
-        _showVideo(),
-      ],
-    );
-  }
 }
+

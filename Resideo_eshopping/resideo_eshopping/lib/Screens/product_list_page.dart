@@ -44,8 +44,6 @@ class _ProductsListPageState extends State<ProductsListPage>
   List<Product> currentList = <Product>[];
   bool _isProgressBarShown = true;
 
-  AnimationController controller;
-  Animation<double> animation;
   User userInfo;
 
   String _name = "";
@@ -69,6 +67,7 @@ class _ProductsListPageState extends State<ProductsListPage>
     }else
       {
         _email=widget.user.email.toString();
+
       }
   }
 
@@ -93,7 +92,6 @@ class _ProductsListPageState extends State<ProductsListPage>
       }).catchError((error) {
         logger.error(ProductsListPage.TAG,
             " Error in the getting user details from API  :" + error);
-//            print(error);
       });
     } else {
       logger.info(ProductsListPage.TAG, " widget user are null :");
@@ -124,7 +122,6 @@ class _ProductsListPageState extends State<ProductsListPage>
 
   @override
   Widget build(BuildContext context) {
-
     Widget widget1;
 
     _setProfile();
@@ -246,7 +243,7 @@ class _ProductsListPageState extends State<ProductsListPage>
       return PlatformButton(
         onPressed: () async {
           await Provider.of<UserRepository>(context).signOut();
-          widget.offline;
+          //widget.offline;
           Flushbar(
             message: "You are logged out!",
             duration: Duration(seconds: 3),
@@ -264,7 +261,7 @@ class _ProductsListPageState extends State<ProductsListPage>
         onPressed: () {
           widget.online();
           Navigator.push(context, MaterialPageRoute(builder: (context){
-            return LoginPage(onSignedIn: _homeStore.onLoggedIn,);
+            return LoginPage(onSignedIn: _homeStore.onLoggedIn);
           }));
         },
         child: Text('LOG IN'),
@@ -311,7 +308,6 @@ class _ProductsListPageState extends State<ProductsListPage>
       } on SocketException catch (_) {
         _showDialog();
         logger.error(ProductsListPage.TAG, " Error while connecting  :");
-        print('not connected'); // show dialog
       }
     });
     firebaseDatabaseUtil = FirebaseDatabaseUtil();
@@ -319,6 +315,12 @@ class _ProductsListPageState extends State<ProductsListPage>
     _getUserDetail();
     _getProduct("All");
 
+  }
+
+  @override
+  void didUpdateWidget(ProductsListPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+      _getUserDetail();
   }
 
   void _showDialog() {

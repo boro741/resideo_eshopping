@@ -1,4 +1,3 @@
-import 'package:flutter/widgets.dart';
 import 'package:mobx/mobx.dart';
 import 'package:resideo_eshopping/Screens/login_page.dart';
 import 'package:resideo_eshopping/stores/error_store.dart';
@@ -14,8 +13,6 @@ abstract class _LoginPageStore with Store {
 
   // store for handling error messages
   final ErrorStore errorStore = ErrorStore();
-
-  final _formKey = GlobalKey<FormState>();
 
   _LoginPageStore() {
     _setupValidations();
@@ -95,7 +92,6 @@ abstract class _LoginPageStore with Store {
       errorStore.errorMessage = e.toString().contains("ERROR_USER_NOT_FOUND")
           ? "Username and password doesn't match"
           : "Something went wrong, please check your internet connection and try again";
-      print(e);
     });
   }
 

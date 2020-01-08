@@ -4,8 +4,15 @@ import 'package:resideo_eshopping/Screens/home_page.dart';
 import 'package:resideo_eshopping/model/user_repository.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:resideo_eshopping/controller/app_localizations.dart';
+import 'package:catcher/catcher_plugin.dart';
 void main() {
-  runApp(MyApp());
+  CatcherOptions debugOptions =
+  CatcherOptions(DialogReportMode(), [ConsoleHandler()]);
+  CatcherOptions releaseOptions = CatcherOptions(SilentReportMode(), [
+    EmailManualHandler(["eshopping_poc@grr.la"])
+  ]);
+
+  Catcher(MyApp(), debugConfig: debugOptions, releaseConfig: releaseOptions);
 }
 class MyApp extends StatelessWidget {
   @override
@@ -13,6 +20,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [ChangeNotifierProvider(builder: (context) => UserRepository.instance(),) ],
       child: MaterialApp(
+        navigatorKey: Catcher.navigatorKey,
       title: 'Resideo e-Shopping',
       theme: ThemeData(
         primarySwatch: Colors.blue,

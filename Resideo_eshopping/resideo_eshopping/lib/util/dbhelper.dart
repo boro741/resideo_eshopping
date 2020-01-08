@@ -39,33 +39,22 @@ class Dbhelper {
 
   Future<Database> initializedb() async {
     var eshoppingdb;
-    try {
       Directory dir = await getApplicationDocumentsDirectory();
       String path = dir.path + _dbname;
       eshoppingdb =
           await openDatabase(path, version: _dbversion, onCreate: _createdb);
-    } catch (e) {
-      print("Exception Occured:$e");
-    }
     return eshoppingdb;
   }
 
   void _createdb(Database db, int newversion) async {
-    try {
       return await db.execute(
           'CREATE TABLE $_tblname($_colid INTEGER,$_coltitle TEXT,$_colsDesc TEXT,$_colimg TEXT,$_colprice INTEGER,$_colquantity INTEGER,$_collDesc TEXT,$_colcategory TEXT,$_colrating INTEGER,$_colreview TEXT,$_colthumbnail TEXT,$_colfaq TEXT,$_colpVideo TEXT)');
-    } catch (e) {
-      print("Exception Occured:$e");
-    }
+
   }
 
   Future<int> _addProduct(Database db, Product pd) async {
     var result;
-    try {
       result = await db.insert(_tblname, pd.toJson());
-    } catch (e) {
-      print("Exception Occured:$e");
-    }
     return result;
   }
 
@@ -81,11 +70,7 @@ class Dbhelper {
   Future<List> getProductListDb() async {
     Database db = await this.db;
     var result;
-    try {
       result = await db.rawQuery('SELECT * FROM $_tblname');
-    } catch (e) {
-      print("Exception Occured:$e");
-    }
     close();
     return result;
   }
@@ -94,22 +79,14 @@ class Dbhelper {
   Future<int> updateInventoryById(int id, int newInventoryValue) async {
     Database db = await this.db;
     var result;
-    try {
       result = await db.rawUpdate(
           "UPDATE $_tblname SET $_colquantity = $newInventoryValue WHERE $_colid = $id");
-    } catch (e) {
-      print("Exception Occured:$e");
-    }
     close();
     return result;
   }
 
   Future close() async {
     Database db = await this.db;
-    try {
       await db.close();
-    } catch (e) {
-      print("Exception Occured:$e");
-    }
   }
 }

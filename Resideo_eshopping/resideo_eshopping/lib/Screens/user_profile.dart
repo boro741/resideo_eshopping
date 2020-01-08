@@ -92,7 +92,6 @@ class _SignUpState extends State<SignUp>
   }
 
   @override
-// void afterFirstLayout(BuildContext context) {
      void initState() {
      super.initState();
     _controler = AnimationController(

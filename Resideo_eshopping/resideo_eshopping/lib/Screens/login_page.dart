@@ -1,6 +1,5 @@
 import 'package:after_layout/after_layout.dart';
 import 'package:flushbar/flushbar.dart';
-import 'package:flushbar/flushbar_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -37,7 +36,6 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
 
   FormMode _formMode = FormMode.LOGIN;
   String userId = "";
-
 
   @override
   void afterFirstLayout(BuildContext context){
@@ -149,7 +147,6 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
           icon: Icons.lock,
           iconColor: Colors.black54,
           textController: _password,
-          //focusNode: _passwordFocusNode,
           errorText: _store.formErrorStore.password,
         );
       },
@@ -172,18 +169,20 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
                 try{
 
                   if(_store.canLogin) _store.login();
-                  //else showErrorMessage(context, 'Please fill in all fields');
 
                   if (_formKey.currentState.validate()) {
                     if(_formMode == FormMode.LOGIN){
                       SharedPreferences prefs = await SharedPreferences.getInstance();
                       userId = await user.signIn(_email.text, _password.text);
                       prefs.setString('uid', userId);
-                      print('Signed in: $userId');
+
+                      if (!mounted) return;
+
                       setState(() {
 
                         if(userId != null){
                           Navigator.of(context).pop();
+
                           Flushbar(
                             message: "You are Signed in!",
                             duration: Duration(seconds: 3),
@@ -217,14 +216,12 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
                     }
 
                           if ( userId != null && userId.length > 0 && _formMode == FormMode.LOGIN) {
-
                             widget.onSignedIn();
 
                           }
                   }
 
                   }catch (e) {
-                  print('Error: $e');
                   logger.error(TAG, " Error in sending the Data to  the Firbase ");
 
                 }
@@ -251,21 +248,6 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
               onPressed: _formMode == FormMode.LOGIN ? _changeFormToSignUp : _changeFormToLogin
           );
   }
-
-
-  showErrorMessage(BuildContext context, String message) {
-    if(message != null) {
-      FlushbarHelper.createError(
-        message: message,
-        title: 'Error',
-        duration: Duration(seconds: 3),
-      )
-        ..show(context);
-    }
-
-    return Container();
-  }
-
 
   @override
   void dispose() {

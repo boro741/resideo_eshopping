@@ -22,12 +22,12 @@ class ProductsTile extends StatelessWidget {
     void navigateToProductdetail(Product pd, FirebaseUser user,
         VoidCallback online, VoidCallback offline,
         User userInfo) async {
+          print(user);
       Navigator.push(context, ScaleRoute(
           page: ProductDetail(pd, user, online, offline, userInfo)));
     }
     if (_products == null)
       logger.info("ProductsTile", "Product object passed in product tile is null");
-//      print("Product object passed in product tile is null");
     else {
       return Column(
         children: <Widget>[

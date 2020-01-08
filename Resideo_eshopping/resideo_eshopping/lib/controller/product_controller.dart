@@ -11,7 +11,7 @@ import 'package:resideo_eshopping/util/firebase_database_helper.dart';
 class ProductController{
   static const String TAG ="ProductController";
 
-  static List<Product> products = <Product>[];
+  List<Product> products = <Product>[];
 
   List<Product> currentList = List<Product>();
 

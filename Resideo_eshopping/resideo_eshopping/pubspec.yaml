@@ -86,6 +86,7 @@ flutter:
     - assets/images/logo.png
     - lang/en.json
     - lang/sk.json
+    - assets/products.json
 
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg

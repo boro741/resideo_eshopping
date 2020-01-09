@@ -11,14 +11,14 @@ void main() {
     expect(response.statusCode, 200);
   });
 
-  test('Returns 25 items', () async {
+  test('Returns 36 items', () async {
     final response = await http.get(url);
     var itemCount = response.body
         .split('},') // split the text into an array
         .toList()
         .length;
 
-    expect(itemCount, 25);
+    expect(36, itemCount);
   });
 
   test('Test for every field returns no null', () async {

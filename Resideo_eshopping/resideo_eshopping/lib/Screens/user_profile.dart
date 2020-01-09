@@ -137,7 +137,6 @@ class _SignUpState extends State<SignUp>
           new IconButton(
             icon: new Icon(Icons.close),
             onPressed: (){
-              //widget.profile();
               Navigator.push(context, MaterialPageRoute(builder: (context){
                 return HomePage();
               }));

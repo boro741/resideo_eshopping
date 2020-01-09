@@ -11,20 +11,17 @@ import 'package:resideo_eshopping/util/logger.dart' as logger;
 class ProductsTile extends StatelessWidget {
   Product _products;
   FirebaseUser user;
-  VoidCallback online;
-  VoidCallback offline;
   User userInfo;
-  ProductsTile(this._products,this.user,this.online,this.offline,this.userInfo);
+  ProductsTile(this._products,this.user,this.userInfo);
   Widget widget;
 
   @override 
   Widget build(BuildContext context) {
     void navigateToProductdetail(Product pd, FirebaseUser user,
-        VoidCallback online, VoidCallback offline,
         User userInfo) async {
           print(user);
       Navigator.push(context, ScaleRoute(
-          page: ProductDetail(pd, user, online, offline, userInfo)));
+          page: ProductDetail(pd, user, userInfo)));
     }
     if (_products == null)
       logger.info("ProductsTile", "Product object passed in product tile is null");
@@ -54,7 +51,7 @@ class ProductsTile extends StatelessWidget {
                 ),
                 onTap: () {
                   navigateToProductdetail(
-                      _products, user, online, offline, userInfo);
+                      _products, user, userInfo);
                 },
 
                 leading:

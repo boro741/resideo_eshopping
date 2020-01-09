@@ -8,8 +8,6 @@ import 'package:resideo_eshopping/widgets/progress_indicator.dart';
 
 class HomePage extends StatelessWidget{
 
-  final _homeStore = HomePageStore();
-
   @override
   Widget build(BuildContext context){
             final user = Provider.of<UserRepository>(context);
@@ -25,9 +23,8 @@ class HomePage extends StatelessWidget{
                   return Observer(
                     builder: (context) {
                       return ProductsListPage(
-                          user: user.user,
-                          online: _homeStore.onlogInButtonPress,
-                          offline: _homeStore.onSignedOut);
+                          user: user.user
+                          );
                     }
                   );
                 break;

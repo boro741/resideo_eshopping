@@ -21,10 +21,10 @@ import 'package:resideo_eshopping/util/logger.dart' as logger;
 import 'package:resideo_eshopping/widgets/progress_indicator.dart';
 
 class ProductsListPage extends StatefulWidget {
- ProductsListPage({this.user,this.online,this.offline});
+ ProductsListPage({this.user});
  final FirebaseUser user;
- final VoidCallback online;
- final VoidCallback offline;
+
+
 
  static const String TAG ="PoductsListPage";
   @override
@@ -139,7 +139,7 @@ class _ProductsListPageState extends State<ProductsListPage>
           shrinkWrap: true,
           padding: const EdgeInsets.all(0.0),
           itemCount: currentList.length,
-          itemBuilder: (context, index) => ProductsTile(currentList[index],widget.user,widget.online,widget.offline,userInfo),
+          itemBuilder: (context, index) => ProductsTile(currentList[index],widget.user,userInfo),
         );
       }
 
@@ -259,7 +259,6 @@ class _ProductsListPageState extends State<ProductsListPage>
     else {
       return PlatformButton(
         onPressed: () {
-          widget.online();
           Navigator.push(context, MaterialPageRoute(builder: (context){
             return LoginPage(onSignedIn: _homeStore.onLoggedIn);
           }));
@@ -319,7 +318,8 @@ class _ProductsListPageState extends State<ProductsListPage>
 
   @override
   void didUpdateWidget(ProductsListPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
+    super.
+    didUpdateWidget(oldWidget);
       _getUserDetail();
   }
 

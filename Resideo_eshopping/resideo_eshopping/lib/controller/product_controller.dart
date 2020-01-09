@@ -107,7 +107,7 @@ class ProductController{
   }
 
   //Method to return the update value of product quantity
-  int _decreaseInventoryCount(Product product) {
+  int decreaseInventoryCount(Product product) {
     if (product.quantity > 0)
       return (product.quantity - 1);
     else
@@ -117,7 +117,7 @@ class ProductController{
   //Method to update the inventory count in product model, firebase and local database when customer purchase the product
   void updateInventory(Product product) {
     helper
-        .updateInventoryById(product.id, _decreaseInventoryCount(product))
+        .updateInventoryById(product.id, decreaseInventoryCount(product))
         .then((result) {
       if (result == 1) {
         product.quantity = product.quantity - 1;

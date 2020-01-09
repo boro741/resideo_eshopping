@@ -41,4 +41,18 @@ void main() async{
     expect(8, productController.filterProducts('Kid').length);
   });
 
+  test("return 0 when inventory is sold out", () {
+    expect(0, productController.decreaseInventoryCount(productController.products[0]));
+  });
+
+  test("decrease inventory count by 1 when product is purchased", () {
+    expect(3, productController.decreaseInventoryCount(productController.products[8]));
+  });
+
+  test("update inventory count", () {
+    productController.updateInventory(productController.products[8]);
+    productController.products[8].quantity = productController.products[8].quantity-1;
+    expect(3, productController.products[8].quantity);
+  });
+
 }

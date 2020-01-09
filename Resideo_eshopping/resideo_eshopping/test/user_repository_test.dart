@@ -29,16 +29,16 @@ void main() {
       String signedIn = await _repo.signIn("email", "password");
       expect(_repo.status, Status.Authenticated);
     });
-//
-//    test("sing in fails with incorrect email and password",() async {
-//      String signedIn = await _repo.signIn("mail", "pass");
-//      expect(_repo.status, Status.Unauthenticated);
-//    });
-//
-//    test('sign out', ()async{
-//      await _repo.signOut();
-//      expect(_repo.status, Status.Unauthenticated);
-//    });
+
+    test("sing in fails with incorrect email and password",() async {
+      String signedIn = await _repo.signIn("mail", "pass");
+      expect(_repo.status, Status.Unauthenticated);
+    });
+
+    test('sign out', ()async{
+      await _repo.signOut();
+      expect(_repo.status, Status.Unauthenticated);
+    });
   });
 }
 

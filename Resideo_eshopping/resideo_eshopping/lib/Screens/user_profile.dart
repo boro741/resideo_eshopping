@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:resideo_eshopping/Screens/home_page.dart';
 import 'dart:io';
 import 'package:resideo_eshopping/controller/image_picker_handler.dart';
 import 'package:resideo_eshopping/model/User.dart';
@@ -11,10 +10,9 @@ import 'package:resideo_eshopping/util/firebase_database_helper.dart';
 class SignUp extends StatefulWidget {
 
   final FirebaseUser user;
-  final VoidCallback profile;
   final User userInfo;
 
-  SignUp(this.user, this.profile, this.userInfo);
+  SignUp(this.user,this.userInfo);
   @override
   State<StatefulWidget> createState() => _SignUpState();
 }
@@ -133,19 +131,6 @@ class _SignUpState extends State<SignUp>
                 color: Colors.white,
               )),
         ),
-        actions: <Widget>[
-          new IconButton(
-            icon: new Icon(Icons.close),
-            onPressed: (){
-              //widget.profile();
-              Navigator.push(context, MaterialPageRoute(builder: (context){
-                return HomePage();
-              }));
-    },
-
-          ),
-        ],
-        leading: new Container(),
       ),
       body: SafeArea(
         child: Form(

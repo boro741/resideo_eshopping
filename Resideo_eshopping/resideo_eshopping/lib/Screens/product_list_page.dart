@@ -49,14 +49,6 @@ class _ProductsListPageState extends State<ProductsListPage>
   String _name = "";
   String _email = "";
   String _imageUrl;
-  bool isProfile = false;
-
-  void _closeUserProfile(){
-   setState(() {
-     _getUserDetail();
-     isProfile=false;
-   });
-  }
   
   void _setProfile(){
     if(widget.user == null)
@@ -143,11 +135,6 @@ class _ProductsListPageState extends State<ProductsListPage>
         );
       }
 
-
-       if(isProfile)
-       {
-         return SignUp(widget.user,_closeUserProfile,userInfo);
-       }else{
         return Scaffold(
           key: key,
           drawer: Drawer(
@@ -217,9 +204,10 @@ class _ProductsListPageState extends State<ProductsListPage>
                                 icon: FontAwesomeIcons.user,
                                 text: 'My Account',
                                 onTap: () {
-                                  setState(() {
-                                    isProfile = true;
-                                  });
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => SignUp(widget.user,userInfo)));
                                 }),
 
 
@@ -233,9 +221,6 @@ class _ProductsListPageState extends State<ProductsListPage>
                   ),
                   body: widget1,
                 );
-              }
-      //}
-      //);
   }
 
   Widget _loginSignupButton() {

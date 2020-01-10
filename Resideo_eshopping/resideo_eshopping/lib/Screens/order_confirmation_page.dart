@@ -13,11 +13,8 @@ class OrderConfirmationPage extends StatefulWidget {
   final Product product;
   final User userInfo;
   final FirebaseUser user;
-  final VoidCallback online;
-  final VoidCallback offline;
 
-  OrderConfirmationPage(this.product, this.userInfo, this.user, this.online,
-      this.offline);
+  OrderConfirmationPage(this.product, this.userInfo, this.user);
 
   @override
   _OrderConfirmationPageState createState() => _OrderConfirmationPageState();

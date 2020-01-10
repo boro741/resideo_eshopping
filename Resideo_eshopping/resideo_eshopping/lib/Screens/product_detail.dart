@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:resideo_eshopping/controller/app_localizations.dart';
 import 'package:resideo_eshopping/controller/product_controller.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/Screens/order_confirmation_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:resideo_eshopping/model/user_repository.dart';
 import 'package:resideo_eshopping/stores/home_page_store.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter_plugin_pdf_viewer/flutter_plugin_pdf_viewer.dart';
@@ -23,12 +25,10 @@ import 'login_page.dart';
 
 class ProductDetail extends StatefulWidget {
   final Product product;
-  final FirebaseUser user;
-  final VoidCallback online;
-  final VoidCallback offline;
+  final FirebaseUser user ;
   final User userInfo;
   ProductDetail(
-      this.product, this.user, this.online, this.offline, this.userInfo);
+      this.product, this.user,this.userInfo);
 
   @override
   _ProductDetailState createState() => _ProductDetailState();
@@ -44,6 +44,7 @@ class _ProductDetailState extends State<ProductDetail> {
   ProductController _productController;
   Future<void> _initializeVideoPlayerFuture;
   final _homeStore = HomePageStore();
+
   @override
   void initState() {
     super.initState();
@@ -75,6 +76,7 @@ class _ProductDetailState extends State<ProductDetail> {
 
   @override
   Widget build(BuildContext context) {
+    final user1 =Provider.of<UserRepository>(context);
     buttonDisabled =
         _productController.enableDisableOrderNowButton(widget.product.quantity);
     void navigateToCustomerAddress() async {
@@ -84,9 +86,8 @@ class _ProductDetailState extends State<ProductDetail> {
               builder: (context) => OrderConfirmationPage(
                   widget.product,
                   widget.userInfo,
-                  widget.user,
-                  widget.online,
-                  widget.offline)));
+                  user1.user,
+                  )));
     }
 
     if (widget.product == null)
@@ -164,16 +165,16 @@ class _ProductDetailState extends State<ProductDetail> {
                       onPressed: buttonDisabled
                           ? null
                           : () {
-                              if (widget.user == null) {
-
-                                Navigator.pop(context);
-                                widget.online();
-                                Navigator.push(context,
+                              if (user1.user == null) {
+                                // Navigator.pop(context);
+                                // widget.online();
+                                Navigator.of(context).push(
                                     MaterialPageRoute(builder: (context) {
                                   return LoginPage(
                                     onSignedIn: _homeStore.onLoggedIn,
                                   );
                                 }));
+                                // Navigator.popAndPushNamed(context, 'OrderConfirmationPage');
                               } else if (widget.userInfo == null ||
                                   widget.userInfo.address == null ||
                                   widget.userInfo.phone == null) {

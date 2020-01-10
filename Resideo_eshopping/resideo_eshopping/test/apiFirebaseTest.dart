@@ -11,14 +11,14 @@ void main() {
     expect(response.statusCode, 200);
   });
 
-  test('Returns 25 items', () async {
+  test('Returns 36 items', () async {
     final response = await http.get(url);
     var itemCount = response.body
         .split('},') // split the text into an array
         .toList()
         .length;
 
-    expect(itemCount, 25);
+    expect(37, itemCount);
   });
 
   test('Test for every field returns no null', () async {
@@ -26,18 +26,19 @@ void main() {
         .get(Uri.encodeFull(url), headers: {"Accept": "application/json"});
 
     var data = json.decode(response.body);
-
-    expect(data[0]['Category'] != null ? true : false, true);
-    expect(data[0]['Image'] != null ? true : false, true);
-    expect(data[0]['Inventory'] != null ? true : false, true);
-    expect(data[0]['LongDescription'] != null ? true : false, true);
-    expect(data[0]['Price'] != null ? true : false, true);
-    expect(data[0]['ProductId'] != null ? true : false, true);
-    expect(data[0]['ProductName'] != null ? true : false, true);
-    expect(data[0]['Rating'] != null ? true : false, true);
-    expect(data[0]['Review'] != null ? true : false, true);
-    expect(data[0]['ShortDescription'] != null ? true : false, true);
-    expect(data[0]['Thumbnail'] != null ? true : false, true);
+    expect(true, data['Products'][0]['Category'] != null ? true : false);
+    expect(true, data['Products'][0]['Image'] != null ? true : false);
+    expect(true, data['Products'][0]['Inventory'] != null ? true : false);
+    expect(true, data['Products'][0]['LongDescription'] != null ? true : false);
+    expect(true, data['Products'][0]['Price'] != null ? true : false);
+    expect(true, data['Products'][0]['ProductId'] != null ? true : false);
+    expect(true, data['Products'][0]['ProductName'] != null ? true : false);
+    expect(true, data['Products'][0]['ProductVideo'] != null ? true : false);
+    expect(true, data['Products'][0]['Rating'] != null ? true : false);
+    expect(true, data['Products'][0]['Review'] != null ? true : false);
+    expect(true, data['Products'][0]['ShortDescription'] != null ? true : false);
+    expect(true, data['Products'][0]['Thumbnail'] != null ? true : false);
+    expect(true, data['Products'][0]['FAQ'] != null ? true : false);
   });
 
   test('An Object contains 11 fields', () async {
@@ -46,6 +47,6 @@ void main() {
 
     var data = json.decode(response.body);
 
-    expect(data[0].length, 11);
+    expect(13, data['Products'][0].length);
   });
 }

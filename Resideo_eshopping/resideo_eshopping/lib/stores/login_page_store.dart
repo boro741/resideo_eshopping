@@ -81,7 +81,7 @@ abstract class _LoginPageStore with Store {
   Future login() async {
     loading = true;
 
-    Future.delayed(Duration(milliseconds: 2000)).then((future) {
+    Future.delayed(Duration(milliseconds: 3000)).then((future) {
       loading = false;
       success = true;
       errorStore.showError = false;

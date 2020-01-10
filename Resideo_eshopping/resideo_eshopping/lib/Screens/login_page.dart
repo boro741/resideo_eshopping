@@ -222,6 +222,10 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
                   }
 
                   }catch (e) {
+                  Flushbar(
+                    message: "Not signed in! Please enter correct details",
+                    duration: Duration(seconds: 3),
+                  )..show(context);
                   logger.error(TAG, " Error in sending the Data to  the Firbase ");
 
                 }

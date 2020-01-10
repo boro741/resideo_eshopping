@@ -1,7 +1,6 @@
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:mobx/mobx.dart';
 class PdfViewPage extends StatefulWidget {
   final String path;
 
@@ -12,13 +11,8 @@ class PdfViewPage extends StatefulWidget {
 
 class _PdfViewPageState extends State<PdfViewPage> {
 
-  @observable
   int _totalPages = 0;
-
-  @observable
   int _currentPage = 0;
-
-  @observable
   bool pdfReady = false;
 
   PDFViewController _pdfViewController;

@@ -32,9 +32,13 @@ class Product{
   String faqUrl;
   @JsonKey(name: 'ProductVideo')
   String pVideoUrl;
+  @JsonKey(name: 'Latitude')
+  String latitude;
+  @JsonKey(name: 'Longitude')
+  String longitude;
   
-  Product(this.id,this.title,this.sDesc,this.imgUrl,this.price,this.quantity,this.lDesc,this.category,this.rating,this.review,this.thumbnailUrl,this.faqUrl,this.pVideoUrl);
-  Product.withId(this.id,this.title,this.sDesc,this.imgUrl,this.price,this.quantity,this.lDesc,this.category,this.rating,this.review,this.thumbnailUrl,this.faqUrl,this.pVideoUrl);
+  Product(this.id,this.title,this.sDesc,this.imgUrl,this.price,this.quantity,this.lDesc,this.category,this.rating,this.review,this.thumbnailUrl,this.faqUrl,this.pVideoUrl,this.latitude,this.longitude);
+  Product.withId(this.id,this.title,this.sDesc,this.imgUrl,this.price,this.quantity,this.lDesc,this.category,this.rating,this.review,this.thumbnailUrl,this.faqUrl,this.pVideoUrl,this.latitude,this.longitude);
 
    factory Product.fromJSON(Map<String,dynamic> jsonMap) => _$ProductFromJson(jsonMap);
 

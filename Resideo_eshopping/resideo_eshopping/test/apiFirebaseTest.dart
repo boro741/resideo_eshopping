@@ -18,7 +18,7 @@ void main() {
         .toList()
         .length;
 
-    expect(37, itemCount);
+    expect(38, itemCount);
   });
 
   test('Test for every field returns no null', () async {
@@ -47,6 +47,6 @@ void main() {
 
     var data = json.decode(response.body);
 
-    expect(13, data['Products'][0].length);
+    expect(15, data['Products'][0].length);
   });
 }

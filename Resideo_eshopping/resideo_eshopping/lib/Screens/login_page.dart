@@ -114,7 +114,16 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
         child: CircleAvatar(
           backgroundColor: Colors.transparent,
           radius: 80.0,
-          child: FlareActor('assets/images/shopping-cart.flr',animation: isOpen ? 'activate' : 'deactivate'),
+          child: GestureDetector(
+            onTap:(){
+              setState(() {
+              isOpen = !isOpen;
+            });},
+
+          child:FlareActor('assets/images/shopping-cart.flr',animation: isOpen ? 'activate' : 'deactivate'),
+          
+          ),
+          
         ),
       ),
     );

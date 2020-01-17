@@ -1,11 +1,6 @@
 import 'dart:async';
-import 'package:flare_flutter/flare.dart';
 import 'package:flutter/material.dart';
 import 'package:resideo_eshopping/controller/image_picker_handler.dart';
-import 'package:flare_flutter/flare_actor.dart';
-import 'package:flare_flutter/flare_controls.dart';
-
-
 
 class ImagePickerDialog extends StatelessWidget {
   final ImagePickerHandler _listener;
@@ -17,8 +12,6 @@ class ImagePickerDialog extends StatelessWidget {
       this._listener, this._controller, this._deletePhotoButtonEnable);
   Animation<double> _drawerContentsOpacity;
   Animation<Offset> _drawerDetailsPosition;
-  final FlareControls animationControls = FlareControls();
-  bool isOpen = false;
 
   void initState() {
     _drawerContentsOpacity = new CurvedAnimation(

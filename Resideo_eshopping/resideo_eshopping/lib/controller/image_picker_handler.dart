@@ -8,7 +8,6 @@ import 'package:resideo_eshopping/Screens/image_picker_dialog.dart';
 import 'package:resideo_eshopping/util/firebase_database_helper.dart';
 import 'package:resideo_eshopping/model/User.dart';
 import 'package:resideo_eshopping/util/logger.dart' as logger;
-import 'package:flare_flutter/flare_controller.dart';
 
 
 class ImagePickerHandler{

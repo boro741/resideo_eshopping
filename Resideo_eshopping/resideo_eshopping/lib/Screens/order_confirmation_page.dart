@@ -24,7 +24,6 @@ class OrderConfirmationPage extends StatefulWidget {
 class _OrderConfirmationPageState extends State<OrderConfirmationPage> with AfterLayoutMixin<OrderConfirmationPage> {
   ProductController _productController;
   static const String TAG ="OrderConfirmationPage";
-  bool isOpen = false;
 
   void navigateToHomePage(BuildContext context) async => Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
@@ -37,9 +36,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> with Afte
         context: context,
         builder: (_) => NetworkGiffyDialog(
               // image: Image.asset('assets/images/tenor.gif'),
-
-              image: FlareActor('assets/images/Successcheck.flr',animation: isOpen ? 'activate' : 'deactivate'),
-
+              image: FlareActor('assets/images/Successcheck.flr',animation: 'activate' ),
               title: Text('Order Placed!!',
                   textAlign: TextAlign.center,
                   style:

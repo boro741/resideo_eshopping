@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:resideo_eshopping/Screens/home_page.dart';
@@ -24,19 +25,18 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> with Afte
   ProductController _productController;
   static const String TAG ="OrderConfirmationPage";
 
-  void navigateToHomePage(BuildContext context) async {
-    Navigator.of(context).pushAndRemoveUntil(
+  void navigateToHomePage(BuildContext context) async => Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
               builder: (context) => HomePage()
                 ),
         (Route<dynamic> route) => false);
-  }
 
   orderPlaced(BuildContext context) {
     showDialog(
         context: context,
         builder: (_) => NetworkGiffyDialog(
-              image: Image.asset('assets/images/tenor.gif'),
+              // image: Image.asset('assets/images/tenor.gif'),
+              image: FlareActor('assets/images/Successcheck.flr',animation: 'activate' ),
               title: Text('Order Placed!!',
                   textAlign: TextAlign.center,
                   style:

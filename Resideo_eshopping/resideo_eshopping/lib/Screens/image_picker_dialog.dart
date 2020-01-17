@@ -5,9 +5,11 @@ import 'package:resideo_eshopping/controller/image_picker_handler.dart';
 class ImagePickerDialog extends StatelessWidget {
   final ImagePickerHandler _listener;
   final AnimationController _controller;
+
   BuildContext context;
   final bool _deletePhotoButtonEnable;
-  ImagePickerDialog(this._listener, this._controller, this._deletePhotoButtonEnable);
+  ImagePickerDialog(
+      this._listener, this._controller, this._deletePhotoButtonEnable);
   Animation<double> _drawerContentsOpacity;
   Animation<Offset> _drawerDetailsPosition;
 
@@ -93,49 +95,50 @@ class ImagePickerDialog extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 new GestureDetector(
-                  onTap: () => _listener.openCamera(),
-                  child: new CircleAvatar(
-                    radius: 30.0,
-                    backgroundColor: Colors.transparent,
-                    backgroundImage: AssetImage("assets/images/camera.png"),
-                  ),
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                Text("Camera", style: TextStyle(color: Colors.white)),
-                const SizedBox(
-                  height: 20,
-                ),
-                new GestureDetector(
-                  onTap: () => _listener.openGallery(),
-                  child: new CircleAvatar(
-                    radius: 30.0,
-                    backgroundColor: Colors.transparent,
-                    backgroundImage: AssetImage("assets/images/gallery.png"),
-                  ),
-                ),
-                const SizedBox(
-                  height: 5,
-                ),
-                Text("GAllery", style: TextStyle(color: Colors.white)),
-                const SizedBox(
-                  height: 20,
-                ),
-                _enableDisableDeletePhotoButton(),
-                const SizedBox(
-                  height: 20,
-                ),
-                new GestureDetector(
-                  onTap: () => dismissDialog(),
-                  child: new Padding(
-                    padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),
-                    child: Icon(Icons.cancel),
-                  ),
-                ),
-              ],
+
+            onTap: () => _listener.openCamera(),
+            child: new CircleAvatar(
+              radius: 30.0,
+              backgroundColor: Colors.transparent,
+              backgroundImage: AssetImage("assets/images/camera.png"),
             ),
           ),
-        ));
+          const SizedBox(
+            height: 5,
+          ),
+          Text("Camera", style: TextStyle(color: Colors.white)),
+          const SizedBox(
+            height: 20,
+          ),
+          new GestureDetector(
+            onTap: () => _listener.openGallery(),
+            child: new CircleAvatar(
+              radius: 30.0,
+              backgroundColor: Colors.transparent,
+              backgroundImage: AssetImage("assets/images/gallery.png"),
+            ),
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+          Text("GAllery", style: TextStyle(color: Colors.white)),
+          const SizedBox(
+            height: 20,
+          ),
+          _enableDisableDeletePhotoButton(),
+          const SizedBox(
+            height: 20,
+          ),
+          new GestureDetector(
+            onTap: () => dismissDialog(),
+            child: new Padding(
+              padding: EdgeInsets.fromLTRB(30.0, 0.0, 30.0, 0.0),
+              child: Icon(Icons.cancel),
+            ),
+          ),
+        ],
+      ),
+    ),
+    ));
   }
 }

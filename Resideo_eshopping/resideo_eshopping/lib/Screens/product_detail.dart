@@ -7,7 +7,9 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:resideo_eshopping/controller/app_localizations.dart';
+import 'package:resideo_eshopping/controller/place_controller.dart';
 import 'package:resideo_eshopping/controller/product_controller.dart';
+import 'package:resideo_eshopping/model/places.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/Screens/order_confirmation_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -20,7 +22,7 @@ import 'package:resideo_eshopping/widgets/rating_start.dart';
 import 'package:resideo_eshopping/util/logger.dart' as logger;
 import 'package:resideo_eshopping/widgets/pdf_viewer.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:geolocator/geolocator.dart';
 import 'login_page.dart';
 
 class ProductDetail extends StatefulWidget {
@@ -43,18 +45,20 @@ class _ProductDetailState extends State<ProductDetail> {
   VideoPlayerController _videoPlayerController;
   ProductController _productController;
   Future<void> _initializeVideoPlayerFuture;
+  List<Place> currentList = <Place>[];
+  List<double> distance = <double>[];
   final _homeStore = HomePageStore();
 
   @override
   void initState() {
     super.initState();
+    listenforplace();
     _videoPlayerController =
         VideoPlayerController.network(widget.product.pVideoUrl);
     _initializeVideoPlayerFuture = _videoPlayerController.initialize();
     _videoPlayerController.setLooping(true);
     _videoPlayerController.setVolume(1.0);
     _productController = ProductController();
-
     getFileFromUrl(widget.product.faqUrl).then((f) {
       setState(() {
         urlPDFPath = f.path;
@@ -62,36 +66,58 @@ class _ProductDetailState extends State<ProductDetail> {
     });
   }
 
+  void listenforplace() async {
+    final Stream<Place> stream = await getPlaces();
+    stream.listen((Place place) =>
+        setState(() => currentList.add(place))
+    );
+  }
+
+
   Future<File> getFileFromUrl(String url) async {
     logger.info(TAG, "Getting PDF File from the Url: " + url);
-      var data = await http.get(url);
-      var bytes = data.bodyBytes;
-      var dir = await getApplicationDocumentsDirectory();
-      File file = File("${dir.path}/mypdfonline.pdf");
+    var data = await http.get(url);
+    var bytes = data.bodyBytes;
+    var dir = await getApplicationDocumentsDirectory();
+    File file = File("${dir.path}/mypdfonline.pdf");
 
-      File urlFile = await file.writeAsBytes(bytes);
-      return urlFile;
-      //logger.error(TAG, "Error while getting the Pdf from URL :" + e);
+    File urlFile = await file.writeAsBytes(bytes);
+    return urlFile;
+    //logger.error(TAG, "Error while getting the Pdf from URL :" + e);
+  }
+
+  void caldistance(String lat, String long) async {
+    double slat = double.parse(widget.product.latitude.substring(0, 7));
+    double slong = double.parse(widget.product.longitude.substring(0, 7));
+    double elat = double.parse(lat.substring(0, 7));
+    double elong = double.parse(long.substring(0, 7));
+
+    double distanceInMeters = await Geolocator().distanceBetween(
+        slat, slong, elat, elong);
+    double distanceInKm = distanceInMeters / 1000;
+    distance.add(distanceInKm);
   }
 
   @override
   Widget build(BuildContext context) {
-    final user1 =Provider.of<UserRepository>(context);
+    final user1 = Provider.of<UserRepository>(context);
     buttonDisabled =
         _productController.enableDisableOrderNowButton(widget.product.quantity);
     void navigateToCustomerAddress() async {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => OrderConfirmationPage(
-                  widget.product,
-                  widget.userInfo,
-                  user1.user,
+              builder: (context) =>
+                  OrderConfirmationPage(
+                    widget.product,
+                    widget.userInfo,
+                    user1.user,
                   )));
     }
 
     if (widget.product == null)
-      logger.info(TAG, "product object passed from the product list page in product detail page is empty");
+      logger.info(TAG,
+          "product object passed from the product list page in product detail page is empty");
     else {
       return PlatformScaffold(
         appBar: PlatformAppBar(
@@ -165,23 +191,23 @@ class _ProductDetailState extends State<ProductDetail> {
                       onPressed: buttonDisabled
                           ? null
                           : () {
-                              if (user1.user == null) {
-                                // Navigator.pop(context);
-                                // widget.online();
-                                Navigator.of(context).push(
-                                    MaterialPageRoute(builder: (context) {
-                                  return LoginPage(
-                                    onSignedIn: _homeStore.onLoggedIn,
-                                  );
-                                }));
-                                // Navigator.popAndPushNamed(context, 'OrderConfirmationPage');
-                              } else if (widget.userInfo == null ||
-                                  widget.userInfo.address == null ||
-                                  widget.userInfo.phone == null) {
-                                showAlertDialog(context);
-                              } else
-                                navigateToCustomerAddress();
-                            },
+                        if (user1.user == null) {
+                          // Navigator.pop(context);
+                          // widget.online();
+                          Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) {
+                                return LoginPage(
+                                  onSignedIn: _homeStore.onLoggedIn,
+                                );
+                              }));
+                          // Navigator.popAndPushNamed(context, 'OrderConfirmationPage');
+                        } else if (widget.userInfo == null ||
+                            widget.userInfo.address == null ||
+                            widget.userInfo.phone == null) {
+                          showAlertDialog(context);
+                        } else
+                          navigateToCustomerAddress();
+                      },
                     ),
                     SizedBox(
                       height: 20,
@@ -189,7 +215,7 @@ class _ProductDetailState extends State<ProductDetail> {
                     PlatformText(
                       "About This Item",
                       style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                         TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
                     SizedBox(
                       height: 10,
@@ -204,7 +230,7 @@ class _ProductDetailState extends State<ProductDetail> {
                     Text(
                       'Customer Reviews',
                       style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                      TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                     ),
                     SizedBox(
                       height: 10,
@@ -238,7 +264,45 @@ class _ProductDetailState extends State<ProductDetail> {
                           }
                         },
                       ),
-                    )
+                    ),
+                    Text(
+                      'Near by Places',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 20),
+                    ),
+                    SizedBox(
+                      height: 20,
+                      width: 20,
+                    ),
+                    SizedBox(
+                      height: 150.0,
+                      //width : 200.0,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: currentList.length,
+                        itemExtent: 100.0,
+                        itemBuilder: (context, index) {
+                          var item = currentList[index];
+                          // Future<double> dis = caldistance(item.latitude,item.longitude);
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 5.0, vertical: 4.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                //title: Text(item.name),
+                                image: DecorationImage(
+                                  image: NetworkImage(
+                                    item.imageUrl,
+                                  ),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -300,37 +364,37 @@ class _ProductDetailState extends State<ProductDetail> {
           ),
         ),
         Center(
-              child:
-                      ButtonTheme(
-                          height: 0.0,
-                          minWidth: 0.0,
-                          child: RaisedButton(
-                            padding: EdgeInsets.all(6.0),
-                            color: Colors.transparent,
-                            //textColor: Colors.white,
-                            onPressed: () {
-                              setState(() {
-                                if (_videoPlayerController.value.isPlaying) {
-                                  _videoPlayerController.pause();
-                                } else {
-                                  _videoPlayerController.play();
-                                }
-                              });
-                            },
-                            child: Icon(
-                              _videoPlayerController.value.isPlaying ? Icons.pause : Icons.play_arrow,
-                              size: 0.0,
-                              color: Colors.transparent,
-                            ),
-                          )
-                      ),
-          )
-        ],
-      );
-
+          child:
+          ButtonTheme(
+              height: 0.0,
+              minWidth: 0.0,
+              child: RaisedButton(
+                padding: EdgeInsets.all(6.0),
+                color: Colors.transparent,
+                //textColor: Colors.white,
+                onPressed: () {
+                  setState(() {
+                    if (_videoPlayerController.value.isPlaying) {
+                      _videoPlayerController.pause();
+                    } else {
+                      _videoPlayerController.play();
+                    }
+                  });
+                },
+                child: Icon(
+                  _videoPlayerController.value.isPlaying ? Icons.pause : Icons
+                      .play_arrow,
+                  size: 0.0,
+                  color: Colors.transparent,
+                ),
+              )
+          ),
+        )
+      ],
+    );
   }
 
-  Widget _showSlides(){
+  Widget _showSlides() {
     return SizedBox(
         height: 400.0,
         width: 800.0,
@@ -354,6 +418,4 @@ class _ProductDetailState extends State<ProductDetail> {
         )
     );
   }
-
 }
-

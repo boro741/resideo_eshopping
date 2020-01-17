@@ -1,4 +1,5 @@
 import 'package:after_layout/after_layout.dart';
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -25,6 +26,7 @@ class LoginPage extends StatefulWidget{
 class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
   TextEditingController _email = TextEditingController();
   TextEditingController _password = TextEditingController();
+  bool isOpen =false;
 
   FocusNode _passwordFocusNode;
 
@@ -112,7 +114,7 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
         child: CircleAvatar(
           backgroundColor: Colors.transparent,
           radius: 80.0,
-          child: Image.asset('assets/images/logo.png'),
+          child: FlareActor('assets/images/shopping-cart.flr',animation: isOpen ? 'activate' : 'deactivate'),
         ),
       ),
     );

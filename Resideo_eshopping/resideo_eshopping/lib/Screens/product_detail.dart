@@ -7,7 +7,6 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:resideo_eshopping/controller/app_localizations.dart';
-import 'package:resideo_eshopping/controller/place_controller.dart';
 import 'package:resideo_eshopping/controller/product_controller.dart';
 import 'package:resideo_eshopping/model/places.dart';
 import 'package:resideo_eshopping/model/product.dart';
@@ -45,14 +44,17 @@ class _ProductDetailState extends State<ProductDetail> {
   VideoPlayerController _videoPlayerController;
   ProductController _productController;
   Future<void> _initializeVideoPlayerFuture;
-  List<Place> currentList = <Place>[];
-  List<double> distance = <double>[];
+  List<Place> finallist = <Place>[];
+
+  List<String> distance = <String>[];
+
+
   final _homeStore = HomePageStore();
 
   @override
   void initState() {
     super.initState();
-    listenforplace();
+    caldistance(widget.product.latitude, widget.product.longitude);
     _videoPlayerController =
         VideoPlayerController.network(widget.product.pVideoUrl);
     _initializeVideoPlayerFuture = _videoPlayerController.initialize();
@@ -64,13 +66,6 @@ class _ProductDetailState extends State<ProductDetail> {
         urlPDFPath = f.path;
       });
     });
-  }
-
-  void listenforplace() async {
-    final Stream<Place> stream = await getPlaces();
-    stream.listen((Place place) =>
-        setState(() => currentList.add(place))
-    );
   }
 
 
@@ -86,16 +81,21 @@ class _ProductDetailState extends State<ProductDetail> {
     //logger.error(TAG, "Error while getting the Pdf from URL :" + e);
   }
 
-  void caldistance(String lat, String long) async {
-    double slat = double.parse(widget.product.latitude.substring(0, 7));
-    double slong = double.parse(widget.product.longitude.substring(0, 7));
-    double elat = double.parse(lat.substring(0, 7));
-    double elong = double.parse(long.substring(0, 7));
 
-    double distanceInMeters = await Geolocator().distanceBetween(
-        slat, slong, elat, elong);
-    double distanceInKm = distanceInMeters / 1000;
-    distance.add(distanceInKm);
+  void caldistance(String lat, String long) async {
+    double slat = double.parse(lat);
+    double slong = double.parse(long);
+    int len = ProductController.placelist.length;
+    for (int i = 0; i < len; i++)  {
+      double elat = double.parse(ProductController.placelist[i].latitude);
+      double elong = double.parse(ProductController.placelist[i].longitude);
+      double distanceInM = await Geolocator().distanceBetween(slat, slong, elat, elong);
+      double distanceInKm = distanceInM / 1000;
+      if (distanceInKm < 5) {
+        finallist.add(ProductController.placelist[i]);
+        distance.add(distanceInKm.toInt().floor().toString());
+      }
+    }
   }
 
   @override
@@ -265,6 +265,9 @@ class _ProductDetailState extends State<ProductDetail> {
                         },
                       ),
                     ),
+                    SizedBox(
+                      height: 20,
+                    ),
                     Text(
                       'Near by Places',
                       style: TextStyle(
@@ -275,30 +278,43 @@ class _ProductDetailState extends State<ProductDetail> {
                       width: 20,
                     ),
                     SizedBox(
-                      height: 150.0,
+                      height: 300.0,
                       //width : 200.0,
                       child: ListView.builder(
                         shrinkWrap: true,
                         scrollDirection: Axis.horizontal,
-                        itemCount: currentList.length,
+                        itemCount: finallist.length,
                         itemExtent: 100.0,
                         itemBuilder: (context, index) {
-                          var item = currentList[index];
-                          // Future<double> dis = caldistance(item.latitude,item.longitude);
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 5.0, vertical: 4.0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                //title: Text(item.name),
-                                image: DecorationImage(
-                                  image: NetworkImage(
-                                    item.imageUrl,
+                          var item = finallist[index];
+                          return Column(
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.symmetric( horizontal: 5.0, vertical: 0.0),
+                                 child:
+                                 Image.network(item.imageUrl, fit: BoxFit.fill),
                                   ),
-                                  fit: BoxFit.cover,
-                                ),
+                              Padding(
+                                padding :EdgeInsets.symmetric(horizontal: 5.0, vertical: 0.0),
+                                child: Text(item.name,textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                               ),
-                            ),
+                              Padding(
+                                padding :EdgeInsets.symmetric(horizontal: 5.0, vertical: 0.0),
+                                child: Text(item.sdesc,textAlign: TextAlign.center),
+                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  distance[index], textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  'Km', style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                                )
+                              ],
+                             ),
+                            ]
                           );
                         },
                       ),
@@ -419,3 +435,4 @@ class _ProductDetailState extends State<ProductDetail> {
     );
   }
 }
+

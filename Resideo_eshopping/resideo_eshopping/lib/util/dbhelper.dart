@@ -23,6 +23,8 @@ class Dbhelper {
   String _colthumbnail = "Thumbnail";
   String _colfaq = "FAQ";
   String _colpVideo = "ProductVideo";
+  String _collatitude = "Latitude";
+  String _collongitude = "Longitude";
 
   Dbhelper.private();
 
@@ -48,7 +50,7 @@ class Dbhelper {
 
   void _createdb(Database db, int newversion) async {
       return await db.execute(
-          'CREATE TABLE $_tblname($_colid INTEGER,$_coltitle TEXT,$_colsDesc TEXT,$_colimg TEXT,$_colprice INTEGER,$_colquantity INTEGER,$_collDesc TEXT,$_colcategory TEXT,$_colrating INTEGER,$_colreview TEXT,$_colthumbnail TEXT,$_colfaq TEXT,$_colpVideo TEXT)');
+          'CREATE TABLE $_tblname($_colid INTEGER,$_coltitle TEXT,$_colsDesc TEXT,$_colimg TEXT,$_colprice INTEGER,$_colquantity INTEGER,$_collDesc TEXT,$_colcategory TEXT,$_colrating INTEGER,$_colreview TEXT,$_colthumbnail TEXT,$_colfaq TEXT,$_colpVideo TEXT,$_collatitude TEXT,$_collongitude TEXT)');
 
   }
 

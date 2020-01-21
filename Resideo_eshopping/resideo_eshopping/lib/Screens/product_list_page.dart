@@ -128,12 +128,20 @@ class _ProductsListPageState extends State<ProductsListPage>
         );
       }
       else{
-        widget1 = ListView.builder(
-          shrinkWrap: true,
-          padding: const EdgeInsets.all(0.0),
-          itemCount: currentList.length,
-          itemBuilder: (context, index) => ProductsTile(currentList[index],widget.user,userInfo),
-        );
+        if(currentList.length <= 0)
+          {
+            widget1 = Center(
+              child:Text("Unable to load the products\n Please try after some time",textAlign: TextAlign.center,),
+            );
+          }
+        else
+          { widget1 = ListView.builder(
+            shrinkWrap: true,
+            padding: const EdgeInsets.all(0.0),
+            itemCount: currentList.length,
+            itemBuilder: (context, index) => ProductsTile(currentList[index],widget.user,userInfo),
+          );
+          }
       }
 
         return Scaffold(

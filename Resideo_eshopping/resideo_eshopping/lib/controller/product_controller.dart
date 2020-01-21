@@ -118,19 +118,24 @@ class ProductController{
   }
 
   //Method to update the inventory count in product model, firebase and local database when customer purchase the product
-  void updateInventory(Product product) {
-    helper
+  Future<bool> updateInventory(Product product) async{
+    bool isUpdateSuccessful=false;
+    await helper
         .updateInventoryById(product.id, decreaseInventoryCount(product))
         .then((result) {
       if (result == 1) {
         product.quantity = product.quantity - 1;
-        _firebaseDatabaseUtil.updateProduct(product);
+        _firebaseDatabaseUtil.updateProduct(product).then((result){
+          if(result)
+          isUpdateSuccessful=true;
+        });
       }else
         logger.error(TAG, "Updating in local database is failed" );
     }).catchError((error,stackTrace){
       // Catcher.reportCheckedError(error, stackTrace);
       logger.error(TAG, " Error in updating the Inventory : " + error);
     });
+    return isUpdateSuccessful;
   }
 
   //Method to enable or disable the order now button in product detail screen based on quantity of product

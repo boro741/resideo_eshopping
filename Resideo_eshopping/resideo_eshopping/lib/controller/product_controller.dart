@@ -122,10 +122,10 @@ class ProductController{
     bool isUpdateSuccessful=false;
     await helper
         .updateInventoryById(product.id, decreaseInventoryCount(product))
-        .then((result) {
+        .then((result) async{
       if (result == 1) {
         product.quantity = product.quantity - 1;
-        _firebaseDatabaseUtil.updateProduct(product).then((result){
+       await  _firebaseDatabaseUtil.updateProduct(product).then((result){
           if(result)
           isUpdateSuccessful=true;
         });

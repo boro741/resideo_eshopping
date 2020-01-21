@@ -24,7 +24,7 @@ class ImagePickerHandler{
    openCamera() async {
     imagePicker.dismissDialog();
     await ImagePicker.pickImage(source: ImageSource.camera).then((image){
-      cropImage(image);
+      _listener.userImage(image);
     }).catchError((error){
       logger.error(TAG, " Error in opening the camera : " + error);
     });
@@ -34,7 +34,7 @@ class ImagePickerHandler{
   openGallery() async {
     imagePicker.dismissDialog();
     await ImagePicker.pickImage(source: ImageSource.gallery).then((image){
-      cropImage(image);
+      _listener.userImage(image);
     }).catchError((error){
       logger.error(TAG, " Error in opening the gallery : " + error);
     });
@@ -50,27 +50,27 @@ class ImagePickerHandler{
     });
   }
 
-   Future cropImage(File image) async {
-    await ImageCropper.cropImage(
-      sourcePath: image.path,
-      aspectRatioPresets: [
-        CropAspectRatioPreset.square,
-        CropAspectRatioPreset.ratio3x2,
-        CropAspectRatioPreset.original,
-        CropAspectRatioPreset.ratio4x3,
-        CropAspectRatioPreset.ratio16x9
-      ],
-      androidUiSettings: AndroidUiSettings(
-          toolbarTitle: 'Cropper',
-          initAspectRatio: CropAspectRatioPreset.original,
-          lockAspectRatio: false),
-    ).then((croppedFile){
-      _listener.userImage(croppedFile);
-    }).then((error){
-      logger.error(TAG, " Error in croping the image : " + error);
-    });
-
-  }
+//   Future cropImage(File image) async {
+//    await ImageCropper.cropImage(
+//      sourcePath: image.path,
+//      aspectRatioPresets: [
+//        CropAspectRatioPreset.square,
+//        CropAspectRatioPreset.ratio3x2,
+//        CropAspectRatioPreset.original,
+//        CropAspectRatioPreset.ratio4x3,
+//        CropAspectRatioPreset.ratio16x9
+//      ],
+//      androidUiSettings: AndroidUiSettings(
+//          toolbarTitle: 'Cropper',
+//          initAspectRatio: CropAspectRatioPreset.original,
+//          lockAspectRatio: false),
+//    ).then((croppedFile){
+//      _listener.userImage(croppedFile);
+//    }).then((error){
+//      logger.error(TAG, " Error in croping the image : " + error);
+//    });
+//
+//  }
 
   void init(){
    _firebaseDatabaseUtil = FirebaseDatabaseUtil();

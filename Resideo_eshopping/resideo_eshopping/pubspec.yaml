@@ -26,7 +26,7 @@ dependencies:
   giffy_dialog: ^1.6.1
   carousel_pro: ^1.0.0
   video_player: ^0.10.3+3
-  image_cropper:
+#  image_cropper:
   image_picker:
   firebase_storage: "^3.0.8"
   firebase_auth: "^0.14.0+4"

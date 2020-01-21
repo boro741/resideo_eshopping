@@ -289,6 +289,8 @@ class _ProductsListPageState extends State<ProductsListPage>
         InternetAddress.lookup('google.com').timeout(Duration(seconds: 3)).then((result) {
           if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
             productController.listenforplace();
+            _getUserDetail();
+            _getProduct("All");
             logger.info(ProductsListPage.TAG, " Connected :");
           } else {
             Future.delayed(const Duration(seconds: 5));
@@ -309,8 +311,7 @@ class _ProductsListPageState extends State<ProductsListPage>
     });
     firebaseDatabaseUtil = FirebaseDatabaseUtil();
     firebaseDatabaseUtil.initState();
-    _getUserDetail();
-    _getProduct("All");
+
 
   }
 

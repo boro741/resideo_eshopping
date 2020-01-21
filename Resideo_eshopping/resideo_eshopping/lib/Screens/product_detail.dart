@@ -278,7 +278,7 @@ class _ProductDetailState extends State<ProductDetail> {
                       width: 20,
                     ),
                     SizedBox(
-                      height: 300.0,
+                      height: 200.0,
                       //width : 200.0,
                       child: ListView.builder(
                         shrinkWrap: true,
@@ -292,7 +292,7 @@ class _ProductDetailState extends State<ProductDetail> {
                               Padding(
                                 padding: EdgeInsets.symmetric( horizontal: 5.0, vertical: 0.0),
                                  child:
-                                 Image.network(item.imageUrl, fit: BoxFit.fill),
+                                 Image.network(item.imageUrl,height: 100 , fit: BoxFit.fill),
                                   ),
                               Padding(
                                 padding :EdgeInsets.symmetric(horizontal: 5.0, vertical: 0.0),

@@ -280,10 +280,8 @@ class _ProductsListPageState extends State<ProductsListPage>
   }
 
   @override
-  // void afterFirstLayout(BuildContext context) {
   void initState() {
     super.initState();
-//    productController.listenforplace();
     Timer.run(() {
       try {
         InternetAddress.lookup('google.com').timeout(Duration(seconds: 3)).then((result) {
@@ -311,8 +309,6 @@ class _ProductsListPageState extends State<ProductsListPage>
     });
     firebaseDatabaseUtil = FirebaseDatabaseUtil();
     firebaseDatabaseUtil.initState();
-
-
   }
 
 

@@ -277,11 +277,12 @@ class _ProductsListPageState extends State<ProductsListPage>
   // void afterFirstLayout(BuildContext context) {
   void initState() {
     super.initState();
-    productController.listenforplace();
+//    productController.listenforplace();
     Timer.run(() {
       try {
         InternetAddress.lookup('google.com').then((result) {
           if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+            productController.listenforplace();
             logger.info(ProductsListPage.TAG, " Connected :");
           } else {
             _showDialog(); // show dialog

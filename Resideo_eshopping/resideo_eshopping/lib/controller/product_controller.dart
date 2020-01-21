@@ -184,9 +184,7 @@ class ProductController{
     final Stream<Place> stream = await getPlaces();
     stream.listen((Place place) {
       placelist.add(place);
-      print(placelist.length);
     });
-    print(placelist.length);
   }
 
 

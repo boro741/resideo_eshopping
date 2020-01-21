@@ -38,7 +38,7 @@ dependencies:
   after_layout: ^1.0.7+2
   flushbar: ^1.9.1
   validators: ^2.0.0+1
-  # catcher: ^0.2.8
+  catcher: ^0.2.8
   dependency_validator: ^1.0.0
   geolocator: ^5.2.0
   flare_flutter: ^1.8.3

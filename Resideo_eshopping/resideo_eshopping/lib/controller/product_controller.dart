@@ -89,7 +89,7 @@ class ProductController{
           logger.error(TAG, "Product are not fetched from the API" );
         }
     }).catchError((error,stackTrace){
-      Catcher.reportCheckedError(error, stackTrace);
+      // Catcher.reportCheckedError(error, stackTrace);
       logger.error(TAG, "Error in updating" +error );
     });
   }
@@ -128,7 +128,7 @@ class ProductController{
       }else
         logger.error(TAG, "Updating in local database is failed" );
     }).catchError((error,stackTrace){
-      Catcher.reportCheckedError(error, stackTrace);
+      // Catcher.reportCheckedError(error, stackTrace);
       logger.error(TAG, " Error in updating the Inventory : " + error);
     });
   }

@@ -8,35 +8,13 @@ part 'home_page_store.g.dart';
 class HomePageStore = _HomePageStore with _$HomePageStore;
 
 
-abstract class _HomePageStore with ChangeNotifier, Store{
-
-  static const String TAG ="HomePage";
-
-  @observable
-  Status status = Status.Unauthenticated;
-
-  @observable
-  String userId = "";
+abstract class _HomePageStore with Store{
 
   @observable
   bool logInButtonPress = false;
 
-  @action
-  bool onlogInButtonPress(){
-    return logInButtonPress=true;
-  }
-
   void onLoggedIn(){
     logInButtonPress=false;
   }
-
-  @action
-  Future onSignedOut() async{
-    logInButtonPress = false;
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.clear();
-    userId = "";
-  }
-
 
 }

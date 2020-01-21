@@ -39,9 +39,6 @@ abstract class _LoginPageStore with Store {
   @observable
   bool loading = false;
 
-  @observable
-  FormMode _formMode = FormMode.LOGIN;
-
   @computed
   bool get canLogin =>
       !formErrorStore.hasErrorsInLogin && email.isNotEmpty && password.isNotEmpty;
@@ -81,17 +78,10 @@ abstract class _LoginPageStore with Store {
   Future login() async {
     loading = true;
 
-    Future.delayed(Duration(milliseconds: 3000)).then((future) {
+    Future.delayed(Duration(milliseconds: 4000)).then((future) {
       loading = false;
       success = true;
       errorStore.showError = false;
-    }).catchError((e) {
-      loading = false;
-      success = false;
-      errorStore.showError = true;
-      errorStore.errorMessage = e.toString().contains("ERROR_USER_NOT_FOUND")
-          ? "Username and password doesn't match"
-          : "Something went wrong, please check your internet connection and try again";
     });
   }
 
@@ -100,11 +90,6 @@ abstract class _LoginPageStore with Store {
     for (final d in _disposers) {
       d();
     }
-  }
-
-  void validateAll() {
-    validatePassword(password);
-    validateEmail(email);
   }
 
 }

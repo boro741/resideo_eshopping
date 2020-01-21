@@ -25,8 +25,6 @@ class ProductsListPage extends StatefulWidget {
  ProductsListPage({this.user});
  final FirebaseUser user;
 
-
-
  static const String TAG ="PoductsListPage";
   @override
   _ProductsListPageState createState() => _ProductsListPageState();
@@ -288,19 +286,24 @@ class _ProductsListPageState extends State<ProductsListPage>
 //    productController.listenforplace();
     Timer.run(() {
       try {
-        InternetAddress.lookup('google.com').then((result) {
+        InternetAddress.lookup('google.com').timeout(Duration(seconds: 3)).then((result) {
           if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
             productController.listenforplace();
             logger.info(ProductsListPage.TAG, " Connected :");
           } else {
-            _showDialog(); // show dialog
+            Future.delayed(const Duration(seconds: 5));
+            Flushbar(
+              message: "Not Connected to Internet!!",
+              duration: Duration(seconds: 3),
+            )..show(context);
           }
-        }).catchError((error) {
-          logger.error(ProductsListPage.TAG, " Error while connecting  :" + error);
-          _showDialog(); // show dialog
         });
       } on SocketException catch (_) {
-        _showDialog();
+        Future.delayed(const Duration(seconds: 5));
+        Flushbar(
+          message: "Not connected to Internet!!",
+          duration: Duration(seconds: 3),
+        )..show(context);
         logger.error(ProductsListPage.TAG, " Error while connecting  :");
       }
     });
@@ -320,13 +323,4 @@ class _ProductsListPageState extends State<ProductsListPage>
       _getUserDetail();
   }
 
-  void _showDialog() {
-    showDialog(
-      context: context,
-      builder: (context) =>
-          AlertDialog(
-            title: Text("Internet connection is required!"),
-          ),
-    );
-  }
 }

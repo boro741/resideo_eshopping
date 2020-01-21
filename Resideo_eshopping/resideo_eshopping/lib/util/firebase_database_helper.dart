@@ -31,19 +31,22 @@ class FirebaseDatabaseUtil  {
     // database.setPersistenceCacheSizeBytes(intValue);
   }
 
-  updateProduct(Product product) async {
+  Future<bool> updateProduct(Product product) async {
+    bool isUpdateSuccessful=false;
     int x;
     if(product != null) {
       x = product.id;
       await _dbRef.child('Products').child((x).toString()).update({
         "Inventory": product.quantity,
       }).then((_) {
+        isUpdateSuccessful=true;
         logger.info(FirebaseDatabaseUtil.TAG, " Updating the inventory in the Firbase " );
       }).catchError((error){
         logger.error(TAG, "Error in the updating inventory " +error);
       });
     }  else
-    logger.info(TAG, "Product argument passed in update product is bull");
+    logger.info(TAG, "Product argument passed in update product is null");
+    return isUpdateSuccessful;
   }
 
   Future<bool> deleteProfilePicture(FirebaseUser user,User userInfo) async {

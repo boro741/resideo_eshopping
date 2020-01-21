@@ -48,6 +48,31 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> with Afte
             ));
   }
 
+  orderNotPlaced(BuildContext context) {
+
+    Widget cancelButton = PlatformButton(
+        child: PlatformText("ok"),
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        androidFlat: (_) => MaterialFlatButtonData());
+
+    PlatformAlertDialog alert = PlatformAlertDialog(
+      title: PlatformText("Order Not Placed"),
+      content: PlatformText("Please try after some time"),
+      actions: <Widget>[
+        cancelButton,
+      ],
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   showAlertDialog(BuildContext context) {
     // set up the buttons
     Widget cancelButton = PlatformButton(
@@ -60,8 +85,12 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> with Afte
         child: PlatformText("Yes"),
         onPressed: () {
           Navigator.pop(context);
-          _productController.updateInventory(widget.product);
-          orderPlaced(context);
+          _productController.updateInventory(widget.product).then((result){
+            if(result)
+              orderPlaced(context);
+            else
+              orderNotPlaced(context);
+          });
         },
         androidFlat: (_) => MaterialFlatButtonData());
 

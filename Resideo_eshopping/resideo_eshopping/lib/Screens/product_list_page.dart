@@ -20,6 +20,7 @@ import 'package:resideo_eshopping/model/User.dart';
 import 'package:resideo_eshopping/util/logger.dart' as logger;
 import 'package:resideo_eshopping/widgets/progress_indicator.dart';
 
+
 class ProductsListPage extends StatefulWidget {
  ProductsListPage({this.user});
  final FirebaseUser user;
@@ -276,11 +277,12 @@ class _ProductsListPageState extends State<ProductsListPage>
   // void afterFirstLayout(BuildContext context) {
   void initState() {
     super.initState();
-
+//    productController.listenforplace();
     Timer.run(() {
       try {
         InternetAddress.lookup('google.com').then((result) {
           if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+            productController.listenforplace();
             logger.info(ProductsListPage.TAG, " Connected :");
           } else {
             _showDialog(); // show dialog
@@ -300,6 +302,8 @@ class _ProductsListPageState extends State<ProductsListPage>
     _getProduct("All");
 
   }
+
+
 
   @override
   void didUpdateWidget(ProductsListPage oldWidget) {

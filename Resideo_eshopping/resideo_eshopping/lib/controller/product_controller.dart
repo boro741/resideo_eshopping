@@ -5,7 +5,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'package:resideo_eshopping/util/logger.dart' as logger;
-// import 'package:catcher/catcher_plugin.dart';
+import 'package:catcher/catcher_plugin.dart';
+import 'package:resideo_eshopping/model/places.dart';
 
 import 'package:resideo_eshopping/util/firebase_database_helper.dart';
 
@@ -15,6 +16,8 @@ class ProductController{
   List<Product> products = <Product>[];
 
   List<Product> currentList = List<Product>();
+
+  static List<Place> placelist = <Place>[];
 
   Dbhelper helper = Dbhelper();
   FirebaseDatabaseUtil _firebaseDatabaseUtil = new FirebaseDatabaseUtil();
@@ -161,6 +164,30 @@ class ProductController{
     else
       return Color(0xFF00C853);
   }
+
+  Future<Stream<Place>> getPlaces() async {
+    final String url = 'https://fluttercheck-5afbb.firebaseio.com/Place.json?auth=fzAIfjVy6umufLgQj9bd1KmgzzPd6Q6hDvj1r3u1';
+
+    final client = new http.Client();
+    final streamedRest = await client.send(
+        http.Request('get', Uri.parse(url))
+    );
+
+    return streamedRest.stream
+        .transform(utf8.decoder)
+        .transform(json.decoder)
+        .expand((data) => (data as List))
+        .map((data) => Place.fromJSON(data));
+  }
+
+  void listenforplace() async {
+    final Stream<Place> stream = await getPlaces();
+    stream.listen((Place place) {
+      placelist.add(place);
+    });
+  }
+
+
 
   _onTimeout() => logger.error(TAG, "Taking a longer time than usual");
 }

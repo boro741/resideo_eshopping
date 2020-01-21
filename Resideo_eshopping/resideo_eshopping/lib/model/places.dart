@@ -20,7 +20,6 @@ class Place{
 
 
   Place(this.name,this.imageUrl,this.sdesc,this.latitude,this.longitude);
-  Place.withId(this.name,this.imageUrl,this.sdesc,this.latitude,this.longitude);
 
   factory Place.fromJSON(Map<String,dynamic> jsonMap) => _$PlaceFromJson(jsonMap);
 

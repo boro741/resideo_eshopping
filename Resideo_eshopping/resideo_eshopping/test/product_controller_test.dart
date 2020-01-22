@@ -12,11 +12,17 @@ void main()
        bool res = productController.enableDisableOrderNowButton(0);
        expect(true, res);
      });
-     test("button enabled", (){
+     test("button enabled for all values greater than 0", (){
        ProductController productController = ProductController();
        bool res = productController.enableDisableOrderNowButton(1);
        expect(false, res);
      });
+     test("button disable for all values less than 0", (){
+       ProductController productController = ProductController();
+       bool res = productController.enableDisableOrderNowButton(-1);
+       expect(true, res);
+     });
+
      test("In Stock", (){
        ProductController productController = ProductController();
        String res = productController.inventoryDetail(5);

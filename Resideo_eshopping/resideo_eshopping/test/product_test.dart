@@ -41,6 +41,11 @@ void main() async{
     expect(8, productController.filterProducts('Kid').length);
   });
 
+  test("check function for random string", () {
+    expect(0, productController.filterProducts('abc').length);
+    expect(0, productController.filterProducts('123').length);
+  });
+
   test("return 0 when inventory is sold out", () {
     expect(0, productController.decreaseInventoryCount(productController.products[0]));
   });

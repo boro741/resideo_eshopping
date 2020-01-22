@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:resideo_eshopping/model/User.dart';
 import 'package:resideo_eshopping/util/logger.dart' as logger;
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ProductsTile extends StatelessWidget {
   Product _products;
@@ -58,8 +59,11 @@ class ProductsTile extends StatelessWidget {
                     margin: EdgeInsets.only(left: 6.0),
                     child: Stack(
                         children: <Widget>[
-                          Image.network(_products.thumbnailUrl, height: 50.0,
-                            fit: BoxFit.fill,),
+                          CachedNetworkImage(
+                            imageUrl: _products.thumbnailUrl,
+                            placeholder: (context, url) => CircularProgressIndicator(),
+                            errorWidget: (context, url, error) => Image.asset("assets/images/no_image_available.png"),
+                          ),
                           (_products.quantity != 0) ? Text('') : Text(
                             'OUT OF STOCK!',
                             style: TextStyle(color: Colors.red, fontSize: 11.0),

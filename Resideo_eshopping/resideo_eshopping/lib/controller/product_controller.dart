@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'package:resideo_eshopping/util/logger.dart' as logger;
-import 'package:catcher/catcher_plugin.dart';
 import 'package:resideo_eshopping/model/places.dart';
 
 import 'package:resideo_eshopping/util/firebase_database_helper.dart';

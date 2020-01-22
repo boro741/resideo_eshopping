@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 import 'package:resideo_eshopping/Screens/product_list_page.dart';
@@ -6,7 +5,6 @@ import 'package:resideo_eshopping/controller/product_controller.dart';
 import 'package:resideo_eshopping/util/firebase_database_helper.dart';
 import 'package:resideo_eshopping/model/product.dart';
 import 'package:resideo_eshopping/model/User.dart';
-import 'package:resideo_eshopping/model/user_repository.dart';
 import 'package:resideo_eshopping/util/logger.dart' as logger;
 
 part 'product_list_page_store.g.dart';

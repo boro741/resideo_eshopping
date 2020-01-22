@@ -83,23 +83,6 @@ mixin _$LoginPageStore on _LoginPageStore, Store {
     }, _$loadingAtom, name: '${_$loadingAtom.name}_set');
   }
 
-  final _$_formModeAtom = Atom(name: '_LoginPageStore._formMode');
-
-  @override
-  FormMode get _formMode {
-    _$_formModeAtom.context.enforceReadPolicy(_$_formModeAtom);
-    _$_formModeAtom.reportObserved();
-    return super._formMode;
-  }
-
-  @override
-  set _formMode(FormMode value) {
-    _$_formModeAtom.context.conditionallyRunInAction(() {
-      super._formMode = value;
-      _$_formModeAtom.reportChanged();
-    }, _$_formModeAtom, name: '${_$_formModeAtom.name}_set');
-  }
-
   final _$loginAsyncAction = AsyncAction('login');
 
   @override

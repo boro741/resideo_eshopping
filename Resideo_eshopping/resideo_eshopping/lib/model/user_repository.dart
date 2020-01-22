@@ -50,8 +50,6 @@ class UserRepository with ChangeNotifier {
     return _userId;
   }
 
-
-
   Future<void> signOut() async {
     await _auth.signOut();
   }

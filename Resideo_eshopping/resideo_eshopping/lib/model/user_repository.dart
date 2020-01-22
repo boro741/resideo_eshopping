@@ -1,3 +1,4 @@
+import 'package:flushbar/flushbar.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -44,8 +45,6 @@ class UserRepository with ChangeNotifier {
       }
       else
         _userId=null;
-    }).catchError((error){
-      print(error);
     });
     return _userId;
   }

@@ -212,18 +212,19 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
                     }
                     else{
                       userId = await user.signUp(_email.text, _password.text);
-                      if(userId != null){
-                        Flushbar(
-                          message: "Created account Successfully",
-                          duration: Duration(seconds: 3),
-                        )..show(context);
-                      }
-                      else{
+                      if(user == null){
                         Flushbar(
                           message: "Account is not created! Please add valid details.",
                           duration: Duration(seconds: 3),
                         )..show(context);
                       }
+                      else if(userId == null && user!= null){
+                        Flushbar(
+                          message: "Account is created successfully!",
+                          duration: Duration(seconds: 3),
+                        )..show(context);
+                      }
+
                     }
 
                           if ( userId != null && userId.length > 0 && _formMode == FormMode.LOGIN) {

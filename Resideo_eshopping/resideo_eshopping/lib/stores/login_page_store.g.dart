@@ -14,6 +14,11 @@ mixin _$LoginPageStore on _LoginPageStore, Store {
   @override
   bool get canLogin =>
       (_$canLoginComputed ??= Computed<bool>(() => super.canLogin)).value;
+  Computed<bool> _$canSignUpComputed;
+
+  @override
+  bool get canSignUp =>
+      (_$canSignUpComputed ??= Computed<bool>(() => super.canSignUp)).value;
 
   final _$emailAtom = Atom(name: '_LoginPageStore.email');
 
@@ -140,6 +145,12 @@ mixin _$FormErrorStore on _FormErrorStore, Store {
   @override
   bool get hasErrorsInLogin => (_$hasErrorsInLoginComputed ??=
           Computed<bool>(() => super.hasErrorsInLogin))
+      .value;
+  Computed<bool> _$hasErrorsInSignUpComputed;
+
+  @override
+  bool get hasErrorsInSignUp => (_$hasErrorsInSignUpComputed ??=
+          Computed<bool>(() => super.hasErrorsInSignUp))
       .value;
 
   final _$emailAtom = Atom(name: '_FormErrorStore.email');

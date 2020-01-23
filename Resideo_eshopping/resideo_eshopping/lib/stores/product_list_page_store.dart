@@ -25,7 +25,7 @@ abstract class _ProductsListPageStore with Store {
   @observable
   String _email = "";
   @observable
-  String _imageUrl = null;
+  String _imageUrl;
   @observable
   bool isProfile = false;
   @observable

@@ -11,7 +11,6 @@ import 'package:resideo_eshopping/widgets/strings.dart';
 import 'package:resideo_eshopping/widgets/text_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:resideo_eshopping/stores/login_page_store.dart';
-import 'package:resideo_eshopping/util/logger.dart' as logger;
 
 enum FormMode {LOGIN, SIGNUP}
 
@@ -30,7 +29,6 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
 
   FocusNode _passwordFocusNode;
 
-  static const String TAG ="LoginSignUpPage";
   final _formKey = GlobalKey<FormState>();
   final _key = GlobalKey<ScaffoldState>();
 
@@ -177,27 +175,29 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
                 color: Colors.blue,
 
                 onPressed: () async {
-                try{
 
-                  if(_store.canLogin) _store.login();
-
-                  if (_formKey.currentState.validate()) {
                     if(_formMode == FormMode.LOGIN){
-                      SharedPreferences prefs = await SharedPreferences.getInstance();
-                      userId = await user.signIn(_email.text, _password.text);
-                      prefs.setString('uid', userId);
+                        if(_store.canLogin){
+                          _store.login();
+                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                        userId = await user.signIn(_email.text, _password.text);
+                        prefs.setString('uid', userId);
 
-                      if (!mounted) return;
+                        if (!mounted) return;
 
-                      setState(() {
+                        setState(() {
 
                         if(userId != null){
-                          Navigator.of(context).pop();
+                        Navigator.of(context).pop();
 
-                          Flushbar(
-                            message: "You are Signed in!",
+                        Flushbar(
+                              message: "You are Signed in!",
                             duration: Duration(seconds: 3),
-                          )..show(context);
+                            )..show(context);
+                        }
+
+                        });
+
                         }
                         else{
                           Flushbar(
@@ -205,42 +205,32 @@ class _LoginPageState extends State<LoginPage> with AfterLayoutMixin<LoginPage>{
                             duration: Duration(seconds: 3),
                           )..show(context);
                         }
-                      });
-
-
-
                     }
                     else{
-                      userId = await user.signUp(_email.text, _password.text);
-                      if(userId != null){
-                        Flushbar(
-                          message: "Created account Successfully",
-                          duration: Duration(seconds: 3),
-                        )..show(context);
-                      }
-                      else{
-                        Flushbar(
-                          message: "Account is not created! Please add valid details.",
-                          duration: Duration(seconds: 3),
-                        )..show(context);
-                      }
+                        if(_store.canSignUp){
+                          userId = await user.signUp(_email.text, _password.text);
+                          if(userId != null){
+                            Flushbar(
+                              message: "Account is created successfully!",
+                              duration: Duration(seconds: 3),
+                            )..show(context);
+                          }
+                        }
+                        else{
+                          Flushbar(
+                            message: "Account is not created! Please add valid details.",
+                            duration: Duration(seconds: 3),
+                          )..show(context);
+                        }
                     }
 
                           if ( userId != null && userId.length > 0 && _formMode == FormMode.LOGIN) {
                             widget.onSignedIn();
 
                           }
-                  }
 
-                  }catch (e) {
-                  Flushbar(
-                    message: "Not signed in! Please enter correct details",
-                    duration: Duration(seconds: 3),
-                  )..show(context);
-                  logger.error(TAG, " Error in sending the Data to  the Firbase ");
-
-                }
                 },
+
                 child: _formMode == FormMode.LOGIN
                     ? Text('Login',
                     style: TextStyle(fontSize: 20.0, color: Colors.white))

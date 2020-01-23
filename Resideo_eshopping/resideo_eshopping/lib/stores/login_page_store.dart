@@ -42,6 +42,10 @@ abstract class _LoginPageStore with Store {
   bool get canLogin =>
       !formErrorStore.hasErrorsInLogin && email.isNotEmpty && password.isNotEmpty;
 
+  @computed
+  bool get canSignUp =>
+      !formErrorStore.hasErrorsInSignUp && email.isNotEmpty && password.isNotEmpty;
+
   @action
   void setEmail(String value) {
     email = value;
@@ -105,5 +109,6 @@ abstract class _FormErrorStore with Store {
   @computed
   bool get hasErrorsInLogin => email != null || password != null;
 
-
+  @computed
+  bool get hasErrorsInSignUp => email != null || password != null;
 }

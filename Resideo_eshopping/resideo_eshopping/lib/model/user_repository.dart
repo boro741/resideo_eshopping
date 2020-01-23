@@ -44,8 +44,6 @@ class UserRepository with ChangeNotifier {
       }
       else
         _userId=null;
-    }).catchError((error){
-      print(error);
     });
     return _userId;
   }

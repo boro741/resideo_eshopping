@@ -23,6 +23,7 @@ import 'package:resideo_eshopping/widgets/pdf_viewer.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'login_page.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class ProductDetail extends StatefulWidget {
   final Product product;
@@ -278,7 +279,7 @@ class _ProductDetailState extends State<ProductDetail> {
                       width: 20,
                     ),
                     SizedBox(
-                      height: 300.0,
+                      height: 200.0,
                       //width : 200.0,
                       child: ListView.builder(
                         shrinkWrap: true,
@@ -291,8 +292,11 @@ class _ProductDetailState extends State<ProductDetail> {
                             children: <Widget>[
                               Padding(
                                 padding: EdgeInsets.symmetric( horizontal: 5.0, vertical: 0.0),
-                                 child:
-                                 Image.network(item.imageUrl, fit: BoxFit.fill),
+                                 child:CachedNetworkImage(
+                                   imageUrl: item.imageUrl,
+                                   placeholder: (context, url) => CircularProgressIndicator(),
+                                   errorWidget: (context, url, error) => Image.asset("assets/images/no_image_available.png"),
+                                 ),
                                   ),
                               Padding(
                                 padding :EdgeInsets.symmetric(horizontal: 5.0, vertical: 0.0),
@@ -416,7 +420,11 @@ class _ProductDetailState extends State<ProductDetail> {
         width: 800.0,
         child: Carousel(
           images: [
-            Image.network(widget.product.imgUrl, fit: BoxFit.fill,),
+            CachedNetworkImage(
+              imageUrl: widget.product.imgUrl,
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, url, error) => Image.asset("assets/images/no_image_available.png"),
+            ),
             _showVideo(),
           ],
           autoplay: false,

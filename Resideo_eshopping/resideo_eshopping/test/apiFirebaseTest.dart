@@ -11,42 +11,66 @@ void main() {
     expect(response.statusCode, 200);
   });
 
-  test('Returns 36 items', () async {
+  test('Returns 42 items', () async {
     final response = await http.get(url);
     var itemCount = response.body
         .split('},') // split the text into an array
         .toList()
         .length;
-
-    expect(38, itemCount);
+    expect(42, itemCount);
   });
 
-  test('Test for every field returns no null', () async {
+  test('Test for every field returns no null in Products table', () async {
     var response = await http
         .get(Uri.encodeFull(url), headers: {"Accept": "application/json"});
 
     var data = json.decode(response.body);
-    expect(true, data['Products'][0]['Category'] != null ? true : false);
-    expect(true, data['Products'][0]['Image'] != null ? true : false);
-    expect(true, data['Products'][0]['Inventory'] != null ? true : false);
-    expect(true, data['Products'][0]['LongDescription'] != null ? true : false);
-    expect(true, data['Products'][0]['Price'] != null ? true : false);
-    expect(true, data['Products'][0]['ProductId'] != null ? true : false);
-    expect(true, data['Products'][0]['ProductName'] != null ? true : false);
-    expect(true, data['Products'][0]['ProductVideo'] != null ? true : false);
-    expect(true, data['Products'][0]['Rating'] != null ? true : false);
-    expect(true, data['Products'][0]['Review'] != null ? true : false);
-    expect(true, data['Products'][0]['ShortDescription'] != null ? true : false);
-    expect(true, data['Products'][0]['Thumbnail'] != null ? true : false);
-    expect(true, data['Products'][0]['FAQ'] != null ? true : false);
+    expect(25, data['Products'].length);
+    for (int i = 0; i < data['Products'].length; i++) {
+      expect(15, data['Products'][i].length);
+      for (int j = 0; j < data['Products'][i].length; j++) {
+        expect(true, data['Products'][j]['Category'] != null ? true : false);
+        expect(true, data['Products'][j]['Image'] != null ? true : false);
+        expect(true, data['Products'][j]['Inventory'] != null ? true : false);
+        expect(true, data['Products'][j]['LongDescription'] != null ? true : false);
+        expect(true, data['Products'][j]['Price'] != null ? true : false);
+        expect(true, data['Products'][j]['ProductId'] != null ? true : false);
+        expect(true, data['Products'][j]['ProductName'] != null ? true : false);
+        expect(true, data['Products'][j]['ProductVideo'] != null ? true : false);
+        expect(true, data['Products'][j]['Rating'] != null ? true : false);
+        expect(true, data['Products'][j]['Review'] != null ? true : false);
+        expect(true, data['Products'][j]['ShortDescription'] != null ? true : false);
+        expect(true, data['Products'][j]['Thumbnail'] != null ? true : false);
+        expect(true, data['Products'][j]['FAQ'] != null ? true : false);
+        expect(true, data['Products'][j]['Latitude'] != null ? true : false);
+        expect(true, data['Products'][j]['Longitude'] != null ? true : false);
+      }
+    }
   });
 
-  test('An Object contains 11 fields', () async {
+  test('Test for every field returns no null in Place table', () async {
     var response = await http
         .get(Uri.encodeFull(url), headers: {"Accept": "application/json"});
 
     var data = json.decode(response.body);
+    expect(6, data['Place'].length);
+    for (int i = 0; i < data['Place'].length; i++) {
+      expect(5, data['Place'][i].length);
+      for (int j = 0; j < data['Place'][i].length; j++) {
+        expect(true, data['Place'][j]['Name'] != null ? true : false);
+        expect(true, data['Place'][j]['Image'] != null ? true : false);
+        expect(true, data['Place'][j]['ShortDescription'] != null ? true : false);
+        expect(true, data['Place'][j]['Latitude'] != null ? true : false);
+        expect(true, data['Place'][j]['Longitude'] != null ? true : false);
+      }
+    }
+  });
 
-    expect(15, data['Products'][0].length);
+  test('Test for total users present in database', () async {
+    var response = await http
+        .get(Uri.encodeFull(url), headers: {"Accept": "application/json"});
+
+    var data = json.decode(response.body);
+    expect(8, data['Users'].length);
   });
 }

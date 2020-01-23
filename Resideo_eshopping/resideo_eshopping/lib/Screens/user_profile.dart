@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:resideo_eshopping/controller/image_picker_handler.dart';
 import 'package:resideo_eshopping/model/User.dart';
 import 'package:resideo_eshopping/util/firebase_database_helper.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class SignUp extends StatefulWidget {
 
@@ -146,10 +147,15 @@ class _SignUpState extends State<SignUp>
                         SizedBox(
                           height: 30,
                         ),
-                        new CircleAvatar(
-                          radius: 80.0,
-                          backgroundColor: Colors.transparent,
-                          backgroundImage: NetworkImage(_imageUrl),
+                        CachedNetworkImage(
+                          imageUrl: _imageUrl,
+                          imageBuilder: (context, imageProvider) => CircleAvatar(
+                            radius: 80.0,
+                            backgroundColor: Colors.transparent,
+                            backgroundImage: imageProvider,
+                          ),
+                          placeholder: (context, url) => CircularProgressIndicator(),
+                          errorWidget: (context, url, error) => Image.asset("assets/images/no_image_available.png"),
                         ),
                       ],
                     ))
